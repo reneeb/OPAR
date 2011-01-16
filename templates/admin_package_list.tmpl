@@ -12,9 +12,19 @@
   <tr>
     <th>PackageName</th>
     <th>Version</th>
+    <th>Datum</th>
     <th>Maintainer</th>
     <th>Co-Maintainer</th>
+    <th>Aktion</th>
   </tr>
   <%LOOP PACKAGES %>
+  <tr>
+    <td><%= NAME %></td>
+    <td><%= DATE %></td>
+    <td><%= VERSION %></td>
+    <td><%= AUTHOR %></td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
   <%/LOOP %>
 </table>

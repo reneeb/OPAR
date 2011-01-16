@@ -1,5 +1,8 @@
 package OTRS::OPR::DB::Helper::Package;
 
+use strict;
+use warnings;
+
 use parent 'OTRS::OPR::Exporter::Aliased';
 
 use OTRS::OPR::Web::Utils qw(time_to_date);
@@ -33,19 +36,21 @@ sub page {
         
         # show just a short excerpt of the text if it is too long
         my $text = $package->package_name;
-        $text    = substr( $text, 0, 37 ) . '...' if $params{short} and 40 < length $text;
+        $text    = substr( $text, 0, 37 ) . '...' if $params->{short} and 40 < length $text;
         
         # show just a short excerpt of the description if it is too long
         my $desc = $package->description;
-        $desc    = substr( $desc, 0, 57 ) . '...' if $params{short} and 60 < length $desc;
+        $desc    = substr( $desc, 0, 57 ) . '...' if $params->{short} and 60 < length $desc;
+        
+        my ($author) = $package->opr_package_author;
         
         # create the infos for the template
-        push @comments_for_template, {
+        push @packages_for_template, {
             NAME        => $text,
             VERSION     => $package->version,
             DESCRIPTION => $desc,
-            AUTHOR      => $package->uploaded_by->user_name,
-            DATE        => $self->time_to_date( $package->upload_time ),
+            AUTHOR      => ($author ? $author->user_name : '' ),
+            DATE        => time_to_date( $self, $package->upload_time ),
         };
     }
     
