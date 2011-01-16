@@ -15,10 +15,10 @@ CGI::Application::Dispatch->dispatch(
         'misc/:run?/:id?' => {
             app => 'Admin::Misc',
         },
-        'package/:run/:package/:id?' => {
+        'packages/:run/:package/:id?' => {
             app => 'Admin::Package',
         },
-        'package/:run?/:id?' => {
+        'packages/:run?/:id?' => {
             app => 'Admin::Package',
         },
         'system/:run?/:id?' => {
