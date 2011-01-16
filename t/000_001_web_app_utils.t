@@ -24,6 +24,11 @@ eval{
 ok !$error, 'Can load module';
 diag $error if $error;
 
+{
+    sub OTRS::OPR::Web::Utils::new { bless {}, shift }
+    sub OTRS::OPR::Web::Utils::base_url { 'test' }
+}
+
 SKIP: {
     
     skip 'cannot load OTRS::OPR::Web::Utils', 10 if $error;
@@ -85,20 +90,24 @@ SKIP: {
         # check page_list        
         my @check_1 = (
             {
-                PAGE     => 1,
-                SELECTED => 0,
+                PAGE       => 1,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 2,
-                SELECTED => 1,
+                PAGE       => 2,
+                SELECTED   => 1,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 3,
-                SELECTED => 0,
+                PAGE       => 3,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 4,
-                SELECTED => 0,
+                PAGE       => 4,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
         );
         
@@ -108,30 +117,36 @@ SKIP: {
         # 10 pages
         my @check_2 = (
             {
-                PAGE     => 1,
-                SELECTED => 0,
+                PAGE       => 1,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 2,
-                SELECTED => 1,
+                PAGE       => 2,
+                SELECTED   => 1,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 3,
-                SELECTED => 0,
+                PAGE       => 3,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
             },
             {
-                PAGE     => 8,
-                SELECTED => 0,
+                PAGE       => 8,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 9,
-                SELECTED => 0,
+                PAGE       => 9,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 10,
-                SELECTED => 0,
+                PAGE       => 10,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
         );
         
@@ -141,42 +156,51 @@ SKIP: {
         # 10 pages, page 6 selected
         my @check_3 = (
             {
-                PAGE     => 1,
-                SELECTED => 0,
+                PAGE       => 1,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 2,
-                SELECTED => 0,
+                PAGE       => 2,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 3,
-                SELECTED => 0,
+                PAGE       => 3,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
             },
             {
-                PAGE     => 5,
-                SELECTED => 0,
+                PAGE       => 5,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 6,
-                SELECTED => 1,
+                PAGE       => 6,
+                SELECTED   => 1,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 7,
-                SELECTED => 0,
+                PAGE       => 7,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 8,
-                SELECTED => 0,
+                PAGE       => 8,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 9,
-                SELECTED => 0,
+                PAGE       => 9,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 10,
-                SELECTED => 0,
+                PAGE       => 10,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
         );
         
@@ -186,44 +210,53 @@ SKIP: {
         # 20 pages, page 6 selected
         my @check_4 = (
             {
-                PAGE     => 1,
-                SELECTED => 0,
+                PAGE       => 1,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 2,
-                SELECTED => 0,
+                PAGE       => 2,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 3,
-                SELECTED => 0,
-            },
-            {
-            },
-            {
-                PAGE     => 5,
-                SELECTED => 0,
-            },
-            {
-                PAGE     => 6,
-                SELECTED => 1,
-            },
-            {
-                PAGE     => 7,
-                SELECTED => 0,
+                PAGE       => 3,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
             },
             {
-                PAGE     => 18,
-                SELECTED => 0,
+                PAGE       => 5,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 19,
-                SELECTED => 0,
+                PAGE       => 6,
+                SELECTED   => 1,
+                __SCRIPT__ => 'test',
             },
             {
-                PAGE     => 20,
-                SELECTED => 0,
+                PAGE       => 7,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
+            },
+            {
+            },
+            {
+                PAGE       => 18,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
+            },
+            {
+                PAGE       => 19,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
+            },
+            {
+                PAGE       => 20,
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
         );
         
@@ -235,14 +268,16 @@ SKIP: {
         # check prepare select
         my @options_1 = (
             {
-                KEY      => 'hallo',
-                VALUE    => 'test',
-                SELECTED => 0,
+                KEY        => 'hallo',
+                VALUE      => 'test',
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
             {
-                KEY      => 'key2',
-                VALUE    => 'test2',
-                SELECTED => 0,
+                KEY        => 'key2',
+                VALUE      => 'test2',
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
         );
         
@@ -252,9 +287,10 @@ SKIP: {
         # check prepare select and exclude 1
         my @options_2 = (
             {
-                KEY      => 'key2',
-                VALUE    => 'test2',
-                SELECTED => 0,
+                KEY        => 'key2',
+                VALUE      => 'test2',
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
         );
         
@@ -264,14 +300,16 @@ SKIP: {
         # check prepare select and select 1
         my @options_3 = (
             {
-                KEY      => 'hallo',
-                VALUE    => 'test',
-                SELECTED => 1,
+                KEY        => 'hallo',
+                VALUE      => 'test',
+                SELECTED   => 1,
+                __SCRIPT__ => 'test',
             },
             {
-                KEY      => 'key2',
-                VALUE    => 'test2',
-                SELECTED => 0,
+                KEY        => 'key2',
+                VALUE      => 'test2',
+                SELECTED   => 0,
+                __SCRIPT__ => 'test',
             },
         );
         

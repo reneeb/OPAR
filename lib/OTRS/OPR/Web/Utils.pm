@@ -42,9 +42,10 @@ sub prepare_select {
            $is_selected = 1 if $selected and $option_value eq $selected;
         
         push @options, {
-            SELECTED => $is_selected,
-            VALUE    => $option_value,
-            KEY      => $option_key,
+            SELECTED   => $is_selected,
+            VALUE      => $option_value,
+            KEY        => $option_key,
+            __SCRIPT__ => $self->base_url,
         };
     }
     
@@ -57,8 +58,9 @@ sub page_list {
     $tmpl_params ||= {};
     
     my $pages = [ map{ { 
-        PAGE     => $_, 
-        SELECTED => ( $page and $_ == $page ) ? 1 : 0,
+        PAGE       => $_, 
+        SELECTED   => ( $page and $_ == $page ) ? 1 : 0,
+        __SCRIPT__ => $self->base_url,
         %{ $tmpl_params },
     } }(1..$max) ];
     
