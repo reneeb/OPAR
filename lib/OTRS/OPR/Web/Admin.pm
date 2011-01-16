@@ -41,7 +41,7 @@ sub start {
     my ($self) = @_;
     
     # redirect to page configured in admin.startpage
-    $self->forward( $self->base_url . '/' . $self->config->get( 'admin.startpage' ) );
+    $self->forward( '/' . $self->config->get( 'admin.startpage' ) );
 }
 
 sub login {
@@ -61,7 +61,7 @@ sub do_login {
     if( $user ) {
     
         # redirect to page configured in admin.startpage
-        $self->forward( $self->base_url . '/' . $self->config->get( 'admin.startpage' ) );
+        $self->forward( '/' . $self->config->get( 'admin.startpage' ) );
         return;
     }
     else {
