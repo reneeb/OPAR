@@ -1,0 +1,13 @@
+---
+paths:
+  base: D:\SVNRepo\PerlServices\software\OPR\Sources\
+  templates: templates\
+templates:
+  base: main.tmpl
+utils:
+  perltidy:
+    config: D:\SVNRepo\PerlServices\software\OPR\Sources\conf\perltidyrc
+  perlcritic:
+    config: D:\SVNRepo\PerlServices\software\OPR\Sources\conf\perlcriticrc
+general:
+  perl_version: 5.008001

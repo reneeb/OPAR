@@ -1,0 +1,11 @@
+---
+db:
+  user: opr
+  host: localhost
+  name: opr
+  passwd: opr_db
+  type: mysql
+analyzer:
+  max_time: 86400
+fork:
+  max: 3
