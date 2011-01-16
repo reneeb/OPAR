@@ -12,30 +12,34 @@ sub check_credentials {
     
     my $logger = $self->logger;
     
-    return if !($params{user} and $params{password});
+    return if !($params->{user} and $params->{password});
     
-    my $password = crypt $params{password}, $self->config->get( 'password.salt' );
+    my $username = $params->{user};
+    my $password = crypt $params->{password}, $self->config->get( 'password.salt' );
+    
+    my $check    = $params->{password};
+    $logger->debug( "Try $username -> $check -> $password" );
     
     my ($user) = $self->table( 'opr_user' )->search({
-        user_name     => $params{user},
+        user_name     => $username,
         user_password => $password,
     })->all;
     
     if ( !$user ) {
-        $logger->info( "Login for $params{user} not successful" );
+        $logger->info( "Login for $username not successful" );
         return;
     }
     
-    $logger->debug( "Login $params{user} successful" );
+    $logger->debug( "Login $username successful" );
     
     my $session = $self->session;
     $session->session->force_new;
     
-    my $session_id = $session->session_id;
+    my $session_id = $session->id;
     $user->session_id( $session_id );
     $user->update;
     
-    $logger->trace( "Session ID for $params{user}: $session_id" );
+    $logger->trace( "Session ID for $user: $session_id" );
     
     return 1;
 }
