@@ -1,13 +1,25 @@
 ---
+db:
+  type: mysql
+  host: localhost
+  name: opar
+  user: opar
+  pass: hot
 paths:
-  base: D:\SVNRepo\PerlServices\software\OPR\Sources\
-  templates: templates\
+  base: /home/opar/opar_sources/
+  templates: templates/
+  conf: /home/opar/opar_sources/conf/
 templates:
   base: main.tmpl
+logging: logging.web.conf
+password:
+  salt: OPAR
+admin:
+  startpage: menu
 utils:
   perltidy:
-    config: D:\SVNRepo\PerlServices\software\OPR\Sources\conf\perltidyrc
+    config: perltidyrc
   perlcritic:
-    config: D:\SVNRepo\PerlServices\software\OPR\Sources\conf\perlcriticrc
+    config: perlcriticrc
 general:
   perl_version: 5.008001
