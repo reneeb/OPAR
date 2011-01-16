@@ -21,14 +21,9 @@ sub cgiapp_prerun {
         if( $self->get_current_runmode eq 'logout' ){
             $session->logout;
         }
-        
-        my $script   = '';
-        
-        $ENV{HTTP_HOST} ||= 'perlnews';
-        my $url      = 'http://' . $ENV{HTTP_HOST} . $script . '/login';
-        
+                
         unless( $self->get_current_runmode eq 'login' ){
-            $self->redirect( $url ) ;
+            $self->forward( '/login' ) ;
         }
     }
     else{
