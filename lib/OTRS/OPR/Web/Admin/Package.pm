@@ -5,7 +5,7 @@ use warnings;
 
 use base qw(OTRS::OPR::Web::App);
 use CGI::Application::Plugin::Redirect;
-use Scalar::Util;
+use Scalar::Util qw(looks_like_number);
 
 use OTRS::OPR::DAO::Package;
 use OTRS::OPR::DB::Helper::Comment {page => 'cpage'};
@@ -19,7 +19,7 @@ use OTRS::OPR::Web::Utils          qw(prepare_select page_list);
 sub setup{
     my ($self) = @_;
 
-    $self->main_tmpl( $self->_config->get('templates.admin') );
+    $self->main_tmpl( $self->config->get('templates.admin') );
     
     my $startmode = 'list';
     my $param     = $self->param( 'run' );
@@ -205,7 +205,7 @@ sub comments : Permission( 'admin' ) {
     if ( !$valid_package_name ) {
         $self->template( 'error' );
         $self->params(
-            ERROR => 'Invalid Package Name';
+            ERROR => 'Invalid Package Name',
         );
         return;
     }
