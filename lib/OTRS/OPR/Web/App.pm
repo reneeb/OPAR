@@ -29,6 +29,10 @@ my $libdir  = Path::Class::Dir->new(
 sub forward {
     my ($self,$uri) = @_;
     
+    if ( $uri !~ m{ \A https?: }xms ) {
+        $uri = $self->base_url . $uri;
+    }
+    
     $self->{___is_redirect___} = 1;
     $self->redirect( $uri );
 }
@@ -49,6 +53,8 @@ sub notify {
 
 sub base_url {
     my ($self) = @_;
+    
+    my $uri = "http://$ENV{HTTP_HOST}/$ENV{SCRIPT_NAME}";
     
     return $ENV{SCRIPT_NAME};
 }
