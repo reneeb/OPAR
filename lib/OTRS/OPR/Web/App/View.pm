@@ -35,13 +35,17 @@ sub view{
     my %notifications;
     my $registered_notifications = $self->notify;
     
-    $notifications{NOTIFICATIONS} = $registered_notifications if $registered_notifications;
+    $notifications{NOTIFICATIONS} = $registered_notifications || [];
+    
+    for my $notification ( @{ $notifications{NOTIFICATIONS} } ) {
+        $notification->{include} = $tmpl_path . $notification->{include};
+    }
     
     $template .= '.tmpl' if $template !~ m{\.tmpl\z}xms;
 
     $tmpl->param(
-        BODY        => $tmpl_path . $template,
-        __SKRIPT__ => 'test2',
+        BODY       => $tmpl_path . $template,
+        __SCRIPT__ => $self->base_url,
         %{$self->stash},
         %notifications,
     );

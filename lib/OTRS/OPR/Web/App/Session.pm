@@ -10,10 +10,11 @@ use OTRS::OPR::Web::App::Config;
 our $VERSION = 0.01;
 
 sub new{
-    my ($class,$expire_time) = @_;
+    my ($class,%args) = @_;
     my $self = bless {},$class;
     
-    $self->expire( $expire_time );
+    $self->_config( $args{config} );
+    $self->expire( $args{expire} );
 
     return $self;
 }# new
@@ -31,7 +32,7 @@ sub session{
                 type => 'cookie',
             },
             expire       => $self->expire,
-            cookiename   => 'ActiveCatering',
+            cookiename   => 'OPAR',
         );
     }
 
@@ -92,13 +93,10 @@ sub id{
 }# id
 
 sub _config{
-    my ($self) = @_;
+    my ($self,$config) = @_;
     
-    unless( defined $self->{_config} ){
-        $self->{_config} = OTRS::OPR::Web::App::Config->new;
-    }
-
-    return $self->{_config};
+    $self->{__config__} = $config if @_ == 2;
+    return $self->{__config__};
 }
 
 1;

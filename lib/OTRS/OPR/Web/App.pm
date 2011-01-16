@@ -26,6 +26,13 @@ my $libdir  = Path::Class::Dir->new(
     ('..') x @subdirs,
 );
 
+sub forward {
+    my ($self,$uri) = @_;
+    
+    $self->{___is_redirect___} = 1;
+    $self->redirect( $uri );
+}
+
 sub notify {
     my ($self,$params) = @_;
     
@@ -42,6 +49,8 @@ sub notify {
 
 sub base_url {
     my ($self) = @_;
+    
+    return $ENV{SCRIPT_NAME};
 }
 
 sub session {
@@ -53,7 +62,10 @@ sub session {
         
         $expire *= 60; # but we need it in seconds
         
-        $self->{___session} = OTRS::OPR::Web::App::Session->new( $expire );
+        $self->{___session} = OTRS::OPR::Web::App::Session->new(
+            config => $self->config,
+            expire => $expire,
+        );
     }
 
     $self->{___session};
@@ -99,11 +111,15 @@ sub main_tmpl{
 sub cgiapp_postrun{
     my ($self,$outref) = @_;
     
+    print STDERR ">>RUNMODE: ", $self->get_current_runmode,"<<\n";
+    
     if ( $self->json_method ) {
         # set http header for json output
         # create json output
     }
-    elsif ( $self->get_current_runmode ne 'dummy_redirect' ){
+    elsif (
+        $self->get_current_runmode ne 'dummy_redirect' &&
+        !$self->{___is_redirect___} ){
         my $string = $self->view;
         $$outref   = $string;
     }
@@ -139,8 +155,11 @@ sub logger {
     my ($self) = @_;
     
     unless( $self->{logging} ){
-        my $conf_file = $self->config->get( 'logging' );
-        Log::Log4perl->init( $conf_file );
+        my $conf_file = Path::Class::File->new(
+            $self->config->get( 'paths.conf' ),
+            $self->config->get( 'logging' ),
+        );
+        Log::Log4perl->init( $conf_file->stringify );
         $self->{logging} = Log::Log4perl->get_logger;
     }
 
