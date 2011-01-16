@@ -9,6 +9,9 @@ paths:
   base: /home/opar/opar_sources/
   templates: templates/
   conf: /home/opar/opar_sources/conf/
+  static: static/
+defaults:
+  static: imprint
 templates:
   base: main.tmpl
 logging: logging.web.conf
