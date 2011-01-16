@@ -27,14 +27,21 @@ sub setup {
         login    => \&login,
         logout   => \&logout,
         do_login => \&do_login,
+        menu     => \&menu,
     );
+}
+
+sub menu {
+    my ($self) = @_;
+    
+    $self->template( 'admin_menu' );
 }
 
 sub start {
     my ($self) = @_;
     
     # redirect to page configured in admin.startpage
-    $self->redirect( $self->base_url . '/' . $self->config->get( 'admin.startpage' ) );
+    $self->forward( $self->base_url . '/' . $self->config->get( 'admin.startpage' ) );
 }
 
 sub login {
@@ -54,7 +61,8 @@ sub do_login {
     if( $user ) {
     
         # redirect to page configured in admin.startpage
-        $self->redirect( $self->base_url . '/' . $self->config->get( 'admin.startpage' ) );
+        $self->forward( $self->base_url . '/' . $self->config->get( 'admin.startpage' ) );
+        return;
     }
     else {
         
