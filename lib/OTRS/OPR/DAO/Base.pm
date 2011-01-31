@@ -2,7 +2,12 @@ package OTRS::OPR::DAO::Base;
 
 use Moose;
 
-has _schema => ( is => 'rw' );
+has _schema => (
+    is => 'rw',
+);
+has _config => (
+    is => 'rw',
+);
 
 sub _after_init {
     my ($self) = @_;
@@ -18,11 +23,19 @@ sub _has_changed {
 sub _save {
 }
 
-after 'new' => sub {
-    my ($self) = @_;
+sub BUILD {
+    my ( $self ) = @_;
+    # establish DB connection iff necessary
+    if ( !$self->_schema ) {
+        warn 'establish DB connection';
+    }
+}
+
+sub ask_table {
+    my ($self, $name) = @_;
     
-    $self->init if $self->can( 'init' );
-};
+    return $self->_schema->resultset( $name );
+}
 
 no Moose;
 
