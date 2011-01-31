@@ -1,0 +1,12 @@
+---
+db:
+  file: test
+  type: SQLite
+  host: localhost
+  user:
+  pass:
+  schema:
+  name: test
+files:
+  inserts: inserts.yml
+  schema: schema.yml

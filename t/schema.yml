@@ -1,0 +1,16 @@
+---
+schema:
+  opr_user:
+    user_id: INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT
+    user_name: VARCHAR(255) 
+    user_password: VARCHAR(255) 
+    mail: VARCHAR(255) 
+    website: VARCHAR(255) 
+    session_id: VARCHAR(255)
+    active: TINYINT
+  opr_group:
+    group_id: INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT
+    group_name: VARCHAR(255) NOT NULL
+  opr_group_user:
+    group_id: INTEGER NOT NULL
+    user_id: INTEGER NOT NULL
