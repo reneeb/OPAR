@@ -42,7 +42,7 @@ sub setup{
     );
 }
 
-sub list_packages : Permission('list_packages') {
+sub list_packages : Permission('admin') {
     my ($self) = @_;
     
     my $config = $self->config;
@@ -65,7 +65,7 @@ sub list_packages : Permission('list_packages') {
     );
 }
 
-sub delete_package : Permission( 'delete_package' ) : Json {
+sub delete_package : Permission( 'admin' ) : Json {
     my ($self) = @_;
     
     # the package is not deleted, it's just marked to be deleted and
@@ -94,7 +94,7 @@ sub delete_package : Permission( 'delete_package' ) : Json {
     return { delete_until => $delete_until };
 }
 
-sub undelete_package : Permission( 'undelete_package' ) : Json {
+sub undelete_package : Permission( 'admin' ) : Json {
     my ($self) = @_;
     
     my $package = $self->param( 'package' );
@@ -126,7 +126,7 @@ of the given package.
 
 =cut
 
-sub set_comaintainer : Permission( 'set_comaintainer' ) {
+sub set_comaintainer : Permission( 'admin' ) {
     my ($self) = @_;
     
     # get package id passed to app
@@ -165,7 +165,7 @@ sub set_comaintainer : Permission( 'set_comaintainer' ) {
 
 =cut
 
-sub save_comaintainer : Permission( 'save_comaintainer' ) : Json {
+sub save_comaintainer : Permission( 'admin' ) : Json {
     my ($self) = @_;
     
     my $package = $self->param( 'package' );
@@ -187,7 +187,7 @@ sub save_comaintainer : Permission( 'save_comaintainer' ) : Json {
     return { success => 1 };
 }
 
-sub comments : Permission( 'comments' ) {
+sub comments : Permission( 'admin' ) {
     my ($self) = @_;
     
     # get the package name
@@ -228,10 +228,10 @@ sub comments : Permission( 'comments' ) {
     );
 }
 
-sub delete_comment : Permission( 'delete_comment' ) : Json {
+sub delete_comment : Permission( 'admin' ) : Json {
 }
 
-sub undelete_comment : Permission( 'undelete_comment' ) : Json {
+sub undelete_comment : Permission( 'admin' ) : Json {
 }
 
 1;
