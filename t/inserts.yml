@@ -16,3 +16,16 @@ inserts:
     table_name: opr_group_user
     group_id: 1
     user_id: 1
+  -
+    table_name: opr_package
+    package_id: 1
+    package_name: Test
+    version: 0.0.0
+    uploaded_by: 1
+    website: http://www.perl-services.de
+    bugtracker: http://git.perl-services.de/issues
+    path: reneeb/Test-0.0.0.opm
+    description: Testpackage
+    framework: 3.0.x
+    upload_time: 1234567890
+    virtual_path: R/RE/RENEEB/Test-0.0.0.opm

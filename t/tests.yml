@@ -10,3 +10,4 @@ db:
 files:
   inserts: inserts.yml
   schema: schema.yml
+  entities: entities

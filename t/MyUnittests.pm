@@ -6,8 +6,9 @@ use parent 'Exporter';
 use DBI;
 use File::Basename;
 use File::Spec;
+use Storable qw(lock_store lock_retrieve);
 
-our @EXPORT = qw(fill_db populate_db delete_db dbh schema);
+our @EXPORT = qw(fill_db populate_db delete_db dbh schema get_inserts delete_files);
 
 my ($dir, $configfile, $config);
 BEGIN {
@@ -36,8 +37,13 @@ sub fill_db {
     
     return if !@{$db_data};
     
+    my %inserted_entities;
+    
     for my $insert ( @{ $db_data } ) {
         my $table   = delete $insert->{table_name};
+        
+        $inserted_entities{$table}++;
+        
         my @columns = keys %{ $insert };
         my $col_str = join ', ', @columns;
         my @values  = @{ $insert }{@columns};
@@ -59,7 +65,16 @@ sub fill_db {
         }
     }
     
+    lock_store \%inserted_entities, $config->get( 'files.entities' );
+    
     1;
+}
+
+sub get_inserts {
+    my ($name) = @_;
+    
+    my $hashref = lock_retrieve( $config->get( 'files.entities' ) );
+    return $hashref->{$name};
 }
 
 sub populate_db {
@@ -131,6 +146,12 @@ sub delete_db {
     if ( -e $db_file ) {
         unlink $db_file or return 0;
     }
+    
+    1;
+}
+
+sub delete_files {
+    unlink $config->get( 'files.entities' ) or return 0;
     
     1;
 }

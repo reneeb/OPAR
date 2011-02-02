@@ -1,11 +1,11 @@
-package OTRS::OPR::DAO::User;
+package OTRS::OPR::DAO::Author;
 
 use Moose;
 use OTRS::OPR::App::AttributeInformation;
 
 extends 'OTRS::OPR::DAO::Base';
 
-for my $attribute ( qw(session_id user_name user_id user_password website mail active) ) {
+for my $attribute ( qw(user_name user_id website) ) {
     has $attribute => (
         metaclass    => 'OTRS::OPR::App::AttributeInformation',
         is_trackable => 1,
@@ -19,25 +19,31 @@ has user_object => (
     isa => 'Object',
 );
 
-has groups        => (
-    traits       => ['Hash'],
-    metaclass    => 'OTRS::OPR::App::AttributeInformation',
-    is_trackable => 1,
-    is           => 'rw',
-    isa          => 'HashRef[Str]',
-    auto_deref   => 1,
-    default      => sub { {} },
-    handles      => {
-        add_group    => 'set',
-        remove_group => 'delete',
-        has_group    => 'get',
-        group_list   => 'kv',
-    },
-    trigger      => sub{ shift->_dirty_flag( 'groups' ) },
+has user_dao => (
+    is  => 'rw',
+    isa => 'Object',
 );
 
-after 'add_group'    => sub{ shift->_dirty_flag( 'groups' ) };
-after 'remove_group' => sub{ shift->_dirty_flag( 'groups' ) };
+has package_dao => (
+    is  => 'rw',
+    isa => 'Object',
+);
+
+has maintainer => (
+    is  => 'rw',
+    isa => 'ArrayRef[Int]',
+);
+
+has comaintainer => (
+    is  => 'rw',
+    isa => 'ArrayRef[Int]',
+);
+
+sub packages {
+    my ($self) = @_;
+    
+    
+};
 
 sub BUILD {
     my ($self) = @_;
@@ -54,21 +60,6 @@ sub BUILD {
     }
     
     $self->not_in_db( 0 );
-    
-    $self->user_name( $user->user_name );
-    $self->website( $user->website );
-    $self->mail( $user->mail );
-    
-    my @group_user_objects = $user->opr_group_user;
-    my @group_objects;
-    
-    for my $group_user_object ( @group_user_objects ) {
-        push @group_objects, $group_user_object->opr_group;
-    }
-    
-    for my $group_obj ( @group_objects ) {
-        $self->add_group( lc $group_obj->group_name, 1 );
-    }
     
     $self->user_object( $user );
     

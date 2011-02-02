@@ -14,3 +14,22 @@ schema:
   opr_group_user:
     group_id: INTEGER NOT NULL
     user_id: INTEGER NOT NULL
+  opr_package:
+    package_id: INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT
+    uploaded_by: INTEGER NOT NULL
+    package_name: VARCHAR(255)
+    description: VARCHAR(255)
+    version: VARCHAR(255)
+    framework: VARCHAR(255)
+    path: VARCHAR(255)
+    is_in_index: INTEGER
+    website: VARCHAR(255)
+    bugtracker: VARCHAR(255)
+    upload_time: VARCHAR(255)
+    virtual_path: VARCHAR(255)
+    deletion_flag: VARCHAR(255)
+  opr_package_dependency:
+    dependency_id: INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT
+    package_id: INTEGER NOT NULL
+    dependency_type: VARCHAR(255)
+    dependency_version: VARCHAR(255)

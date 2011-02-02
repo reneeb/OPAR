@@ -2,22 +2,31 @@ package OTRS::OPR::DAO::Base;
 
 use Moose;
 
+has not_in_db => (
+    is      => 'rw',
+    isa     => 'Int',
+    default => sub{ 1 },
+);
+
 has _schema => (
     is => 'rw',
 );
+
 has _config => (
     is => 'rw',
 );
+
 has _flags => (
     is      => 'rw',
     isa     => 'HashRef',
     default => sub { {} },
     traits  => ['Hash'],
     handles => {
-        delete_flag   => 'delete',
-        set_flag      => 'set',
-        count_flags   => 'count',
-        changed_attrs => 'kv',
+        delete_flag    => 'delete',
+        set_flag       => 'set',
+        count_flags    => 'count',
+        changed_attrs  => 'kv',
+        reject_changes => 'clear',
     },
 );
 
@@ -50,11 +59,7 @@ sub _dirty_flag {
 
 sub _has_changed {
     my ($self) = @_;
-    
     $self->count_flags;
-}
-
-sub _save {
 }
 
 sub BUILD {
