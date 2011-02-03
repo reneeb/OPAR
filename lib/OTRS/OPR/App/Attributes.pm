@@ -14,7 +14,7 @@ sub Permission : ATTR(CODE) {
     
     *{$sym} = sub {
         my ($self) = @_;
-        unless( $self->user->permission( $params->[0] ) ) {
+        unless( $self->user->has_group( $params->[0] ) ) {
             $self->logger->info(
                 $self->user->user_name . 
                 ' has no sufficient permission for ' .
@@ -36,7 +36,6 @@ sub Json : ATTR(CODE) {
     
     *{$sym} = sub {
         $_[0]->json_method(1);
-        print "ATTR <<json>>";
         $code->(@_);
     };
 }
