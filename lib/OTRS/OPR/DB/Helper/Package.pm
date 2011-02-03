@@ -15,13 +15,13 @@ sub page {
     
     my $resultset = $self->table( 'opr_package' )->search(
         {
-            # is_in_index => 1,
-            # group by name
+            is_in_index => 1,
         },
         {
             page     => $page,
             rows     => $rows,
             order_by => 'package_id',
+            group_by => [ 'package_name' ],
         },
     );
     
