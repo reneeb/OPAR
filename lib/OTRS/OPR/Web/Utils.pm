@@ -17,13 +17,13 @@ our @EXPORT_OK = qw(
 sub prepare_select {
     my ($self,$params) = @_;
     
-    return if not exists $params{data} or ref $params{data} ne 'HASH';
-    return if exists $params{excluded} and ref $params{excluded} ne 'ARRAY';
-    return if exists $params{selected} and ref $params{selected} ne 'ARRAY';
+    return if not exists $params->{data} or ref $params->{data} ne 'HASH';
+    return if exists $params->{excluded} and ref $params->{excluded} ne 'ARRAY';
+    return if exists $params->{selected} and ref $params->{selected} ne 'ARRAY';
     
-    my $data     = $params{data}     || {};
-    my $excluded = $params{excluded} || [];
-    my $selected = $params{selected} || [];
+    my $data     = $params->{data}     || {};
+    my $excluded = $params->{excluded} || [];
+    my $selected = $params->{selected} || [];
     
     my @options;
     
@@ -61,10 +61,10 @@ sub page_list {
 sub time_to_date {
     my ($self,$time,$params) = @_;
     
-    return if !$time or $time !~ m{ \A \d+ \z };
+    return if !$time or $time !~ m{ \A \d+ \z }xms;
     
     # check if a time zone is given and if it is a valid name
-    my $tz = $params{time_zone} || 'Europe/London';
+    my $tz = $params->{time_zone} || 'Europe/London';
     if ( !DateTime::TimeZone->is_valid_name( $tz ) ) {
         $tz = 'Europe/London';
     }
@@ -79,7 +79,7 @@ sub time_to_date {
     
     # the user wants to get the date
     # format => dd month_abbr YYYY
-    if ( not exists $params{date} or $params{date} ) {
+    if ( not exists $params->{date} or $params->{date} ) {
         my $day   = sprintf "%02d", $date_time->day;
         my $month = $date_time->month_abbr;
         my $year  = $date_time->year;
@@ -89,7 +89,7 @@ sub time_to_date {
     
     # the user wants to get the time
     # format => hh:mm:ss
-    if ( $params{time} ) {
+    if ( $params->{time} ) {
         push @parts, $date_time->hms(':');
     }
     
