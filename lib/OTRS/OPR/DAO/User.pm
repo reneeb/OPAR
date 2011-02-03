@@ -5,7 +5,7 @@ use OTRS::OPR::App::AttributeInformation;
 
 extends 'OTRS::OPR::DAO::Base';
 
-for my $attribute ( qw(session_id user_name user_id user_password website mail active) ) {
+for my $attribute ( qw(session_id user_name user_password website mail active) ) {
     has $attribute => (
         metaclass    => 'OTRS::OPR::App::AttributeInformation',
         is_trackable => 1,
@@ -13,6 +13,11 @@ for my $attribute ( qw(session_id user_name user_id user_password website mail a
         trigger      => sub{ shift->_dirty_flag( $attribute ) },
     );
 }
+
+
+has user_id => (
+    is  => 'rw',
+);
 
 has user_object => (
     is  => 'rw',
@@ -42,16 +47,17 @@ after 'remove_group' => sub{ shift->_dirty_flag( 'groups' ) };
 sub BUILD {
     my ($self) = @_;
     
-    $self->delete_flag( 'user_id' );
-    
-    return if !$self->user_id;
-    
-    my ($user) = $self->ask_table( 'opr_user' )->find( $self->user_id );
-    
-    if ( !$user ) {
-        $self->user_id( undef );
-        return;
+    my $user;
+    if ( !$self->user_id && $self->session_id ) {
+        ($user) = $self->ask_table( 'opr_user' )->search({
+            session_id => $self->session_id,
+         });
     }
+    elsif ( $self->user_id ) {
+        ($user) = $self->ask_table( 'opr_user' )->find( $self->user_id );
+    }
+    
+    return if !$user;
     
     $self->not_in_db( 0 );
     

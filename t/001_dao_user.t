@@ -5,7 +5,7 @@ use warnings;
 use File::Basename;
 use File::Spec;
 
-use Test::More tests => 25;
+use Test::More tests => 29;
 
 my $dir;
 my $lib;
@@ -23,7 +23,7 @@ use OTRS::OPR::DAO::User;
 my $schema = schema();
 
 my $max_id = get_inserts( 'opr_user' );
-is $max_id, 1;
+is $max_id, 2, 'Inserted two users in "preconditions"';
 
 ok $schema, 'schema was created';
 
@@ -97,4 +97,17 @@ ok $schema, 'schema was created';
     ok $non_existant, 'User was created';
     ok !$non_existant->user_name;
     ok !$non_existant->website;
+}
+
+{
+    # find user by session_id
+    my $user = OTRS::OPR::DAO::User->new(
+        session_id => 12345,
+        _schema    => $schema,
+    );
+    
+    ok $user, 'User created';
+    is $user->user_name, 'tester', 'Username ok';
+    is $user->session_id, 12345, 'Session ID ok';
+    ok !$user->_has_changed, 'User has not been changed';
 }
