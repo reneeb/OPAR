@@ -5,7 +5,7 @@ use warnings;
 use File::Basename;
 use File::Spec;
 
-use Test::More tests => 26;
+use Test::More tests => 31;
 
 my $dir;
 my $lib;
@@ -65,9 +65,17 @@ is $max_id, 1;
     ok !$package->package_name, 'no package name yet (new package)';
     ok !$package->_has_changed, 'new package not changed yet';
     $package->package_name( 'DynamicAdminMenu' );
+    is $package->package_name, 'DynamicAdminMenu', 'set "package_name"';
     $package->version( '1.0.0' );
+    is $package->version, '1.0.0', 'set "version"';
     $package->framework( '2.4.x' );
+    is $package->framework, '2.4.x', 'set "framework"';
+    $package->uploaded_by( 1 );
+    is $package->uploaded_by, 1, 'set "uploaded_by"';
     ok $package->_has_changed, 'new package was changed';
+    
+    my @changed = $package->changed_attrs;
+    is scalar( @changed ), 4, 'changed 4 attributes';
 }
 
 {

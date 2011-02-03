@@ -3,11 +3,14 @@ package OTRS::OPR::DAO::Package;
 use Moose;
 use OTRS::OPR::App::AttributeInformation;
 
+use OTRS::OPR::DAO::Author;
+
 extends 'OTRS::OPR::DAO::Base';
 
 my @attributes = qw(
-    package_id uploaded_by package_name description version
+    uploaded_by package_name description version
     framework path virtual_path is_in_index website bugtracker upload_time
+    deletion_flag
 );
 
 for my $attribute ( @attributes ) {
@@ -18,6 +21,11 @@ for my $attribute ( @attributes ) {
         trigger      => sub{ shift->_dirty_flag( $attribute ) },
     );
 }
+
+
+has package_id => (
+    is  => 'rw',
+);
 
 has package_object => (
     is  => 'rw',
@@ -38,7 +46,6 @@ has dependencies => (
 sub author {
     my ($self) = @_;
     
-    require OTRS::OPR::DAO::Author;
     my $author = OTRS::OPR::DAO::Author->new(
         user_id => $self->uploaded_by,
         _schema => $self->_schema,
@@ -49,15 +56,12 @@ sub author {
 
 sub BUILD {
     my ($self) = @_;
-    
-    $self->delete_flag( 'package_id' );
-    
+        
     return if !$self->package_id;
     
     my ($package) = $self->ask_table( 'opr_package' )->find( $self->package_id );
     
     if ( !$package ) {
-        $self->package_id( undef );
         return;
     }
         
@@ -74,21 +78,29 @@ sub BUILD {
 
 sub DEMOLISH {
     my ($self) = @_;
-    
     return if !$self->_has_changed;
         
     my @changed_attrs = $self->changed_attrs;
     my $package       = $self->package_object;
     
     if ( !$package ) {
-        $package = $self->ask_table( 'opr_package' )->create( {} );
+        $package = $self->ask_table( 'opr_package' )->create({
+            uploaded_by => 0,
+        });
     }
     
+    #$self->_schema->storage->debug( 1 );
+    
+    ATTRELEMENT:
     for my $attr_element ( @changed_attrs ) {
         my $attr = $attr_element->[0];
+        
+        next ATTRELEMENT if $attr eq 'package_id';
+        
+        $package->$attr( $self->$attr() );
     }
     
-    $package->update;
+    $package->in_storage ? $package->update : $package->insert;
 }
 
 no Moose;
