@@ -5,7 +5,7 @@ use warnings;
 use File::Basename;
 use File::Spec;
 
-use Test::More tests => 11;
+use Test::More tests => 7;
 
 my $dir;
 my $lib;

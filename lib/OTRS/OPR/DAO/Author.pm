@@ -5,7 +5,8 @@ use OTRS::OPR::App::AttributeInformation;
 
 extends 'OTRS::OPR::DAO::Base';
 
-for my $attribute ( qw(user_name user_id website) ) {
+my @attributes = qw(user_name user_id website);
+for my $attribute ( @attributes ) {
     has $attribute => (
         metaclass    => 'OTRS::OPR::App::AttributeInformation',
         is_trackable => 1,
@@ -62,6 +63,10 @@ sub BUILD {
     $self->not_in_db( 0 );
     
     $self->user_object( $user );
+    
+    for my $attr ( @attributes ) {
+        $self->$attr( $user->$attr() );
+    }
     
     $self->_after_init();
 }
