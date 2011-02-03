@@ -18,6 +18,6 @@ use lib $dir;
 
 use MyUnittests;
 
-ok 1;
-#ok delete_db(), 'delete test db';
+#ok 1;
+ok delete_db(), 'delete test db';
 ok delete_files(), 'delete files created while testing';
