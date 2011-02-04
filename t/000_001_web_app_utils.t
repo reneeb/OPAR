@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use File::Basename;
 use File::Spec;
-use Test::More tests => 16;
+use Test::More tests => 22;
 
 my $dir;
 my $lib;
@@ -104,5 +104,178 @@ SKIP: {
         
         my $page_list_1 = OTRS::OPR::Web::Utils->page_list( 4, 2 );
         is_deeply $page_list_1, \@check_1, 'page 2 selected';
+        
+        # 10 pages
+        my @check_2 = (
+            {
+                PAGE     => 1,
+                SELECTED => 0,
+            },
+            {
+                PAGE     => 2,
+                SELECTED => 1,
+            },
+            {
+                PAGE     => 3,
+                SELECTED => 0,
+            },
+            {
+            },
+            {
+                PAGE     => 8,
+                SELECTED => 0,
+            },
+            {
+                PAGE     => 9,
+                SELECTED => 0,
+            },
+            {
+                PAGE     => 10,
+                SELECTED => 0,
+            },
+        );
+        
+        my $page_list_2 = OTRS::OPR::Web::Utils->page_list( 10, 2 );
+        is_deeply $page_list_2, \@check_2, '10 pages, page 2 selected';
+        
+        # 10 pages, page 6 selected
+        my @check_3 = (
+            {
+                PAGE     => 1,
+                SELECTED => 0,
+            },
+            {
+                PAGE     => 2,
+                SELECTED => 0,
+            },
+            {
+                PAGE     => 3,
+                SELECTED => 0,
+            },
+            {
+            },
+            {
+                PAGE     => 5,
+                SELECTED => 0,
+            },
+            {
+                PAGE     => 6,
+                SELECTED => 1,
+            },
+            {
+                PAGE     => 7,
+                SELECTED => 0,
+            },
+            {
+                PAGE     => 8,
+                SELECTED => 0,
+            },
+            {
+                PAGE     => 9,
+                SELECTED => 0,
+            },
+            {
+                PAGE     => 10,
+                SELECTED => 0,
+            },
+        );
+        
+        my $page_list_3 = OTRS::OPR::Web::Utils->page_list( 10, 6 );
+        is_deeply $page_list_3, \@check_3, '10 pages, page 6 selected';
+        
+        # 20 pages, page 6 selected
+        my @check_4 = (
+            {
+                PAGE     => 1,
+                SELECTED => 0,
+            },
+            {
+                PAGE     => 2,
+                SELECTED => 0,
+            },
+            {
+                PAGE     => 3,
+                SELECTED => 0,
+            },
+            {
+            },
+            {
+                PAGE     => 5,
+                SELECTED => 0,
+            },
+            {
+                PAGE     => 6,
+                SELECTED => 1,
+            },
+            {
+                PAGE     => 7,
+                SELECTED => 0,
+            },
+            {
+            },
+            {
+                PAGE     => 18,
+                SELECTED => 0,
+            },
+            {
+                PAGE     => 19,
+                SELECTED => 0,
+            },
+            {
+                PAGE     => 20,
+                SELECTED => 0,
+            },
+        );
+        
+        my $page_list_4 = OTRS::OPR::Web::Utils->page_list( 20, 6 );
+        is_deeply $page_list_4, \@check_4, '20 pages, page 6 selected';
+    }
+    
+    {
+        # check prepare select
+        my @options_1 = (
+            {
+                KEY      => 'hallo',
+                VALUE    => 'test',
+                SELECTED => 0,
+            },
+            {
+                KEY      => 'key2',
+                VALUE    => 'test2',
+                SELECTED => 0,
+            },
+        );
+        
+        my $select_options_1 = OTRS::OPR::Web::Utils->prepare_select({data => { hallo => 'test', key2 => 'test2' }});
+        is_deeply $select_options_1, \@options_1, 'prepare_select test 1';
+        
+        # check prepare select and exclude 1
+        my @options_2 = (
+            {
+                KEY      => 'key2',
+                VALUE    => 'test2',
+                SELECTED => 0,
+            },
+        );
+        
+        my $select_options_2 = OTRS::OPR::Web::Utils->prepare_select({data => { hallo => 'test', key2 => 'test2' }, excluded => [ 'test' ]});
+        is_deeply $select_options_2, \@options_2, 'prepare_select test 2';
+        
+        # check prepare select and select 1
+        my @options_3 = (
+            {
+                KEY      => 'hallo',
+                VALUE    => 'test',
+                SELECTED => 1,
+            },
+            {
+                KEY      => 'key2',
+                VALUE    => 'test2',
+                SELECTED => 0,
+            },
+        );
+        
+        my $select_options_3 = OTRS::OPR::Web::Utils->prepare_select({data => { hallo => 'test', key2 => 'test2' }, selected => 'test' });
+        is_deeply $select_options_3, \@options_3, 'prepare_select test 2';
     }
 }

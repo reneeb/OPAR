@@ -19,24 +19,32 @@ sub prepare_select {
     
     return if not exists $params->{data} or ref $params->{data} ne 'HASH';
     return if exists $params->{excluded} and ref $params->{excluded} ne 'ARRAY';
-    return if exists $params->{selected} and ref $params->{selected} ne 'ARRAY';
+    return if exists $params->{selected} and ref $params->{selected};
     
     my $data     = $params->{data}     || {};
     my $excluded = $params->{excluded} || [];
-    my $selected = $params->{selected} || [];
+    my $selected = $params->{selected};
     
     my @options;
     
+    my $not_numeric = grep{ /\D/ }keys %{$data};
+    my @sorted_keys = $not_numeric ?
+        sort{ $a cmp $b }keys %{$data} :
+        sort{ $a <=> $b }keys %{$data};
+    
     OPTIONVALUE:
-    for my $option_value ( keys %{$data} ) {
+    for my $option_key ( @sorted_keys ) {
+        my $option_value = $data->{$option_key};
+        
         next OPTIONVALUE if grep{ $option_value eq $_ }@{$excluded};
         
-        my $is_selected = grep{ $option_value eq $_ }@{$selected};
+        my $is_selected = 0;
+           $is_selected = 1 if $selected and $option_value eq $selected;
         
         push @options, {
             SELECTED => $is_selected,
-            KEY      => $data->{$option_value},
             VALUE    => $option_value,
+            KEY      => $option_key,
         };
     }
     
@@ -44,18 +52,42 @@ sub prepare_select {
 }
 
 sub page_list {
-    my ($self,$pages,$page) = @_;
+    my ($self,$max,$page,$tmpl_params) = @_;
     
-    my @pages;
-    for my $nr ( 1 .. $pages ) {
-        my $selected = ($nr == $page) ? 1 : 0;
-        push @pages, {
-            PAGE     => $nr,
-            SELECTED => $selected,
-        };
+    $tmpl_params ||= {};
+    
+    my $pages = [ map{ { 
+        PAGE     => $_, 
+        SELECTED => ( $page and $_ == $page ) ? 1 : 0,
+        %{ $tmpl_params },
+    } }(1..$max) ];
+    
+    return $pages if scalar @{$pages} < 7;
+    
+    my $nr_orig = scalar @{$pages};
+    
+    my @begin = @{$pages}[0..2];
+    my @end   = @{$pages}[-3..-1];
+    my @rest  = @{$pages}[3..$nr_orig-4];
+    
+    my @middle;
+    
+    my $nr = scalar @rest;
+    
+    if( $page < 3 || $page >= $nr_orig-3 ) {
+        @middle = ({});
+    }
+    elsif( $page <= 5 ) {
+        @middle = $nr > 3 ? (@rest[0..2], {}) : @rest;
+    }
+    elsif( $page >= $nr_orig-4 ) {
+        @middle = $nr > 3 ? ( {}, @rest[-3..-1] ) : @rest;
+    }
+    else {
+        @middle = $nr > 3 ? ( {}, @rest[ $page-5 .. $page-3 ], {} ) : @rest;
     }
     
-    return \@pages;
+    return [@begin,@middle,@end];
 }
 
 sub time_to_date {
