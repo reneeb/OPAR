@@ -2,7 +2,7 @@ package OTRS::OPR::DB::Helper::Package;
 
 use parent 'OTRS::OPR::Exporter::Aliased';
 
-use OTRS::OPR::Web::App::Utils qw(time_to_date);
+use OTRS::OPR::Web::Utils qw(time_to_date);
 
 our @EXPORT_OK = qw(
     page
@@ -26,7 +26,7 @@ sub page {
     );
     
     my @packages = $resultset->all;    
-    my $pages    = $resultset->pager->last_page;
+    my $pages    = $resultset->pager->last_page || 1;
     
     my @packages_for_template;
     for my $package ( @packages ) {
