@@ -1,6 +1,6 @@
 package OTRS::OPR::DB::Helper::Comment;
 
-use base 'OTRS::OPR::Exporter::Aliased';
+use parent 'OTRS::OPR::Exporter::Aliased';
 
 use OTRS::OPR::Web::Utils qw(time_to_date);
 
