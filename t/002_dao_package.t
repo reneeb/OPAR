@@ -5,7 +5,7 @@ use warnings;
 use File::Basename;
 use File::Spec;
 
-use Test::More tests => 31;
+use Test::More tests => 48;
 
 my $dir;
 my $lib;
@@ -27,6 +27,18 @@ ok $schema, 'schema was created';
 
 my $max_id = get_inserts( 'opr_package' );
 is $max_id, 1;
+
+{
+    # check API
+    my @methods = qw(
+        uploaded_by description version name_id
+        framework path virtual_path is_in_index website bugtracker upload_time
+        deletion_flag objects package_name package_id oq_results
+        dependencies author
+    );
+    
+    can_ok 'OTRS::OPR::DAO::Package', @methods;
+}
 
 {
     # check package 1
@@ -51,6 +63,45 @@ is $max_id, 1;
     $package->version( '0.0.1' );
     ok $package->_has_changed, 'package data have been changed';
     is $package->version, '0.0.1', 'changed version number of package 1';
+}
+
+{
+    # check package 1 with giving package_name
+    my $package = OTRS::OPR::DAO::Package->new(
+        package_name => 'Test',
+        _schema => $schema,
+    );
+
+    ok $package, 'package object created (2)';
+    
+    ok !$package->not_in_db, 'package 1 is in database (2)';
+
+    ok !$package->_has_changed, 'package data have not been changed (2)';
+    is $package->package_name, 'Test', 'name of package 1 (2)';
+    is $package->version, '0.0.1', 'version of package 1 (2)';
+    is $package->website, 'http://www.perl-services.de', 'website of package 1 (2)';
+    is $package->bugtracker, 'http://git.perl-services.de/issues', 'bugtracker of package 1 (2)';
+    is $package->path, 'reneeb/Test-0.0.0.opm', 'path of package 1 (2)';
+}
+
+{
+    # check package 1 with giving package_name and version
+    my $package = OTRS::OPR::DAO::Package->new(
+        package_name => 'Test',
+        version      => '0.0.1',
+        _schema => $schema,
+    );
+
+    ok $package, 'package object created (3)';
+    
+    ok !$package->not_in_db, 'package 1 is in database (3)';
+
+    ok !$package->_has_changed, 'package data have not been changed (3)';
+    is $package->package_name, 'Test', 'name of package 1 (3)';
+    is $package->version, '0.0.1', 'version of package 1 (3)';
+    is $package->website, 'http://www.perl-services.de', 'website of package 1 (3)';
+    is $package->bugtracker, 'http://git.perl-services.de/issues', 'bugtracker of package 1 (3)';
+    is $package->path, 'reneeb/Test-0.0.0.opm', 'path of package 1 (3)';
 }
 
 {
