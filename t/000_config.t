@@ -31,7 +31,7 @@ SKIP: {
     my $config_hash = $config->get('');
     
     ok ref $config_hash eq 'HASH', 'get a hashreference';
-    ok keys %{$config_hash} == 2, 'hash has two keys';
+    ok keys %{$config_hash} == 3, 'hash has two keys';
     ok $config_hash->{db}->{file} eq 'test', 'check db filename';
     ok $config->get( 'db.file' ) eq 'test', 'check get( "file" )';
 }
