@@ -14,10 +14,13 @@ schema:
   opr_group_user:
     group_id: INTEGER NOT NULL
     user_id: INTEGER NOT NULL
+  opr_package_names:
+    name_id: INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT
+    package_name: VARCHAR(255)
   opr_package:
     package_id: INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT
     uploaded_by: INTEGER NOT NULL
-    package_name: VARCHAR(255)
+    name_id: INTEGER NOT NULL
     description: VARCHAR(255)
     version: VARCHAR(255)
     framework: VARCHAR(255)
@@ -33,3 +36,7 @@ schema:
     package_id: INTEGER NOT NULL
     dependency_type: VARCHAR(255)
     dependency_version: VARCHAR(255)
+  opr_formid:
+    formid: VARCHAR(255) NOT NULL PRIMARY KEY
+    used: INTEGER
+    expire: INTEGER
