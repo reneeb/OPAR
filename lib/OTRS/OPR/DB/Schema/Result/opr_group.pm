@@ -13,9 +13,6 @@ __PACKAGE__->add_columns( qw/
 __PACKAGE__->set_primary_key( qw/ group_id / );
 
 
-__PACKAGE__->has_many( opr_group_functions => 'OTRS::OPR::DB::Schema::Result::opr_group_functions',
-             { 'foreign.group_id' => 'self.group_id' });
-
 __PACKAGE__->has_many( opr_group_user => 'OTRS::OPR::DB::Schema::Result::opr_group_user',
              { 'foreign.group_id' => 'self.group_id' });
 

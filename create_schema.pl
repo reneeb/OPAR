@@ -10,7 +10,7 @@ my $sql  = 'D:\SVNRepo\PerlServices\software\OPR\docs\er_modell.sql';
 
 my $dbic = FabForce::DBDesigner4::DBIC->new();
 $dbic->namespace( 'OTRS::OPR::DB' );
-$dbic->output_path( 'D:\SVNRepo\PerlServices\software\OPR\Sources\lib\\' );
+$dbic->output_path( 'D:\Git\OPAR\opar-sources\lib\\' );
 $dbic->schema_name( 'Schema' );
 $dbic->create_schema( $file );
 

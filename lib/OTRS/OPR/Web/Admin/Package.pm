@@ -57,9 +57,6 @@ sub list_packages : Permission('admin') {
     
     my ($packages,$pages) = $self->page( $page, $search_term );
     my $pagelist          = $self->page_list( $pages, $page );
-
-use Data::Dumper;
-warn Dumper $packages;
     
     $self->template( 'admin_package_list' );
     $self->stash(
