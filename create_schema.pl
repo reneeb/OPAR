@@ -26,3 +26,5 @@ $designer->writeSQL( $sql ,
         },
     }
 );
+
+print "done"
