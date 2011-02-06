@@ -3,7 +3,7 @@ package OTRS::OPR::Web::App::Forms;
 use strict;
 use warnings;
 
-use parent '';
+use parent 'OTRS::OPR::Exporter::Aliased';
 
 sub check_formid {
     my ($self) = @_;
