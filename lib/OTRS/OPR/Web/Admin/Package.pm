@@ -73,18 +73,17 @@ sub delete_package : Permission( 'admin' ) : Json {
     my $config  = $self->config;
     my $package = $self->param( 'package' );
     
-    if ( !looks_like_number($package) or $package <= 0 ) {
+    if ( $package =~ m{\D}x or $package <= 0 ) {
         return { error => 'invalid package' };
     }
     
-    my $delete_until;
+    my $package_dao = OTRS::OPR::DAO::Package->new(
+        package_id => $package,
+        _schema    => $self->schema,
+    );
     
-    my ($package_obj) = $self->table( 'opr_package' )->find( $package );
-    if ( $package_obj ) {
-        $delete_until = time + $config->get( 'deletion.span.package' );
-        $package_obj->deletion_flag( $delete_until );
-        $package_obj->update;
-    }
+    my $delete_until = time + $config->get( 'time.deletion' );
+    $package_dao->deletion_flag( $delete_until );
     
     my $job_id = $self->create_job({
         id   => $package,
@@ -99,7 +98,7 @@ sub undelete_package : Permission( 'admin' ) : Json {
     
     my $package = $self->param( 'package' );
     
-    if ( !looks_like_number($package) or $package <= 0 ) {
+    if ( $package =~ m{\D}x or $package <= 0 ) {
         return { error => 'invalid package' };
     }
     

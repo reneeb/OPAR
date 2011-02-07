@@ -27,6 +27,7 @@ sub setup {
         feedback      => \&feedback,
         send_feedback => \&send_feedback,
         static        => \&static,
+        recent        => \&recent,
     );
 }
 
@@ -54,7 +55,8 @@ sub send_feedback {
     my %errors;
     my $notification_type = 'success';
     
-    $errors{formid} = $self->check_formid( $params{formid} );
+    # check if form has a valid id
+    $errors{formid} = 1 if !$self->check_formid( $params{formid} );
     
     $notification_type = 'error' if keys %errors;
     $self->notify({
@@ -62,6 +64,9 @@ sub send_feedback {
         include => 'notifications/feedback_' . $notification_type,
     });
     
+    # TODO: check userinput
+    
+    # show errors in template
     my %template_params;
     for my $error_key ( keys %errors ) {
         $template_params{ 'ERROR_' . uc $error_key } = $self->config->get( 'errors.' . $error_key );
@@ -76,7 +81,7 @@ sub send_feedback {
 sub static {
     my ($self) = @_;
     
-    my $page       = $self->param( 'page' );
+    my $page       = $self->param( 'page' ) || '';
     
     $page =~ s{[^a-z_]}{}g;
     $page .= '.tmpl';

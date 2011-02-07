@@ -10,7 +10,10 @@ use File::Spec;
 use Path::Class;
 
 use OTRS::OPR::DAO::Package;
-use OTRS::OPR::Web::App::Forms qw(check_formid get_formid);
+use OTRS::OPR::DAO::Author;
+use OTRS::OPR::DB::Helper::Job     qw(create_job find_job);
+use OTRS::OPR::DB::Helper::Package qw(page user_is_maintainer);
+use OTRS::OPR::Web::App::Forms     qw(check_formid get_formid);
 use OTRS::OPR::Web::App::Prerun;
 
 sub setup {
@@ -27,14 +30,73 @@ sub setup {
     $self->start_mode( $startmode );
     $self->mode_param( 'rm' );
     $self->run_modes(
-        AUTOLOAD    => \&list,
-        list        => \&list,
-        upload      => \&upload,
-        do_upload   => \&do_upload,
-        delete      => \&delete,
-        undelete    => \&undelete,
-        maintainer  => \&maintainer,
+        AUTOLOAD     => \&list,
+        list         => \&list,
+        upload       => \&upload,
+        do_upload    => \&do_upload,
+        delete       => \&delete_package,
+        undelete     => \&undelete_package,
+        maintainer   => \&maintainer,
+        version_list => \&version_list,
     );
+}
+
+sub delete_package : Permission( 'author' ) : Json {
+    my ($self) = @_;
+    
+    my $package = $self->param( 'package' );
+    
+    if ( $package =~ m{\D}x or $package <= 0 ) {
+        return {};
+    }
+    
+    if ( !$self->user_is_maintainer( $self->user, { id => $package } ) ) {
+        return { ERROR => 'User is not mainteiner' };
+    }
+    
+    my $package_dao = OTRS::OPR::DAO::Package->new(
+        package_id => $package,
+        _schema    => $self->schema,
+    );
+    
+    my $deletion = time + $self->config->get( 'time.deletion' );
+    $package_dao->deletion_flag( $deletion );
+        
+    my $job_id = $self->create_job({
+        id   => $package,
+        type => 'delete',
+    });
+    
+    return { delete_until => $deletion };
+}
+
+sub undelete_package : Permission( 'author' ) : Json {
+    my ($self) = @_;
+    
+    my $package = $self->param( 'package' );
+    
+    if ( $package =~ m{\D} or $package <= 0 ) {
+        return {};
+    }
+    
+    if ( !$self->user_is_maintainer( $self->user, { id => $package } ) ) {
+        return { ERROR => 'User is not mainteiner' };
+    }
+    
+    my $job = $self->find_job(
+        id   => $package,
+        type => 'delete',
+    );
+    
+    $job->delete;
+    
+    my $package_dao = OTRS::OPR::DAO::Package->new(
+        package_id => $package,
+        _schema    => $self->schema,
+    );
+    
+    $package_dao->deletion_flag( 0 );
+    return { deletion_flag => 0 };
 }
 
 sub upload : Permission( 'author' ) {
@@ -73,13 +135,13 @@ sub do_upload : Permission( 'author' ) {
     }
     
     # upload file. This file is needed anyways.
-    my ($file,$virtual_path) = $self->_upload_file;
+    my $file = $self->_upload_file;
     
     # quickcheck for package name:
     # extract (<Name>.*</Name>) from .opm validate against opr_package_names
     # if user is the main author or co-maintainer, then upload is ok.
     my $package_name = $self->_get_package_name( $file );
-    if ( !$self->user_is_maintainer( $self->user, $package_name ) ) {
+    if ( !$self->user_is_maintainer( $self->user, { name => $package_name } ) ) {
         $self->notify({
             type    => 'error',
             include => 'notifications/generic_error',
@@ -98,15 +160,65 @@ sub do_upload : Permission( 'author' ) {
         _schema => $self->schema,
     );
     
+    my $user_name    = $self->user;
+    my $virtual_path = uc
+        substr( $user_name, 0, 1 ) . '/' .
+        substr( $user_name, 0, 2 ) . '/' .
+        $user_name;
+    $virtual_path .= $package_name;
+    
     $package->uploaded_by( $self->user->user_id );
     $package->path( $file );
     $package->virtual_path( $virtual_path );
+    
+    $self->notify({
+        type    => 'success',
+        include => 'notifications/generic_success',
+    });
+    $self->stash(
+        SUCCESS_HEADLINE => 'OPM upload successful',
+        SUCCESS_MESSAGE  => '',
+    );
+}
+
+sub maintainer : Permission( 'author' ) {
+    my ($self) = @_;
+    
+    my $formid = $self->get_formid;
+    
+    $self->template( 'author_package_maintainer' );
+    $self->stash(
+        FORMID => $formid,
+    );
 }
 
 sub list : Permission( 'author' ) {
     my ($self) = @_;
     
-    $self->template( 'author_home' );
+    my $config = $self->config;
+    
+    my %params      = $self->query->Vars;
+    my $search_term = $params{search_term};
+    my $page        = $params{page} || 1;
+    
+    if ( $page =~ m{\D} or $page <= 0 ) {
+        $page = 1;
+    }
+    
+    my ($packages,$pages) = $self->page( $page, { search => $search_term } );
+    my $pagelist          = $self->page_list( $pages, $page );
+    
+    $self->template( 'author_package_list' );
+    $self->stash(
+        PACKAGES => $packages,
+        PAGES    => $pagelist,
+    );
+}
+
+sub version_list : Permission( 'author' ) : Json {
+    my ($self) = @_;
+    
+    my $package = $self->param( 'package' );
 }
 
 sub _get_package_name {
@@ -138,9 +250,13 @@ sub _upload_file{
     
     my $name = $self->query->param( $field_name );
     
-    my ($file,$suffix) = $name =~ /([^\\\/]+)(\.[^.]*)$/;
+    my ($file,$version,$suffix) = $name =~ m{
+        ([^\\\/]+)       # filename
+        -(\d+\.\d+\.\d+) # version
+        (\.[^.]*)        # file suffix
+        \z               # string end
+    };
     $file =~ s{[^A-Za-z0-9.-]}{}g;
-    $file .= '.opm';
     
     my $user_name = $self->user->user_name;
     
@@ -149,11 +265,9 @@ sub _upload_file{
         $user_name,
     );
     
-    
-    
     my $file_path = Path::Class::File->new(
         $path,
-        $file,
+        $file . '-' . $version . '.opm',
     );
     
     mkdir $path unless -e $path;
