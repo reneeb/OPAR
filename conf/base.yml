@@ -16,6 +16,8 @@ defaults:
 templates:
   base: main.tmpl
 logging: logging.web.conf
+time:
+  deletion: 259200
 mail:
   smtp: mail.perl-services.de
   user: opar@perl-services.de
