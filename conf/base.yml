@@ -10,11 +10,19 @@ paths:
   templates: templates/
   conf: /home/opar/opar_sources/conf/
   static: static/
+  mails: mails/
 defaults:
   static: imprint
 templates:
   base: main.tmpl
 logging: logging.web.conf
+mail:
+  smtp: mail.perl-services.de
+  user: opar@perl-services.de
+  pass: 391TWgb!
+  from: opar@perl-services.de
+  to: reb@perl-services.de
+  subject: Mail von OPAR
 password:
   salt: OPAR
 admin:
