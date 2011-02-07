@@ -90,9 +90,16 @@ sub populate_db {
     my $tables      = $schema_conf->get( 'schema' ) || {};
     my $last;
     for my $table ( keys %{ $tables } ) {
+        
+        my $primary_key = delete $tables->{$table}->{primary_key};
+        if ( $primary_key ) {
+            $primary_key = "PRIMARY KEY($primary_key)";
+        }
+        
         my $sql  = 'CREATE TABLE ' . $table . ' (';
            $sql .= join ', ', map{ $_ . ' ' . $tables->{$table}->{$_} }keys %{ $tables->{$table} };
            $sql .= ')';
+           $sql .= " $primary_key" if $primary_key;
         $dbh->do( $sql ) or $last = 1;
         if ( $last ) {
             warn $sql . ': ' . $dbh->errstr;
