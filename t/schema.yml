@@ -40,3 +40,8 @@ schema:
     formid: VARCHAR(255) NOT NULL PRIMARY KEY
     used: INTEGER
     expire: INTEGER
+  opr_package_author:
+    user_id: INTEGER NOT NULL
+    name_id: INTEGER NOT NULL
+    is_main_author: INTEGER
+    primary_key: user_id, name_id

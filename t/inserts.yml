@@ -28,9 +28,43 @@ inserts:
     name_id: 1
     package_name: Test
   -
+    table_name: opr_package_names
+    name_id: 2
+    package_name: NotMainAuthor
+  -
+    table_name: opr_package_names
+    name_id: 3
+    package_name: NotMaintainer
+  -
     table_name: opr_package
     package_id: 1
     name_id: 1
+    version: 0.0.0
+    uploaded_by: 1
+    website: http://www.perl-services.de
+    bugtracker: http://git.perl-services.de/issues
+    path: reneeb/Test-0.0.0.opm
+    description: Testpackage
+    framework: 3.0.x
+    upload_time: 1234567890
+    virtual_path: R/RE/RENEEB/Test-0.0.0.opm
+  -
+    table_name: opr_package
+    package_id: 2
+    name_id: 2
+    version: 0.0.0
+    uploaded_by: 1
+    website: http://www.perl-services.de
+    bugtracker: http://git.perl-services.de/issues
+    path: reneeb/Test-0.0.0.opm
+    description: Testpackage
+    framework: 3.0.x
+    upload_time: 1234567890
+    virtual_path: R/RE/RENEEB/Test-0.0.0.opm
+  -
+    table_name: opr_package
+    package_id: 3
+    name_id: 3
     version: 0.0.0
     uploaded_by: 1
     website: http://www.perl-services.de
@@ -45,3 +79,13 @@ inserts:
     formid: 123456
     used: 0
     expire: 2147483647
+  -
+    table_name: opr_package_author
+    user_id: 1
+    name_id: 1
+    is_main_author: 1
+  -
+    table_name: opr_package_author
+    user_id: 1
+    name_id: 2
+    is_main_author: 0

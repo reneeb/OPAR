@@ -26,7 +26,7 @@ ok $schema, 'schema was created';
 
 
 my $max_id = get_inserts( 'opr_package' );
-is $max_id, 1;
+is $max_id, 3;
 
 {
     # check API
