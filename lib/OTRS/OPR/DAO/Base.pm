@@ -16,6 +16,16 @@ has _config => (
     is => 'rw',
 );
 
+has _errors => (
+    is      => 'rw',
+    isa     => 'HashRef[Str]',
+    default => sub{ {} },
+    traits  => ['Hash'],
+    handles => {
+        set_error => 'set',
+    },
+);
+
 has _flags => (
     is      => 'rw',
     isa     => 'HashRef',
