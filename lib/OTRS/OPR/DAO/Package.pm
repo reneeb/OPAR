@@ -108,6 +108,16 @@ sub BUILD {
             },
         );
     }
+    elsif ( $self->virtual_path ) {
+        ($package) = $self->ask_table( 'opr_package' )->search(
+            {
+                virtual_path => $self->virtual_path,
+            },
+            {
+                order_by => 'package_id DESC',
+            },
+        );
+    }
         
     return if !$package;
         
