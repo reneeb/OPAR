@@ -12,6 +12,10 @@ CGI::Application::Dispatch->dispatch(
             app => 'Guest',
             rm  => 'start',
         },
+        'recent/:page' => {
+            app => 'Guest',
+            rm  => 'recent',
+        },
         'static/:page' => {
             app => 'Guest',
             rm  => 'static',
