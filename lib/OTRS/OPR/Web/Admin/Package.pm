@@ -55,7 +55,7 @@ sub list_packages : Permission('admin') {
         $page = 1;
     }
     
-    my ($packages,$pages) = $self->page( $page, $search_term );
+    my ($packages,$pages) = $self->page( $page, { search => $search_term } );
     my $pagelist          = $self->page_list( $pages, $page );
     
     $self->template( 'admin_package_list' );
