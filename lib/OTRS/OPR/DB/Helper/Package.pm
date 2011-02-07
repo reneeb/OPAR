@@ -9,6 +9,7 @@ use OTRS::OPR::Web::Utils qw(time_to_date);
 
 our @EXPORT_OK = qw(
     page
+    user_is_maintainer
 );
 
 sub page {
@@ -70,6 +71,43 @@ sub page {
     }
     
     return ( \@packages_for_template, $pages );
+}
+
+sub user_is_maintainer {
+    my ($self,$user_dao,$package_params) = @_;
+    
+    if ( !exists $package_params->{name} and !exists $package_params->{id} ) {
+        return;
+    }
+    
+    if ( $package_params->{name} ) {
+        my ($exists) = $self->table( 'opr_package_author' )->search(
+            {
+                user_id                          => $user_dao->user_id,
+                'opr_package_names.package_name' => $package_params->{name},
+            },
+            {
+                'join' => 'opr_package_names',
+            },
+        );
+        
+        return 1 if $exists;
+    }
+    elsif ( $package_params->{id} ) {
+        my ($exists) = $self->table( 'opr_package_names' )->search(
+            {
+                'opr_package_author.user_id' => $user_dao->user_id,
+                'opr_package.package_id'     => $package_params->{id},
+            },
+            {
+                'join' => [ 'opr_package_author', 'opr_package' ],
+            },
+        );
+        
+        return 1 if $exists;
+    }
+    
+    return;
 }
 
 1;
