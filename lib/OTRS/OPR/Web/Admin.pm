@@ -24,10 +24,12 @@ sub setup {
     $self->run_modes(
         AUTOLOAD => \&start,
         start    => \&start,
-        login    => \&login,
-        logout   => \&logout,
-        do_login => \&do_login,
         menu     => \&menu,
+        
+        # imported subroutines
+        login    => sub{ shift->login( 'admin_login' ) },
+        do_login => sub{ shift->do_login( 'admin.startpage' ) },
+        logout   => \&logout,
     );
 }
 
@@ -42,50 +44,6 @@ sub start {
     
     # redirect to page configured in admin.startpage
     $self->forward( '/' . $self->config->get( 'admin.startpage' ) );
-}
-
-sub login {
-    my ($self) = @_;
-    
-    # show the login form
-    $self->template( 'admin_login' );
-}
-
-sub do_login {
-    my ($self) = @_;
-    
-    my %params = $self->query->Vars;
-    my $user   = $self->check_credentials( \%params );
-
-    # successful login    
-    if( $user ) {
-    
-        # redirect to page configured in admin.startpage
-        $self->forward( '/' . $self->config->get( 'admin.startpage' ) );
-        return;
-    }
-    else {
-        
-        # show login form and show error message
-        $self->notify({
-            type    => 'error',
-            include => 'notifications/login_unsuccessful',
-        });
-        $self->login;
-    }
-}
-
-sub logout {
-    my ($self) = @_;
-    
-    $self->session->logout;
-    
-    $self->notify({
-        type    => 'success',
-        include => 'notifications/logout_successful',
-    });
-    
-    $self->login;
 }
 
 1;
