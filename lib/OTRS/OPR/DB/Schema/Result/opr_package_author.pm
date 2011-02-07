@@ -11,7 +11,7 @@ __PACKAGE__->add_columns( qw/
     name_id
     is_main_author
 /);
-__PACKAGE__->set_primary_key( qw/ user_id / );
+__PACKAGE__->set_primary_key( qw/ user_id name_id / );
 
 
 
