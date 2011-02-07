@@ -87,24 +87,37 @@ sub user_is_maintainer {
                 'opr_package_names.package_name' => $package_params->{name},
             },
             {
-                'join' => 'opr_package_names',
+                'join'    => 'opr_package_names',
+                '+select' => [ 'is_main_author' ],
             },
         );
+        
+        return if !$exists;
+        
+        if ( $package_params->{main_author} ) {
+            return $exists->is_main_author;
+        }
         
         return 1 if $exists;
     }
     elsif ( $package_params->{id} ) {
-        my ($exists) = $self->table( 'opr_package_names' )->search(
+        my ($exists) = $self->table( 'opr_package_author' )->search(
             {
-                'opr_package_author.user_id' => $user_dao->user_id,
-                'opr_package.package_id'     => $package_params->{id},
+                'user_id'                => $user_dao->user_id,
+                'opr_package.package_id' => $package_params->{id},
             },
             {
-                'join' => [ 'opr_package_author', 'opr_package' ],
+                'join' => { 'opr_package_names' => 'opr_package' },
             },
         );
         
-        return 1 if $exists;
+        return if !$exists;
+        
+        if ( $package_params->{main_author} ) {
+            return $exists->is_main_author;
+        }
+        
+        return 1;
     }
     
     return;
