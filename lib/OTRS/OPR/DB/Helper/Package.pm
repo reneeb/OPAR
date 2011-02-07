@@ -12,19 +12,34 @@ our @EXPORT_OK = qw(
 );
 
 sub page {
-    my ($self,$page,$search_term,$params) = @_;
+    my ($self,$page,$params) = @_;
     
     my $rows = $self->config->get( 'rows.search' );
+    
+    my %search_clauses;
+    if ( exists $params->{search} ) {
+        my $term = $params->{search};
+        $term    =~ tr/*/%/;
+        for my $field ( 'opr_package_names.package_name', 'description' ) {
+            $search_clauses{$field} = { LIKE => '%' . $term . '%' };
+        }
+    }
+    
+    if ( exists $params->{uploader} ) {
+        $search_clauses{uploaded_by} = $params->{uploader};
+    }
     
     my $resultset = $self->table( 'opr_package' )->search(
         {
             is_in_index => 1,
+            %search_clauses,
         },
         {
             page     => $page,
             rows     => $rows,
             order_by => 'package_id',
             group_by => [ 'package_name' ],
+            join     => 'opr_package_names',
         },
     );
     
