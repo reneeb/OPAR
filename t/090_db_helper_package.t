@@ -62,4 +62,6 @@ ok $schema, 'schema was created';
     ok !$mock->user_is_maintainer( $user, { id   => 3 } ), 'User is not maintainer (3)';
     ok !$mock->user_is_maintainer( $user, { name => 'NotMaintainer', main_author => 1 } ), 'User is not maintainer (NotMaintainer, main_author)';
     ok !$mock->user_is_maintainer( $user, { id => 3, main_author => 1 } ), 'User is not maintainer (3, main_author)';
+    
+    ok $mock->user_is_maintainer( $user, { name => 'NotUsedYet' } ), 'User is maintainer (new name)';
 }
