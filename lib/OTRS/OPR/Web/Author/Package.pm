@@ -38,6 +38,7 @@ sub setup {
         undelete     => \&undelete_package,
         maintainer   => \&maintainer,
         version_list => \&version_list,
+        show         => \&show,
     );
 }
 
@@ -112,10 +113,10 @@ sub upload : Permission( 'author' ) {
 sub do_upload : Permission( 'author' ) {
     my ($self) = @_;
     
-    my %params = $self->query->Vars();
+    my %params = $self->query->Vars;
     my %errors;
     
-    $self->template( 'author_uploaded' );
+    $self->template( 'blank' );
     
     # check formid
     $errors{formid} = 1 if !$self->check_formid( $params{formid} );
@@ -170,6 +171,11 @@ sub do_upload : Permission( 'author' ) {
     $package->uploaded_by( $self->user->user_id );
     $package->path( $file );
     $package->virtual_path( $virtual_path );
+        
+    my $job_id = $self->create_job({
+        id   => $package->package_id,
+        type => 'analyze',
+    });
     
     $self->notify({
         type    => 'success',

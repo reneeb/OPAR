@@ -42,4 +42,8 @@ sub start {
     $self->template( 'author_home' );
 }
 
+sub register {
+    my ($self) = @_;
+}
+
 1;
