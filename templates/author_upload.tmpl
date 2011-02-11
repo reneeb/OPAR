@@ -1,0 +1,21 @@
+<h2>Upload OPM-File</h2>
+
+<p>Here you can upload an opm file.</p>
+
+<form action="<%= __SCRIPT__ %>/package/do_upload" method="post">
+  <fieldset class="table_like">
+               
+      <label for="opm_file">
+        <span class="<%= ERROR_OPM_FILE %>">File *</span>
+      </label>
+      <div class="field <%= ERROR_OPM_FILE %>">
+        <input type="file" name="opm_file" id="opm_file" class="px290">
+      </div>
+      <div class="clear"></div>
+      
+  </fieldset>
+
+  <div class="button_row">
+    <button type="submit" name="submit" value="Upload">Upload</button>
+  </div>
+</form>
