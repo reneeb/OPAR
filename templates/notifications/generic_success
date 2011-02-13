@@ -1,0 +1,6 @@
+<span class="ok">
+  <h4><%= SUCCESS_HEADLINE %></h4>
+  <p>
+    <%= SUCCESS_MESSAGE %>
+  </p>
+</span>
