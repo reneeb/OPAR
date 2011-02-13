@@ -6,6 +6,8 @@ use Digest::MD5 qw(md5_hex);
 
 use parent 'OTRS::OPR::Exporter::Aliased';
 
+our @EXPORT_OK = qw(check_formid get_formid);
+
 sub check_formid {
     my ($self,$id) = @_;
     
