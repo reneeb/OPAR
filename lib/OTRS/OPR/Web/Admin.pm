@@ -5,8 +5,9 @@ use warnings;
 
 use parent qw(OTRS::OPR::Web::App);
 
-use OTRS::OPR::DB::Helper::User qw(check_credentials);
-use OTRS::OPR::Web::App::Prerun;
+use OTRS::OPR::DB::Helper::User   qw(check_credentials);
+use OTRS::OPR::Web::App::Login;
+use OTRS::OPR::Web::App::Prerun   qw(cgiapp_prerun);
 
 sub setup {
     my ($self) = @_;
@@ -18,6 +19,8 @@ sub setup {
     if( $param ){
         $startmode = $param;
     }
+    
+    $self->logger->trace( "Runmode $startmode" );
 
     $self->start_mode( $startmode );
     $self->mode_param( 'rm' );
@@ -28,12 +31,12 @@ sub setup {
         
         # imported subroutines
         login    => sub{ shift->login( 'admin_login' ) },
-        do_login => sub{ shift->do_login( 'admin.startpage' ) },
+        do_login => sub{ shift->do_login( 'admin.startpage', 'admin_login' ) },
         logout   => \&logout,
     );
 }
 
-sub menu {
+sub menu : Permission( 'admin' ) {
     my ($self) = @_;
     
     $self->template( 'admin_menu' );

@@ -6,9 +6,9 @@ use warnings;
 use parent qw(OTRS::OPR::Web::App);
 
 use File::Spec;
-use OTRS::OPR::Web::App::Forms qw(check_formid get_formid);
+use OTRS::OPR::Web::App::Forms     qw(check_formid get_formid);
 use OTRS::OPR::Web::App::Login;
-use OTRS::OPR::Web::App::Prerun;
+use OTRS::OPR::Web::App::Prerun    qw(cgiapp_prerun);;
 
 sub setup {
     my ($self) = @_;
@@ -36,7 +36,7 @@ sub setup {
     );
 }
 
-sub start {
+sub start : Permission('author') {
     my ($self) = @_;
     
     $self->template( 'author_home' );
