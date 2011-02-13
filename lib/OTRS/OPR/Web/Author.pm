@@ -6,9 +6,10 @@ use warnings;
 use parent qw(OTRS::OPR::Web::App);
 
 use File::Spec;
-use OTRS::OPR::Web::App::Forms     qw(check_formid get_formid);
+use OTRS::OPR::DB::Helper::User   qw(check_credentials);
+use OTRS::OPR::Web::App::Forms    qw(check_formid get_formid);
 use OTRS::OPR::Web::App::Login;
-use OTRS::OPR::Web::App::Prerun    qw(cgiapp_prerun);;
+use OTRS::OPR::Web::App::Prerun   qw(cgiapp_prerun);
 
 sub setup {
     my ($self) = @_;
