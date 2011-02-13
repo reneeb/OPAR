@@ -19,7 +19,7 @@ sub page {
     
     my %search_clauses;
     if ( exists $params->{search} ) {
-        my $term = $params->{search};
+        my $term = $params->{search} || '';
         $term    =~ tr/*/%/;
         for my $field ( 'opr_package_names.package_name', 'description' ) {
             $search_clauses{$field} = { LIKE => '%' . $term . '%' };
@@ -39,7 +39,7 @@ sub page {
             page     => $page,
             rows     => $rows,
             order_by => 'package_id',
-            group_by => [ 'package_name' ],
+            group_by => [ 'opr_package_names.package_name' ],
             join     => 'opr_package_names',
         },
     );
@@ -81,6 +81,31 @@ sub user_is_maintainer {
     }
     
     if ( $package_params->{name} ) {
+        my ($package_name_exists) = $self->table( 'opr_package_names' )->search({
+            package_name => $package_params->{name},
+        });
+        
+        if ( !$package_name_exists ) {
+             if ( $package_params->{add} ) {
+                 my ($package_name) = $self->table( 'opr_package_names' )->create({
+                     package_name => $package_params->{name},
+                 });
+                 
+                 $package_name->update;
+                 
+                 my ($package_author) = $self->table( 'opr_package_author' )->create({
+                     user_id        => $user_dao->user_id,
+                     name_id        => $package_name->name_id,
+                     is_main_author => 1,
+                 });
+                 
+                 return $package_name->name_id;
+             }
+             
+             return 0;
+        }
+        
+        
         my ($exists) = $self->table( 'opr_package_author' )->search(
             {
                 user_id                          => $user_dao->user_id,
@@ -88,17 +113,17 @@ sub user_is_maintainer {
             },
             {
                 'join'    => 'opr_package_names',
-                '+select' => [ 'is_main_author' ],
+                '+select' => [ 'is_main_author', 'opr_package_names.name_id' ],
             },
         );
         
         return if !$exists;
         
         if ( $package_params->{main_author} ) {
-            return $exists->is_main_author;
+            return $exists->is_main_author ? $exists->name_id : 0;
         }
         
-        return 1 if $exists;
+        return $exists->name_id if $exists;
     }
     elsif ( $package_params->{id} ) {
         my ($exists) = $self->table( 'opr_package_author' )->search(
@@ -107,14 +132,15 @@ sub user_is_maintainer {
                 'opr_package.package_id' => $package_params->{id},
             },
             {
-                'join' => { 'opr_package_names' => 'opr_package' },
+                'join'    => { 'opr_package_names' => 'opr_package' },
+                '+select' => [ 'is_main_author', 'opr_package_names.name_id' ],
             },
         );
         
         return if !$exists;
         
         if ( $package_params->{main_author} ) {
-            return $exists->is_main_author;
+            return $exists->is_main_author ? $exists->name_id : 0;;
         }
         
         return 1;

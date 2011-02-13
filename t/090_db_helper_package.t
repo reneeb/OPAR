@@ -5,7 +5,7 @@ use warnings;
 use File::Basename;
 use File::Spec;
 
-use Test::More tests => 13;
+use Test::More tests => 19;
 
 my $dir;
 my $lib;
@@ -23,6 +23,9 @@ use OTRS::OPR::DAO::User;
 my $schema = schema();
 
 ok $schema, 'schema was created';
+
+my $max_id = get_inserts( 'opr_package_names' );
+is $max_id, 3, 'Inserted package names in "preconditions"';
 
 {
 
@@ -51,6 +54,12 @@ ok $schema, 'schema was created';
     ok $mock->user_is_maintainer( $user, { id => 1 } ), 'User is maintainer (1)';
     ok $mock->user_is_maintainer( $user, { id => 1, main_author => 1 } ), 'User is maintainer (1, main_author)';
     
+    my $name_id = $mock->user_is_maintainer( $user, { name => 'Test' } );
+    is $name_id, 1, 'NameID for "Test"';
+    
+    my $name_id_main_author = $mock->user_is_maintainer( $user, { name => 'Test', main_author => 1 } );
+    is $name_id_main_author, 1, 'NameID for "Test" (main_author)';
+    
     ok $mock->user_is_maintainer( $user, { name => 'NotMainAuthor' } ), 'User is maintainer (NotMainAuthor)';
     ok $mock->user_is_maintainer( $user, { id   => 2 } ), 'User is maintainer (2)';
     ok !$mock->user_is_maintainer( $user, { name => 'NotMainAuthor', main_author => 1 } ), 'User is not maintainer (NotMainAuthor, main_author)';
@@ -58,10 +67,16 @@ ok $schema, 'schema was created';
     ok !$mock->user_is_maintainer( $user, { id => 2, main_author => 1 } ), 'User is not maintainer (2, main_author)';
     #schema->storage->debug(0);
     
+    my $nma_id = $mock->user_is_maintainer( $user, { name => 'NotMainAuthor' } );
+    is $nma_id, 2, 'NameID for "NotMainAuthor"';
+    
     ok !$mock->user_is_maintainer( $user, { name => 'NotMaintainer' } ), 'User is not maintainer (NotMaintainer)';
     ok !$mock->user_is_maintainer( $user, { id   => 3 } ), 'User is not maintainer (3)';
     ok !$mock->user_is_maintainer( $user, { name => 'NotMaintainer', main_author => 1 } ), 'User is not maintainer (NotMaintainer, main_author)';
     ok !$mock->user_is_maintainer( $user, { id => 3, main_author => 1 } ), 'User is not maintainer (3, main_author)';
     
-    ok $mock->user_is_maintainer( $user, { name => 'NotUsedYet' } ), 'User is maintainer (new name)';
+    ok !$mock->user_is_maintainer( $user, { name => 'NotUsedYet' } ), 'User is maintainer (new name, no "add")';
+    
+    my $nuy_id = $mock->user_is_maintainer( $user, { name => 'NotUsedYet', add => 1 } );
+    is $nuy_id, $max_id + 2, 'User is maintainer (new name, "add")'; # plus 2 as one name was added in an other test
 }
