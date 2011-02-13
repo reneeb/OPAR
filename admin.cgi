@@ -27,7 +27,7 @@ CGI::Application::Dispatch->dispatch(
         'user/:run?/:id?' => {
             app => 'Admin::User',
         },
-        ':rm' => {
+        ':run' => {
             app => 'Admin',
         },
     ],
