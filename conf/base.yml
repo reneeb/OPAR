@@ -11,11 +11,14 @@ paths:
   conf: /home/opar/opar_sources/conf/
   static: static/
   mails: mails/
+  uploads: /home/opar/uploads/
 defaults:
   static: imprint
 templates:
   base: main.tmpl
 logging: logging.web.conf
+formid:
+  expire: 200
 time:
   deletion: 259200
 mail:
