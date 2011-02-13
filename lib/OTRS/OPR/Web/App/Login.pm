@@ -22,20 +22,27 @@ sub logout {
 sub login {
     my ($self,$template) = @_;
     
+    $self->logger->trace( 'Loginform' );
+    
     # show the login form
     $self->template( $template );
 }
 
 sub do_login {
-    my ($self,$forward) = @_;
+    my ($self,$forward,$template) = @_;
+    
+    $self->logger->trace( 'do_login' );
     
     my %params = $self->query->Vars;
+    
+    $self->logger->debug( "$params{user} tries to login" );
     my $user   = $self->check_credentials( \%params );
 
     # successful login    
     if( $user ) {
     
         # redirect to page configured in admin.startpage
+        $self->logger->trace( "Forward to $forward" );
         $self->forward( '/' . $self->config->get( $forward ) );
         return;
     }
@@ -46,7 +53,7 @@ sub do_login {
             type    => 'error',
             include => 'notifications/login_unsuccessful',
         });
-        $self->login;
+        $self->login( $template );
     }
 }
 
