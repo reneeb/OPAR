@@ -14,7 +14,7 @@ use OTRS::OPR::DAO::Author;
 use OTRS::OPR::DB::Helper::Job     qw(create_job find_job);
 use OTRS::OPR::DB::Helper::Package qw(page user_is_maintainer);
 use OTRS::OPR::Web::App::Forms     qw(check_formid get_formid);
-use OTRS::OPR::Web::App::Prerun;
+use OTRS::OPR::Web::App::Prerun    qw(cgiapp_prerun);
 
 sub setup {
     my ($self) = @_;
@@ -125,33 +125,42 @@ sub do_upload : Permission( 'author' ) {
         $self->notify({
             type    => 'error',
             include => 'notifications/generic_error',
-        });
-        
-        $self->stash(
             ERROR_HEADLINE => 'The form ID was invalid',
-            ERROR_MESSAGE  => '',
-        );
+            ERROR_MESSAGE  => 'The form ID was invalid',
+        });
         
         return;
     }
     
     # upload file. This file is needed anyways.
-    my $file = $self->_upload_file;
+    my ($code, $file) = $self->_upload_file;
+    
+    if ( !$code ) {
+        $self->notify({
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => 'Upload error',
+            ERROR_MESSAGE  => $file,
+        });
+        
+        return;
+    }
     
     # quickcheck for package name:
     # extract (<Name>.*</Name>) from .opm validate against opr_package_names
     # if user is the main author or co-maintainer, then upload is ok.
     my $package_name = $self->_get_package_name( $file );
-    if ( !$self->user_is_maintainer( $self->user, { name => $package_name } ) ) {
+    $self->logger->trace( "Uploaded package: $package_name" );
+    my $name_id      = $self->user_is_maintainer( $self->user, { name => $package_name, add => 1 } );
+    if ( !$name_id ) {
         $self->notify({
-            type    => 'error',
-            include => 'notifications/generic_error',
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => 'User is not maintainer',
+            ERROR_MESSAGE  => 'You are not the maintainer',
         });
         
-        $self->stash(
-            ERROR_HEADLINE => 'User is not maintainer',
-            ERROR_MESSAGE  => '',
-        );
+        unlink $file;
         
         return;
     }
@@ -161,7 +170,7 @@ sub do_upload : Permission( 'author' ) {
         _schema => $self->schema,
     );
     
-    my $user_name    = $self->user;
+    my $user_name    = $self->user->user_name;
     my $virtual_path = uc
         substr( $user_name, 0, 1 ) . '/' .
         substr( $user_name, 0, 2 ) . '/' .
@@ -171,6 +180,7 @@ sub do_upload : Permission( 'author' ) {
     $package->uploaded_by( $self->user->user_id );
     $package->path( $file );
     $package->virtual_path( $virtual_path );
+    $package->name_id( $name_id );
         
     my $job_id = $self->create_job({
         id   => $package->package_id,
@@ -178,13 +188,11 @@ sub do_upload : Permission( 'author' ) {
     });
     
     $self->notify({
-        type    => 'success',
-        include => 'notifications/generic_success',
-    });
-    $self->stash(
+        type             => 'success',
+        include          => 'notifications/generic_success',
         SUCCESS_HEADLINE => 'OPM upload successful',
-        SUCCESS_MESSAGE  => '',
-    );
+        SUCCESS_MESSAGE  => 'OPM file uploaded and ready for analysis',
+    });
 }
 
 sub maintainer : Permission( 'author' ) {
@@ -211,7 +219,7 @@ sub list : Permission( 'author' ) {
         $page = 1;
     }
     
-    my ($packages,$pages) = $self->page( $page, { search => $search_term } );
+    my ($packages,$pages) = $self->page( $page, { search => $search_term, uploader => $self->user->user_id } );
     my $pagelist          = $self->page_list( $pages, $page );
     
     $self->template( 'author_package_list' );
@@ -246,23 +254,29 @@ sub _get_package_name {
     return $package_name || '';
 }
 
-sub _upload_file{
+sub _upload_file {
     my ($self) = @_;
     
     my $field_name = 'opm_file';
     
     my $fh = $self->query->upload( $field_name );
-    binmode $fh;
+    
+    if ( !$fh ) {
+        return 0, 'Cannot open filehandle to read upload';
+    }
     
     my $name = $self->query->param( $field_name );
     
     my ($file,$version,$suffix) = $name =~ m{
         ([^\\\/]+)       # filename
         -(\d+\.\d+\.\d+) # version
-        (\.[^.]*)        # file suffix
+        (\.opm)          # file suffix
         \z               # string end
-    };
+    }xms;
+    
     $file =~ s{[^A-Za-z0-9.-]}{}g;
+    
+    return (0, 'No .opm suffix' ) if !$file;
     
     my $user_name = $self->user->user_name;
     
@@ -276,18 +290,36 @@ sub _upload_file{
         $file . '-' . $version . '.opm',
     );
     
-    mkdir $path unless -e $path;
+    $self->logger->debug( "Target file: $file_path" );
+    
+    my $path_stringified = $path->stringify;
+    
+    mkdir $path_stringified unless -e $path_stringified;
+    
+    $self->logger->warn( "Directory $path_stringified does not exist" ) unless -e $path_stringified;
 
     my $buffer;
+    my $something_read = '';
+    
     if(open my $wfh, '>', $file_path->stringify ){
         binmode $wfh;
-        while(read $fh,$buffer,1024){
+        while ( read $name, $buffer, 1024 ) {
             print $wfh $buffer;
+            $something_read .= $buffer;
         }
         close $wfh;
+        
+        if ( !$something_read ) {
+            $self->logger->warn( "File seems to be empty!" );
+            return 0, 'file seems to be empty';
+        }
+    }
+    else {
+        $self->logger->warn( "Cannot open target file $file_path" );
+        return 0, 'Cannot open target file';
     }
     
-    return $file_path->stringify;
+    return 1, $file_path->stringify;
 }
 
 1;
