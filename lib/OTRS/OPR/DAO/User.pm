@@ -61,6 +61,7 @@ sub BUILD {
     
     $self->not_in_db( 0 );
     
+    $self->user_id( $user->user_id );
     $self->user_name( $user->user_name );
     $self->website( $user->website );
     $self->mail( $user->mail );
