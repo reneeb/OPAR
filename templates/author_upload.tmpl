@@ -2,14 +2,16 @@
 
 <p>Here you can upload an opm file.</p>
 
-<form action="<%= __SCRIPT__ %>/package/do_upload" method="post">
+<form action="<%= __SCRIPT__ %>/package/do_upload" method="post" enctype="multipart/form-data">
+  <input type="hidden" name="formid" value="<%= FORMID %>" />
+
   <fieldset class="table_like">
                
       <label for="opm_file">
         <span class="<%= ERROR_OPM_FILE %>">File *</span>
       </label>
       <div class="field <%= ERROR_OPM_FILE %>">
-        <input type="file" name="opm_file" id="opm_file" class="px290">
+        <input type="file" name="opm_file" id="opm_file" class="px290" />
       </div>
       <div class="clear"></div>
       
