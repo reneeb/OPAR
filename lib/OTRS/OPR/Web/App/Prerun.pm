@@ -22,7 +22,7 @@ sub cgiapp_prerun {
             $session->logout;
         }
                 
-        unless( $self->get_current_runmode eq 'login' ){
+        unless( $self->get_current_runmode =~ m{ \A (?:do_)? login \z }xms ){
             $self->forward( '/login' ) ;
         }
     }
