@@ -87,10 +87,15 @@ sub json_method {
 sub user {
     my ($self,$session) = @_;
     
+    $session ||= $self->session;
+    
     unless( $self->{___user} ) {
         my $session_id = $session->id;
         if( $session_id and not $session->is_expired ){
-            my ($user) = OTRS::OPR::DAO::User->new( session_id => $session_id );
+            my ($user) = OTRS::OPR::DAO::User->new(
+                session_id => $session_id,
+                _schema    => $self->schema,
+            );
             
             if( $user ) {
                 $self->{___user} = $user;
@@ -117,7 +122,7 @@ sub main_tmpl{
 sub cgiapp_postrun{
     my ($self,$outref) = @_;
     
-    print STDERR ">>RUNMODE: ", $self->get_current_runmode,"<<\n";
+    #print STDERR ">>RUNMODE: ", $self->get_current_runmode,"<<\n";
     
     if ( $self->json_method ) {
         # set http header for json output
