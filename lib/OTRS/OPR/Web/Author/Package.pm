@@ -15,6 +15,7 @@ use OTRS::OPR::DB::Helper::Job     qw(create_job find_job);
 use OTRS::OPR::DB::Helper::Package qw(page user_is_maintainer);
 use OTRS::OPR::Web::App::Forms     qw(check_formid get_formid);
 use OTRS::OPR::Web::App::Prerun    qw(cgiapp_prerun);
+use OTRS::OPR::Web::Utils          qw(prepare_select page_list);
 
 sub setup {
     my ($self) = @_;
@@ -174,14 +175,17 @@ sub do_upload : Permission( 'author' ) {
     my $virtual_path = uc
         substr( $user_name, 0, 1 ) . '/' .
         substr( $user_name, 0, 2 ) . '/' .
-        $user_name;
+        $user_name . '/';
     $virtual_path .= $package_name;
     
     $package->uploaded_by( $self->user->user_id );
     $package->path( $file );
     $package->virtual_path( $virtual_path );
     $package->name_id( $name_id );
-        
+    $package->upload_time( time );
+    
+    # create an entry in job queue that the package
+    # should be analyzed    
     my $job_id = $self->create_job({
         id   => $package->package_id,
         type => 'analyze',
@@ -219,7 +223,14 @@ sub list : Permission( 'author' ) {
         $page = 1;
     }
     
-    my ($packages,$pages) = $self->page( $page, { search => $search_term, uploader => $self->user->user_id } );
+    my ($packages,$pages) = $self->page(
+        $page,
+        {
+            search   => $search_term,
+            uploader => $self->user->user_id,
+            all      => 1,
+        }
+    );
     my $pagelist          = $self->page_list( $pages, $page );
     
     $self->template( 'author_package_list' );
