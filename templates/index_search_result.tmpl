@@ -1,0 +1,29 @@
+			<section>
+				<h1>Search results for <i><%= SEARCH_TERM %></i>:</h1>
+			</section>
+
+			<section id="packages">
+				<%LOOP PACKAGES %>
+				<div>
+					<div>
+						<h2>
+							<span>42</span>
+							<a href="<%= __SCRIPT__ %>/<%= virtual_path %>"><%= package_name %></a>
+							&nbsp;
+							<%IF website %><a href="<%= website ESCAPE=0 %>" class="web">Website</a><%/IF %>
+							<%IF bugtrackter %><a href="<%= bugtracker ESCAPE=0 %>" class="bugs">Bugtracker</a><%/IF %>
+						</h2>
+						<p>
+							Version <b><%= version %></b> 
+							by <b><%= author_name %></b> 
+							on <b><%= pubdate %></b> // 
+							Framework: <b><%= framework %></b>
+						</p>
+						<p>
+							<%= description %>
+							<!-- <a href="#">mehr</a> -->
+						</p>
+					</div>
+				</div>
+				<%/LOOP %>
+			</section>
