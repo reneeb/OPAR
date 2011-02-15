@@ -1,0 +1,33 @@
+<h2>Profile</h2>
+
+  <fieldset class="table_like">
+               
+      <label for="user_name">
+        Username
+      </label>
+      <div>
+        <span id="user_name"><%= user_name %></span>
+      </div>
+      <div class="clear"></div>
+               
+      <label for="mail">
+        E-mail
+      </label>
+      <div>
+        <span id="mail"><%= mail %></span>
+      </div>
+      <div class="clear"></div>
+               
+      <label for="website">
+        Website
+      </label>
+      <div>
+        <span id="website"><%= website %></span>
+      </div>
+      <div class="clear"></div>
+      
+      <button type="button" onclick="window.location.href='<%= __SCRIPT__ %>/profile/edit'" value="Edit profile">
+          Edit profile
+      </button>
+      
+  </fieldset>

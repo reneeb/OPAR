@@ -1,0 +1,36 @@
+<h2>Profile</h2>
+
+<form action="<%= __SCRIPT__ %>/profile/save" method="post">
+  <fieldset class="table_like">
+               
+      <label for="user_name">
+        Username
+      </label>
+      <div>
+        <span id="user_name"><%= user_name %></span>
+      </div>
+      <div class="clear"></div>
+               
+      <label for="mail">
+        E-mail
+      </label>
+      <div>
+        <input type="text" name="mail" id="mail" value="<%= mail %>" />
+      </div>
+      <div class="clear"></div>
+               
+      <label for="website">
+        Website
+      </label>
+      <div>
+        <input type="text" name="website" id="website" value="<%= website %>" />
+      </div>
+      <div class="clear"></div>
+      
+      <button type="submit" value="Save profile">
+          Save profile
+      </button>
+      
+  </fieldset>
+
+</form>

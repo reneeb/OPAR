@@ -1,0 +1,31 @@
+<h2>Packages</h2>
+
+<%LOOP PAGES %>
+    <%IF PAGE %>
+        <a href="<%= __SCRIPT__ %>/packages/list/<%= PAGE %>"><%= PAGE %></a>
+    <%ELSE %>
+        ...
+    <%/IF %>
+<%/LOOP %>
+
+<table id="package_list">
+  <tr>
+    <th>PackageName</th>
+    <th>Version</th>
+    <th>Date</th>
+    <th>My Role</th>
+    <th>Aktion</th>
+  </tr>
+  <%LOOP PACKAGES %>
+  <tr>
+    <td><%= NAME %></td>
+    <td><%= VERSION %></td>
+    <td><%= DATE %></td>
+    <td><%= MYROLE %></td>
+    <td>
+      <a href="<%= __SCRIPT__ %>/package/versions/<%= NAME %>">Versions</a>
+      <a href="<%= __SCRIPT__ %>/package/maintainer/<%= NAME %>">Co-Maintainer</a>
+    </td>
+  </tr>
+  <%/LOOP %>
+</table>
