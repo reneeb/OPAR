@@ -1,0 +1,45 @@
+form fieldset {
+    border: 0;
+}
+
+form label[for] {
+    cursor: pointer;
+}
+
+fieldset.table_like > label {
+    display: block;
+    float: left;
+    line-height: 1.3em;
+    width: 33%;
+    text-align: right;
+    color: #000000;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-right: 4px;
+    text-shadow: 0 1px 0 #fafafa;
+}
+
+fieldset.table_like > .field {
+    line-height: 1.2em;
+    margin-left: 30%;
+    margin-right: 0;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-right: 0;
+    padding-left: 10px;
+}
+
+.button_row {
+    width: 100%;
+    text-align: right;
+}
+
+.big_textarea {
+    width: 290px;
+    height: 150px;
+}
+
+.clear {
+    float: none !important;
+    clear: both !important;
+}
