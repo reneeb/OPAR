@@ -15,7 +15,8 @@ paths:
 defaults:
   static: imprint
 templates:
-  base: main.tmpl
+  base: opar.tmpl
+  author: opar.tmpl
 logging: logging.web.conf
 formid:
   expire: 200
