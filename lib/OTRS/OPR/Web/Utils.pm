@@ -95,7 +95,7 @@ sub page_list {
 sub time_to_date {
     my ($self,$time,$params) = @_;
     
-    return if !$time or $time !~ m{ \A \d+ \z }xms;
+    return '' if !$time or $time !~ m{ \A \d+ \z }xms;
     
     # check if a time zone is given and if it is a valid name
     my $tz = $params->{time_zone} || 'Europe/London';
