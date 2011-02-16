@@ -13,14 +13,16 @@
     <th>PackageName</th>
     <th>Version</th>
     <th>Date</th>
+    <th>State</th>
     <th>My Role</th>
-    <th>Aktion</th>
+    <th>Action</th>
   </tr>
   <%LOOP PACKAGES %>
   <tr>
     <td><%= NAME %></td>
     <td><%= VERSION %></td>
     <td><%= DATE %></td>
+    <td><%= STATE %></td>
     <td><%= MYROLE %></td>
     <td>
       <a href="<%= __SCRIPT__ %>/package/versions/<%= NAME %>">Versions</a>
