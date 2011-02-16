@@ -5,7 +5,7 @@ use warnings;
 use File::Basename;
 use File::Spec;
 
-use Test::More tests => 19;
+use Test::More tests => 24;
 
 my $dir;
 my $lib;
@@ -19,6 +19,7 @@ use lib $dir;
 
 use MyUnittests;
 use OTRS::OPR::DAO::User;
+use OTRS::OPR::DAO::Package;
 
 my $schema = schema();
 
@@ -28,18 +29,18 @@ my $max_id = get_inserts( 'opr_package_names' );
 is $max_id, 3, 'Inserted package names in "preconditions"';
 
 {
+    package MockObject;
+    use MyUnittests;
+    use OTRS::OPR::Web::App::Config;
+    use OTRS::OPR::DB::Helper::Package qw(user_is_maintainer package_exists);
+     
+    sub new { bless {}, shift }
+    sub table { shift; schema()->resultset( shift ); }
+    sub config { OTRS::OPR::Web::App::Config->new( $dir . '/tests.yml' ) }
+        
+}
 
-    {
-        package MockObject;
-        use MyUnittests;
-        use OTRS::OPR::Web::App::Config;
-        use OTRS::OPR::DB::Helper::Package qw(user_is_maintainer);
-        
-        sub new { bless {}, shift }
-        sub table { shift; schema()->resultset( shift ); }
-        sub config { OTRS::OPR::Web::App::Config->new( $dir . '/tests.yml' ) }
-        
-    }
+{
     
     my $mock = MockObject->new;
     
@@ -48,7 +49,7 @@ is $max_id, 3, 'Inserted package names in "preconditions"';
         user_id => 1,
         _schema => $schema,
     );
-
+    
     ok $mock->user_is_maintainer( $user, { name => 'Test' } ), 'User is maintainer (Test)';
     ok $mock->user_is_maintainer( $user, { name => 'Test', main_author => 1 } ), 'User is maintainer (Test, main_author)';
     ok $mock->user_is_maintainer( $user, { id => 1 } ), 'User is maintainer (1)';
@@ -79,4 +80,28 @@ is $max_id, 3, 'Inserted package names in "preconditions"';
     
     my $nuy_id = $mock->user_is_maintainer( $user, { name => 'NotUsedYet', add => 1 } );
     is $nuy_id, $max_id + 2, 'User is maintainer (new name, "add")'; # plus 2 as one name was added in an other test
+}
+
+{
+    # test "page"
+    my $mock = MockObject->new;
+}
+
+{
+    # test "package_exists"
+    
+    my $mock = MockObject->new;
+    
+    my ($package) = OTRS::OPR::DAO::Package->new(
+        package_id => 1,
+        _schema    => $schema,
+    );
+    
+    ok !$mock->package_exists, 'Empty package name does not exist';
+    
+    my $package_name = $package->package_name;
+    ok $mock->package_exists( $package_name ), "$package_name exists";
+    ok $mock->package_exists( $package_name, { version => $package->version } ), sprintf "%s v%s exists", $package_name, $package->version;
+    ok !$mock->package_exists( $package_name . 'N' ), sprintf "%s does not exist", $package_name;
+    ok !$mock->package_exists( $package_name, { version => '99.99.999' } ), sprintf "%s v99.99.999 does not exist", $package_name;
 }
