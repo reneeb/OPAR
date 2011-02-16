@@ -28,7 +28,41 @@ Author.Package = (function (TargetNS) {
      * @return nothing
      */
     TargetNS.Delete = function (PackageID) {
-        var URL = Core.Config.Get('BaseURL');
+        var URL = OPAR.Config.Get('BaseURL');
+        
+        URL += '/package/delete/' + PackageID;
+        
+        new Ajax.Request( 
+            URL,
+            {
+                method: 'get',
+                onSuccess: function(transport) {
+                    var data = transport.responseText.evalJSON(true);
+                    $("span_" + PackageID).className = 'visible';
+                    $("deletion_date_" + PackageID).innerHTML = data.deletionTime;
+                }
+            },
+        );
+    };
+    
+    TargetNS.UnDelete = function (PackageID) {
+        var URL = OPAR.Config.Get('BaseURL');
+        
+        URL += '/package/undelete/' + PackageID;
+        
+        new Ajax.Request( 
+            URL,
+            {
+                method: 'get',
+                onSuccess: function(transport) {
+                    var data = transport.responseText.evalJSON(true);
+                    
+                    if ( data.Success ) {
+                        $("span_" + PackageID).className = 'hidden';
+                    }
+                }
+            },
+        );
     };
 
     return TargetNS;
