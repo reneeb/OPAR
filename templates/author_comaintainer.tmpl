@@ -1,0 +1,29 @@
+<h2>Maintainer of Package <%= PACKAGE_NAME %></h2>
+
+<form action="<%= __SCRIPT__ %>" method="post">
+  <fieldset class="table_like">
+               
+      <label for="maintainer">
+        Username
+      </label>
+      <div>
+        <span id="maintainer"><%= MAINTAINER %></span>
+      </div>
+      <div class="clear"></div>
+               
+      <label for="co_maintainer">
+        Co-Maintainer
+      </label>
+      <div>
+        <select name="co_maintainer" id="co_maintainer">
+        <%LOOP COMAINTAINER %>
+          <option value="<%= VALUE %>"><%= KEY %></option>
+        <%/LOOP %>
+        </select>
+      </div>
+      <div class="clear"></div>
+    
+      <%IF IS_MAIN_AUTHOR %><button type="submit" value="Save co-maintainer">Save co-maintainer</button>
+    
+    </fieldset>
+</form>

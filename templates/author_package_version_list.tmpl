@@ -1,0 +1,19 @@
+<h2>Versions of Package <%= PACKAGE_NAME %></h2>
+
+<table id="version_list">
+  <tr>
+    <th>Version</th>
+    <th>Date</th>
+    <th>Action</th>
+  </tr>
+  <%LOOP VERSIONS %>
+  <tr>
+    <td><%= VERSION %></td>
+    <td><%= DATE %></td>
+    <td>
+      <span class="hidden">scheduled for deletion on <span id="deletion_date"><%= DELETION_DATE %></span></span>
+      <a href="<%= __SCRIPT__ %>/package/<%= DELETE_PRE %>delete/<%= PACKAGE_ID %>"><%= DELETE_PRE %>delete</a>
+    </td>
+  </tr>
+  <%/LOOP %>
+</table>
