@@ -38,7 +38,7 @@ SKIP: {
         
         for my $time ( '', '1a', 'b6', 'test' ) {
             my $nothing = OTRS::OPR::Web::Utils->time_to_date( '' );
-            is $nothing, undef, "Pass an $time to function";
+            is $nothing, '', "Pass an invalid time ($time) to function";
         }
         
         # 1234567890 => Sat Feb 14 00:31:30 2009 (Berlin/Europe)
