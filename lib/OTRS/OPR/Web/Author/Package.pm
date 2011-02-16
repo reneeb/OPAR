@@ -12,7 +12,7 @@ use Path::Class;
 use OTRS::OPR::DAO::Package;
 use OTRS::OPR::DAO::Author;
 use OTRS::OPR::DB::Helper::Job     qw(create_job find_job);
-use OTRS::OPR::DB::Helper::Package qw(page user_is_maintainer);
+use OTRS::OPR::DB::Helper::Package (qw(page user_is_maintainer package_exists), { version_list => 'versions' } );
 use OTRS::OPR::Web::App::Forms     qw(check_formid get_formid);
 use OTRS::OPR::Web::App::Prerun    qw(cgiapp_prerun);
 use OTRS::OPR::Web::Utils          qw(prepare_select page_list);
@@ -38,7 +38,7 @@ sub setup {
         delete       => \&delete_package,
         undelete     => \&undelete_package,
         maintainer   => \&maintainer,
-        version_list => \&version_list,
+        versions     => \&version_list,
         show         => \&show,
     );
 }
@@ -82,13 +82,15 @@ sub undelete_package : Permission( 'author' ) : Json {
     }
     
     if ( !$self->user_is_maintainer( $self->user, { id => $package } ) ) {
-        return { ERROR => 'User is not mainteiner' };
+        return { ERROR => 'User is not maintainer' };
     }
     
-    my $job = $self->find_job(
+    my $job = $self->find_job({
         id   => $package,
         type => 'delete',
-    );
+    });
+    
+    return {} if !$job;
     
     $job->delete;
     
@@ -231,7 +233,7 @@ sub list : Permission( 'author' ) {
             all      => 1,
         }
     );
-    my $pagelist          = $self->page_list( $pages, $page );
+    my $pagelist = $self->page_list( $pages, $page );
     
     $self->template( 'author_package_list' );
     $self->stash(
@@ -240,10 +242,42 @@ sub list : Permission( 'author' ) {
     );
 }
 
-sub version_list : Permission( 'author' ) : Json {
+sub version_list : Permission( 'author' ) {
     my ($self) = @_;
     
-    my $package = $self->param( 'package' );
+    my $package = $self->param( 'id' );
+    
+    $self->template( 'blank' );
+    
+    $self->logger->trace( 'Version list for ' . $package );
+    
+    if ( !$self->package_exists( $package ) ) {
+        $self->notify({
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => 'No versionlist available',
+            ERROR_MESSAGE  => 'The package does not exist, so there is no version list',
+        });
+        return;
+    }
+    
+    if ( !$self->user_is_maintainer( $self->user, { name => $package } ) ) {
+        $self->notify({
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => 'No versionlist available',
+            ERROR_MESSAGE  => 'You are not maintainer of this package, so you cannot see the list of all versions',
+        });
+        return;
+    }
+    
+    my $version_list = $self->versions( $package, { all => 1 } );
+        
+    $self->template( 'author_package_version_list' );
+    $self->stash(
+        VERSIONS     => $version_list,
+        PACKAGE_NAME => $package,
+    );
 }
 
 sub _get_package_name {
