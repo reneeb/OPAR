@@ -2,42 +2,25 @@ package OTRS::OPR::App::Attributes;
 
 use strict;
 use warnings;
+
 use Attribute::Handlers;
+use CGI::Application;
 use Data::Dumper;
 
-sub Permission : ATTR(CODE) {
-    my ($pkg,$sym,$code,$attrname,$params) = @_;
+%CGI::Application::__permissions = ();
+%CGI::Application::__json        = ();
+
+sub Permission : ATTR(BEGIN) {
+    my ($pkg,$sym,$code,$attrname,$params,$phase) = @_;
     
-    my $name = *{$sym}{NAME};
-    
-    no warnings 'redefine';
-    
-    *{$sym} = sub {
-        my ($self) = @_;
-        unless( $self->user->has_group( $params->[0] ) ) {
-            $self->logger->info(
-                $self->user->user_name . 
-                ' has no sufficient permission for ' .
-                $params->[0]
-            );
-            $self->no_permission(1);
-            return;
-        }
-        $code->(@_);
-    };
+    my $permission = $params->[0];
+    $CGI::Application::__permissions{$code} = $permission;
 }
 
-sub Json : ATTR(CODE) {
+sub Json : ATTR(BEGIN) {
     my ($pkg,$sym,$code) = @_;
     
-    my $name = *{$sym}{NAME};
-    
-    no warnings 'redefine';
-    
-    *{$sym} = sub {
-        $_[0]->json_method(1);
-        $code->(@_);
-    };
+    $CGI::Application::__json{$code} = 1;
 }
 
 1;
