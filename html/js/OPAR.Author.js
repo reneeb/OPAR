@@ -41,7 +41,7 @@ Author.Package = (function (TargetNS) {
                     $("span_" + PackageID).className = 'visible';
                     $("deletion_date_" + PackageID).innerHTML = data.deletionTime;
                 }
-            },
+            }
         );
     };
     
@@ -61,7 +61,7 @@ Author.Package = (function (TargetNS) {
                         $("span_" + PackageID).className = 'hidden';
                     }
                 }
-            },
+            }
         );
     };
 
