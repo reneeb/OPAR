@@ -15,7 +15,7 @@ use OTRS::OPR::DB::Helper::Job     qw(create_job find_job);
 use OTRS::OPR::DB::Helper::Package (qw(page user_is_maintainer package_exists), { version_list => 'versions' } );
 use OTRS::OPR::Web::App::Forms     qw(check_formid get_formid);
 use OTRS::OPR::Web::App::Prerun    qw(cgiapp_prerun);
-use OTRS::OPR::Web::Utils          qw(prepare_select page_list);
+use OTRS::OPR::Web::Utils          qw(prepare_select page_list time_to_date);
 
 sub setup {
     my ($self) = @_;
@@ -46,7 +46,7 @@ sub setup {
 sub delete_package : Permission( 'author' ) : Json {
     my ($self) = @_;
     
-    my $package = $self->param( 'package' );
+    my $package = $self->param( 'id' );
     
     if ( $package =~ m{\D}x or $package <= 0 ) {
         return {};
@@ -69,7 +69,7 @@ sub delete_package : Permission( 'author' ) : Json {
         type => 'delete',
     });
     
-    return { delete_until => $deletion };
+    return { deletionTime => $self->time_to_date( $deletion ) };
 }
 
 sub undelete_package : Permission( 'author' ) : Json {
