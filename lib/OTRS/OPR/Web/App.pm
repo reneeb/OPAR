@@ -9,6 +9,7 @@ use CGI::Application::Plugin::Redirect;
 use Data::Dumper;
 use DBIx::Class;
 use File::Basename;
+use JSON;
 use Log::Log4perl;
 use Path::Class;
 
@@ -78,10 +79,13 @@ sub session {
 }
 
 sub json_method {
-    my ($self,$value) = @_;
+    my ($self) = @_;
     
-    $self->{__is_json_method} = $value if @_ == 2;
-    return $self->{__is_json_method};
+    my $runmode  = $self->get_current_runmode;
+    my %runmodes = $self->run_modes;
+    
+    my $code = $runmodes{$runmode};
+    return $CGI::Application::__json{$code};
 }
 
 sub user {
@@ -125,8 +129,17 @@ sub cgiapp_postrun{
     #print STDERR ">>RUNMODE: ", $self->get_current_runmode,"<<\n";
     
     if ( $self->json_method ) {
+        
         # set http header for json output
+        $self->header_type( 'none' );
+        $self->header_add( -type => 'application/json' );
+        print $self->query->header( $self->header_props );
+        
+        # we need a JSON object
+        my $json = JSON->new;
+        
         # create json output
+        $$outref = $json->encode( $$outref );
     }
     elsif (
         $self->get_current_runmode ne 'dummy_redirect' &&
@@ -203,13 +216,6 @@ sub table {
     
     return if !$name;
     return $self->schema->resultset($name);
-}
-
-sub no_permission {
-    my ($self,$value) = @_;
-    
-    $self->{__has_no_permission} = $value if @_ == 2;
-    return $self->{__has_no_permission};
 }
 
 1;
