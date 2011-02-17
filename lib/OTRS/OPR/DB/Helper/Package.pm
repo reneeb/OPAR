@@ -123,7 +123,7 @@ sub version_list {
         my $info = _package_to_hash( $self, $package, $params );
         
         if ( $package->deletion_flag ) {
-            $info->{DELETION_PRE}  = 'un';
+            $info->{DELETION_PRE}  = 'Un';
             $info->{DELETION_DATE} = time_to_date( $self, $package->deletion_flag );
         }
         
@@ -232,6 +232,7 @@ sub _package_to_hash {
         __SCRIPT__  => $self->base_url,
         DATE        => time_to_date( $self, $package->upload_time ),
         PACKAGE_ID  => $package->package_id,
+        DELETION    => $package->deletion_flag,
     };
     
     return $info;

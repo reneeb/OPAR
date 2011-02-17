@@ -40,8 +40,9 @@ Author.Package = (function (TargetNS) {
                     var data = transport.responseText.evalJSON(true);
                     $("span_" + PackageID).className = 'visible';
                     $("deletion_date_" + PackageID).innerHTML = data.deletionTime;
+                    $("delete_link_" + PackageID).onclick = function(event){Author.Package.UnDelete(PackageID)};
                 }
-            },
+            }
         );
     };
     
@@ -59,9 +60,10 @@ Author.Package = (function (TargetNS) {
                     
                     if ( data.Success ) {
                         $("span_" + PackageID).className = 'hidden';
+                        $("delete_link_" + PackageID).onclick = function(event){Author.Package.Delete(PackageID)};
                     }
                 }
-            },
+            }
         );
     };
 

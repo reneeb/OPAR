@@ -11,11 +11,13 @@
     <td><%= VERSION %></td>
     <td><%= DATE %></td>
     <td>
-      <span class="hidden" id="span_<%= PACKAGE_ID %>">
+      <span class="<%= CLASS %>" id="span_<%= PACKAGE_ID %>">
         scheduled for deletion on
         <span id="deletion_date_<%= PACKAGE_ID %>"><%= DELETION_DATE %></span>
       </span>
-      <a href="<%= __SCRIPT__ %>/package/<%= DELETE_PRE %>delete/<%= PACKAGE_ID %>"><%= DELETE_PRE %>delete</a>
+      <a href="#"
+         id="delete_link_<%= PACKAGE_ID %>"
+         onclick="Author.Package.<%= DELETION_PRE %>Delete( '<%= PACKAGE_ID %>' );">(un-)delete</a>
     </td>
   </tr>
   <%/LOOP %>
