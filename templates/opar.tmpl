@@ -35,5 +35,12 @@
 			</footer>
 	
 		</div>
+		<script type="text/javascript" src="/js/OPAR.Config.js"></script>
+		<%IF JS_FILE %><script type="text/javascript" src="/js/OPAR.<%= JS_FILE %>.js"></script><%/IF %>
+		<script type="text/javascript">
+		//<![CDATA[
+		    OPAR.Config.Set('BaseURL', '<%= __SCRIPT__ %>');
+		//]]>
+		</script>
 	</body>
 </html>
