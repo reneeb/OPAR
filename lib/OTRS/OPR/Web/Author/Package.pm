@@ -90,7 +90,7 @@ sub undelete_package : Permission( 'author' ) : Json {
         type => 'delete',
     });
     
-    return {} if !$job;
+    return { ERROR => 'Cannot find deletion job' } if !$job;
     
     $job->delete;
     
@@ -100,7 +100,7 @@ sub undelete_package : Permission( 'author' ) : Json {
     );
     
     $package_dao->deletion_flag( 0 );
-    return { deletion_flag => 0 };
+    return { Success => 1 };
 }
 
 sub upload : Permission( 'author' ) {
@@ -271,7 +271,11 @@ sub version_list : Permission( 'author' ) {
         return;
     }
     
-    my $version_list = $self->versions( $package, { all => 1 } );
+    my $version_list = $self->versions( $package, { all => 1 } ) || [];
+    
+    for my $version ( @{ $version_list } ) {
+       $version->{CLASS} = $version->{DELETION} ? 'visible' : 'hidden'
+    }
         
     $self->template( 'author_package_version_list' );
     $self->stash(
