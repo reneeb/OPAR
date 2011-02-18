@@ -1,13 +1,43 @@
-<h2>Packages</h2>
+<section>
+	<h2>Packages :: Page
+		<%LOOP PAGES %>
+				<%IF PAGE %>
+						<a href="<%= __SCRIPT__ %>/packages/list/<%= PAGE %>"><%= PAGE %></a>
+				<%ELSE %>
+						...
+				<%/IF %>
+		<%/LOOP %>	
+	</h2>
+</section>
 
-<%LOOP PAGES %>
-    <%IF PAGE %>
-        <a href="<%= __SCRIPT__ %>/packages/list/<%= PAGE %>"><%= PAGE %></a>
-    <%ELSE %>
-        ...
-    <%/IF %>
-<%/LOOP %>
 
+<section id="packages">		
+	<%LOOP PACKAGES %>
+	<div>
+		<div>
+			<h2>
+				<span>42</span>
+				<a href="#"><%= NAME %></a>
+				&nbsp;
+				<a href="#" class="web">Website</a>
+				<a href="#" class="bugs">Bugtracker</a>
+			</h2>
+			<p>
+				Version <b><%= VERSION %></b> 
+				by <b><%= AUTHOR %></b> 
+				on <b><%= DATE %></b> // 
+				Framework: <b>GTK</b>
+			</p>
+			<p>
+				Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet...
+				<a href="#">mehr</a>
+			</p>
+		</div>
+	</div>
+	<%/LOOP %>
+</section>
+
+<!--
 <table id="package_list">
   <tr>
     <th>PackageName</th>
@@ -28,3 +58,4 @@
   </tr>
   <%/LOOP %>
 </table>
+-->

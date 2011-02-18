@@ -431,7 +431,8 @@ section form input[type="password"] {
 	padding: 0.1em 0.2em;
 }
 
-section form input[type="submit"] {
+section form input[type="submit"],
+section form button {
 	border: solid 2px #fff;
 	background: -moz-linear-gradient(100% 100% 90deg, #222, #777);
 	padding: 0.6em 1.2em;
@@ -440,7 +441,8 @@ section form input[type="submit"] {
 	-moz-box-shadow: 0 0 6px #666;
 	text-decoration: none;
 }
-section form input[type="submit"]:hover {
+section form input[type="submit"]:hover,
+section form button:hover {
 	background: -moz-linear-gradient(100% 100% 90deg, #444, #999);
 	cursor: pointer;
 }
