@@ -22,6 +22,9 @@ formid:
   expire: 200
 time:
   deletion: 259200
+recaptcha:
+  public_key: 6LcMqsESAAAAAD0ioZiFwRNDe3OcftdzwL_XIV81
+  private_key: 6LcMqsESAAAAADEX18C3wWHJT7vGXWyE7OCWWnTm
 mail:
   smtp: mail.perl-services.de
   user: opar@perl-services.de

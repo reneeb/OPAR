@@ -1,24 +1,27 @@
 						
 			<section>
-				<h1>Register &rarr; <a href="#">Login</a></h1>
+				<h1>Register &rarr; Login</h1>
 			</section>
 
 			<section id="register">		
 				<div>
-					<form action="<%= __SCRIPT__ %>/registration/send" method="">
+					<form action="<%= __SCRIPT__ %>/registration/send" method="post">
 						<dl>
 							<dt>Name</dt>
 							<dd>
 								<input type="text" name="username"/>
-								<a href="#" class="help">?</a>
+								<a href="#" onclick="OPAR.Global.ShowHelp('registration.username');" class="help">?</a><br />
 							</dd>
 	
 							<dt>Email</dt>
 							<dd>
 								<input type="text" name="email"/>
-								<a href="#" class="help">?</a>
+								<a href="#" onclick="OPAR.Global.ShowHelp('registration.email');" class="help">?</a>
 								<input type="text" name="emailcheck"/> (repeat)
 							</dd>
+							
+							<dt class="empty">&nbsp;</dt>
+							<dd><%= CAPTCHA ESCAPE=0 %></dd>
 	
 							<dt class="empty">&nbsp;</dt>
 							<dd class="right">

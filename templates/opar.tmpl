@@ -22,6 +22,10 @@
 					<input type="submit" value="Search"/>
 				</form>
 			</header>
+			
+			<noscript>
+			    <!-- Tell the user that JavaScript is required -->
+			</noscript>
 
 			<%LOOP NOTIFICATIONS %>
 			  <%INCLUDE_VAR include %>
@@ -36,6 +40,7 @@
 		</div>
 		<script type="text/javascript" src="/js/OPAR.Config.js"></script>
 		<script type="text/javascript" src="/js/OPAR.Package.js"></script>
+		<script type="text/javascript" src="/js/OPAR.User.js"></script>
 		<script type="text/javascript">
 		//<![CDATA[
 		    OPAR.Config.Set('BaseURL', '<%= __SCRIPT__ %>');
