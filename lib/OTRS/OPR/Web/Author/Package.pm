@@ -75,10 +75,10 @@ sub delete_package : Permission( 'author' ) : Json {
 sub undelete_package : Permission( 'author' ) : Json {
     my ($self) = @_;
     
-    my $package = $self->param( 'package' );
+    my $package = $self->param( 'id' );
     
     if ( $package =~ m{\D} or $package <= 0 ) {
-        return {};
+        return { ERROR => 'Invalid package ID' };
     }
     
     if ( !$self->user_is_maintainer( $self->user, { id => $package } ) ) {

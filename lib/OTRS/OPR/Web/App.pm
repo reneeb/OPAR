@@ -131,7 +131,7 @@ sub cgiapp_postrun{
     if ( $self->json_method ) {
         
         # set http header for json output
-        $self->header_type( 'none' );
+        $self->header_type( 'header' );
         $self->header_add( -type => 'application/json' );
         print $self->query->header( $self->header_props );
         
