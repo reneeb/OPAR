@@ -131,9 +131,8 @@ sub cgiapp_postrun{
     if ( $self->json_method ) {
         
         # set http header for json output
-        $self->header_type( 'header' );
-        $self->header_add( -type => 'application/json' );
-        print $self->query->header( $self->header_props );
+        $self->header_type( 'none' );
+        print $self->query->header( -type => 'application/json' );
         
         # we need a JSON object
         my $json = JSON->new;
