@@ -1,8 +1,8 @@
 // --
-// OPAR.Author.js - provides functions for OPAR authors
+// OPAR.Package.js - provides functions for OPAR authors
 // Copyright (C) 2010-2011 Perl-Services.de, http://perl-services.de/\n";
 // --
-// $Id: OPAR.Author.js
+// $Id: OPAR.Package.js
 // --
 // This software comes with ABSOLUTELY NO WARRANTY. For details, see
 // the enclosed file COPYING for license information (AGPL). If you
@@ -11,15 +11,15 @@
 
 "use strict";
 
-var Author = Author || {};
+var OPAR = OPAR || {};
 
 /**
  * @namespace
- * @exports TargetNS as Author.Package
+ * @exports TargetNS as OPAR.Package
  * @description
  *      This namespace contains all form functions.
  */
-Author.Package = (function (TargetNS) {
+OPAR.Package = (function (TargetNS) {
 
     /**
      * @function
@@ -40,7 +40,7 @@ Author.Package = (function (TargetNS) {
                     var data = transport.responseText.evalJSON(true);
                     $("span_" + PackageID).className = 'visible';
                     $("deletion_date_" + PackageID).innerHTML = data.deletionTime;
-                    $("delete_link_" + PackageID).onclick = function(event){Author.Package.UnDelete(PackageID)};
+                    $("delete_link_" + PackageID).onclick = function(event){OPAR.Package.UnDelete(PackageID)};
                 }
             }
         );
@@ -60,7 +60,7 @@ Author.Package = (function (TargetNS) {
                     
                     if ( data.Success ) {
                         $("span_" + PackageID).className = 'hidden';
-                        $("delete_link_" + PackageID).onclick = function(event){Author.Package.Delete(PackageID)};
+                        $("delete_link_" + PackageID).onclick = function(event){OPAR.Package.Delete(PackageID)};
                     }
                 }
             }
@@ -68,4 +68,4 @@ Author.Package = (function (TargetNS) {
     };
 
     return TargetNS;
-}(Author.Package || {}));
+}(OPAR.Package || {}));
