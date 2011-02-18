@@ -45,3 +45,13 @@ schema:
     name_id: INTEGER NOT NULL
     is_main_author: INTEGER
     primary_key: user_id, name_id
+  opr_job_queue:
+    job_id: INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT
+    type_id: INTEGER NOT NULL
+    package_id: INTEGER NOT NULL
+    created: INTEGER NOT NULL
+    changed: INTEGER NOT NULL
+    job_state: VARCHAR(255)
+  opr_job_type:
+    type_id: INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT
+    type_label: VARCHAR(255)

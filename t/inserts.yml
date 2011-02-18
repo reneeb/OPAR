@@ -89,3 +89,19 @@ inserts:
     user_id: 1
     name_id: 2
     is_main_author: 0
+  -
+    table_name: opr_job_type
+    type_id: 1
+    type_label: analyze
+  -
+    table_name: opr_job_type
+    type_id: 2
+    type_label: delete
+  -
+    table_name: opr_job_queue
+    job_id: 1
+    type_id: 2
+    package_id: 2
+    created: 12345
+    changed: 67890
+    job_state: in progress
