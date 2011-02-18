@@ -6,7 +6,7 @@ use FabForce::DBDesigner4;
 use FabForce::DBDesigner4::DBIC;
 
 my $file = 'D:\SVNRepo\PerlServices\software\OPR\docs\er_modell.xml';
-my $sql  = 'D:\SVNRepo\PerlServices\software\OPR\docs\er_modell.sql';
+my $sql  = 'D:\Git\OPAR\opar-sources\documents\er_modell.sql';
 
 my $dbic = FabForce::DBDesigner4::DBIC->new();
 $dbic->namespace( 'OTRS::OPR::DB' );

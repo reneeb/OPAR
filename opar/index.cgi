@@ -28,6 +28,9 @@ CGI::Application::Dispatch->dispatch(
             app => 'Guest::Package',
             rm  => 'oq',
         },
+        'registration/:rm?' => {
+            app => 'Guest::Registration',
+        },
         ':initial/:short/:author/:package' => {
             app => 'Guest::Package',
             rm  => 'dist',

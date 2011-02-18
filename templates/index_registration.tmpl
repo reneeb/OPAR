@@ -1,0 +1,30 @@
+						
+			<section>
+				<h1>Register &rarr; <a href="#">Login</a></h1>
+			</section>
+
+			<section id="register">		
+				<div>
+					<form action="<%= __SCRIPT__ %>/registration/send" method="">
+						<dl>
+							<dt>Name</dt>
+							<dd>
+								<input type="text" name="username"/>
+								<a href="#" class="help">?</a>
+							</dd>
+	
+							<dt>Email</dt>
+							<dd>
+								<input type="text" name="email"/>
+								<a href="#" class="help">?</a>
+								<input type="text" name="emailcheck"/> (repeat)
+							</dd>
+	
+							<dt class="empty">&nbsp;</dt>
+							<dd class="right">
+								<input type="submit" value="Register"/>
+							</dd>
+						</dl>
+					</form>
+				</div>
+			</section>

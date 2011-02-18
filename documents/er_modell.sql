@@ -7,7 +7,8 @@ CREATE TABLE `opr_user` (
   session_id VARCHAR(255) ,
   website VARCHAR(255) ,
   mail VARCHAR(255) NOT NULL,
-  active TINYINT,
+  active TINYINT ,
+  registered INTEGER,
   PRIMARY KEY(user_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -146,5 +147,14 @@ CREATE TABLE `opr_formid` (
   used TINYINT ,
   expire BIGINT,
   PRIMARY KEY(formid)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `opr_temp_passwd`;
+
+CREATE TABLE `opr_temp_passwd` (
+  id INTEGER NOT NULL AUTO_INCREMENT,
+  token VARCHAR(255) ,
+  created INTEGER,
+  PRIMARY KEY(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

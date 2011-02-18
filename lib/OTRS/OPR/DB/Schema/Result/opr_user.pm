@@ -14,6 +14,7 @@ __PACKAGE__->add_columns( qw/
     website
     mail
     active
+    registered
 /);
 __PACKAGE__->set_primary_key( qw/ user_id / );
 
