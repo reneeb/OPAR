@@ -34,13 +34,6 @@ sub cgiapp_prerun {
         
         my $needed_permission = $CGI::Application::__permissions{$code};
         
-        # load specific javascript files for each area
-        if ( $needed_permission ) {
-            $self->stash(
-                JS_FILE => ucfirst $needed_permission,
-            );
-        }
-        
         # check if user is allowed to run modes for a specific area
         if ( $needed_permission && !$self->user->has_group( $needed_permission ) ) {
             $self->forward( '/login' );
