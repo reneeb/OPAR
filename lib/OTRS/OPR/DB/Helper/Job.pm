@@ -23,13 +23,17 @@ sub create_job {
         package_id => $params->{id},
     });
     
-    return if $existing_job;
+    return $existing_job->job_id if $existing_job;
     
     my $job = $self->table( 'opr_job_queue' )->create({
         type_id    => $type->type_id,
         package_id => $params->{id},
         created    => time,
+        job_state  => 'open',
+        changed    => time,
     });
+    
+    $job->update;
     
     return $job->job_id;
 }

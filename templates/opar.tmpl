@@ -1,8 +1,8 @@
 <html>
 	<head>
 		<title>OPAR</title>
-		<link rel="stylesheet" type="text/css" href="/css/main.css"/>
-		<link rel="stylesheet" type="text/css" href="/css/form.css"/>
+		<link rel="stylesheet" type="text/css" href="/html/css/main.css"/>
+		<link rel="stylesheet" type="text/css" href="/html/css/form.css"/>
 		<script type="text/javascript" src="/js/prototype.js"></script>
 	</head>
 	<body>
@@ -10,11 +10,11 @@
 	
 			<header>
 				<h1>
-					OPAR
+					<a href="#" class="home">OPAR</a>
 					<span>OTRS Plugin Archive</span>
 				</h1>
 				<p>
-					This website is a browseable collection of
+					Browseable collection of
 					plugins for the popular OTRS software.
 				</p>
 				<form>
@@ -22,8 +22,7 @@
 					<input type="submit" value="Search"/>
 				</form>
 			</header>
-			
-			
+
 			<%LOOP NOTIFICATIONS %>
 			  <%INCLUDE_VAR include %>
 			<%/LOOP %>
