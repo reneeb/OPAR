@@ -1,5 +1,12 @@
 			<section>
 				<h1>Search results for <i><%= SEARCH_TERM %></i>:</h1>
+				<%LOOP PAGES %>
+						<%IF PAGE %>
+								<a href="<%= __SCRIPT__ %>/packages/list/<%= PAGE %>"><%= PAGE %></a>
+						<%ELSE %>
+								...
+						<%/IF %>
+				<%/LOOP %>	
 			</section>
 
 			<section id="packages">
@@ -7,20 +14,19 @@
 				<div>
 					<div>
 						<h2>
-							<span>42</span>
-							<a href="<%= __SCRIPT__ %>/<%= virtual_path %>"><%= package_name %></a>
+							<a href="<%= __SCRIPT__ %>/package/<%= VIRTUAL_PATH %>"><%= NAME %></a>
 							&nbsp;
-							<%IF website %><a href="<%= website ESCAPE=0 %>" class="web">Website</a><%/IF %>
-							<%IF bugtrackter %><a href="<%= bugtracker ESCAPE=0 %>" class="bugs">Bugtracker</a><%/IF %>
+							<%IF WEBSITE %><a href="<%= WEBSITE ESCAPE=0 %>" class="web">Website</a><%/IF %>
+							<%IF BUGTRACKER %><a href="<%= BUGTRACKER ESCAPE=0 %>" class="bugs">Bugtracker</a><%/IF %>
 						</h2>
 						<p>
-							Version <b><%= version %></b> 
-							by <b><%= author_name %></b> 
-							on <b><%= pubdate %></b> // 
-							Framework: <b><%= framework %></b>
+							Version <b><%= VERSION %></b> 
+							by <b><%= AUTHOR %></b> 
+							on <b><%= DATE %></b> // 
+							Framework: <b><%= FRAMEWORK %></b>
 						</p>
 						<p>
-							<%= description %>
+							<%= DESCRIPTION %>
 							<!-- <a href="#">mehr</a> -->
 						</p>
 					</div>

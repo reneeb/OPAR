@@ -482,4 +482,27 @@ section form button:hover {
 	text-align: right;
 }
 
+.kwalitee {
+	width: 80px;
+	height: 15px;
+}
 
+.green {
+	font-size: 0.6em;
+	background-color: green;
+}
+
+.yellow {
+	font-size: 0.6em;
+	background-color: yellow;
+}
+
+.orange {
+	font-size: 0.6em;
+	background-color: orange;
+}
+
+.red {
+	font-size: 0.6em;
+	background-color: red;
+}

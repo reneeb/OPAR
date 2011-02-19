@@ -6,6 +6,8 @@ use warnings;
 use parent qw(OTRS::OPR::Web::App);
 
 use File::Spec;
+use OTRS::OPR::DAO::Package;
+use OTRS::OPR::DB::Helper::Package;
 use OTRS::OPR::Web::App::Forms qw(check_formid get_formid);
 
 sub setup {
@@ -90,22 +92,39 @@ sub dist {
         \z              # string end
     }xms;
     
+    if ( !$name ) {
+        $self->notify({
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => 'No Package Name Given',
+            ERROR_MESSAGE  => $self->config->get( 'error.package_not_given' ),
+        });
+        
+        $self->template( 'blank' );
+        return;
+    }
+    
+    my %version;
+    
+    $version{version} = $version if $version;
+    
     my $dao = OTRS::OPR::DAO::Package->new(
         package_name => $name,
-        version      => $version,
+        %version,
+        _schema      => $self->schema,
     );
     
     # if package can't be found show error message
     if ( $dao->not_in_db ) {
         $self->notify({
-            type    => 'error',
-            include => 'notifications/generic_error',
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => 'Package Not Found',
+            ERROR_MESSAGE  => $self->config->get( 'error.package_not_found' ),
         });
         
-        $self->template( '404' );
-        $self->stash(
-            MESSAGE => $self->config->get( 'error.package_not_found' );
-        );
+        $self->template( 'blank' );
+        return;
     }
     
     my %stash = $dao->to_hash;
@@ -113,13 +132,34 @@ sub dist {
     $self->template( 'index_package' );
     $self->stash(
         %stash,
+        OK_GRADE => 'red',
     );
+}
+
+sub download : Stream {
+    my ($self) = @_;
+    
+    my $package_id = $self->param( 'id' );
+    
+    if ( !$package_id || $package_id =~ m{\D}x or $package_id <= 0 ) {
+        $self->notify({
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => 'Package Not Found',
+            ERROR_MESSAGE  => $self->config->get( 'error.package_not_found' ),
+        });
+        
+        $self->template( 'blank' );
+        return;
+    }
+    
+    $self->stream();
 }
 
 sub author {
 }
 
-sub oq {
+sub ok {
 }
 
 1;

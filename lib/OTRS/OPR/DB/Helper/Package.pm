@@ -46,9 +46,11 @@ sub page {
     if ( exists $params->{search} ) {
         my $term = $params->{search} || '';
         $term    =~ tr/*/%/;
+        my @ors;
         for my $field ( 'opr_package_names.package_name', 'description' ) {
             next unless $term;
-            $search_clauses{$field} = { LIKE => '%' . $term . '%' };
+            push @ors, { $field => { LIKE => '%' . $term . '%' } };
+            $search_clauses{'-or'} = \@ors;
         }
     }
     
@@ -225,14 +227,17 @@ sub _package_to_hash {
         
     # create the infos for the template
     my $info = {
-        NAME        => $text,
-        VERSION     => $package->version,
-        DESCRIPTION => $desc,
-        AUTHOR      => ($author ? $author->user_name : '' ),
-        __SCRIPT__  => $self->base_url,
-        DATE        => time_to_date( $self, $package->upload_time ),
-        PACKAGE_ID  => $package->package_id,
-        DELETION    => $package->deletion_flag,
+        NAME         => $text,
+        VERSION      => $package->version,
+        DESCRIPTION  => $desc,
+        AUTHOR       => ($author ? $author->user_name : '' ),
+        __SCRIPT__   => $self->base_url,
+        DATE         => time_to_date( $self, $package->upload_time ),
+        PACKAGE_ID   => $package->package_id,
+        DELETION     => $package->deletion_flag,
+        VIRTUAL_PATH => $package->virtual_path,
+        WEBSITE      => $package->website,
+        BUGTRACKER   => $package->bugtracker,
     };
     
     return $info;

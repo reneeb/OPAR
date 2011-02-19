@@ -4,6 +4,7 @@ use Moose;
 use OTRS::OPR::App::AttributeInformation;
 
 use OTRS::OPR::DAO::Author;
+use OTRS::OPR::Web::Utils qw(time_to_date);
 
 extends 'OTRS::OPR::DAO::Base';
 
@@ -77,6 +78,34 @@ sub author {
 }
 
 sub maintainer_list {
+}
+
+sub to_hash {
+    my ($self) = @_;
+    
+    my $package = $self->get_object( 'package' );
+    
+    return if !$package;
+    
+    my ($author) = $package->opr_user;
+    my ($text)   = $package->opr_package_names->package_name;
+    my $desc     = $package->description;
+        
+    # create the infos for the template
+    my %info = (
+        NAME         => $text,
+        VERSION      => $package->version,
+        DESCRIPTION  => $desc,
+        AUTHOR       => ($author ? $author->user_name : '' ),
+        DATE         => time_to_date( $self, $package->upload_time ),
+        PACKAGE_ID   => $package->package_id,
+        DELETION     => $package->deletion_flag,
+        VIRTUAL_PATH => $package->virtual_path,
+        WEBSITE      => $package->website,
+        BUGTRACKER   => $package->bugtracker,
+    );
+    
+    return %info;
 }
 
 sub BUILD {

@@ -1,0 +1,72 @@
+			<section>
+				<h1><%= NAME %></h1>
+			</section>
+
+			<section id="package">				
+				<div>
+					<dl>
+						<dt>Version</dt>
+						<dd><%= VERSION %></dd>
+
+						<dt>Uploaded by/on</dt>
+						<dd><%= AUTHOR %> on <b><%= DATE %></b></dd>
+
+						<dt>Framework</dt>
+						<dd><%= FRAMEWORK %></dd>
+
+						<dt>Links</dt>
+						<dd>
+							<a href="<%= __SCRIPT__ %>/package/download/<%= PACKAGE_ID %>">Download</a>
+							<%IF WEBSITE %><a href="<%= WEBSITE %>" class="web">Website</a><%/IF %>
+							<%IF BUGTRACKER %><a href="<%= BUGTRACKER %>" class="bugs">Bugtracker</a><%/IF %>
+						</dd>
+
+						<dt>Description</dt>
+						<dd>
+							<%= DESCRIPTION %>
+						</dd>
+
+						<%IF HAS_DEPENDENCIES %>
+						<dt>Dependencies</dt>
+						<dd>
+							<ul>
+								<%LOOP DEPENDENCIES %><li><%= NAME %></li>
+								<%/LOOP %>
+							</ul>
+						</dd>
+						<%/IF %>
+
+						<dt>OPAR Kwalitee (OK)</dt>
+						<dd class="kwalitee">
+							<span class="<%= OK_GRADE %>">
+								<a href="<%= __SCRIPT__ %>/package/ok/<%= PACKAGE_ID %>">
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								</a>
+							</span>
+						</dd>
+					</dl>
+				</div>
+			</section>
+			
+			<%IF HAS_COMMENTS %>
+			<section>
+				<h2>Comments</h2>
+			</section>
+
+			<section id="comments">
+				<div>
+				<%LOOP COMMENTS %>
+					<div>
+						<h2>
+							<a href="<%= WEBSITE %>">Mr. Y</a>
+							<span>on <%= DATE %></span>
+							<div><span class="score-<%= SCORE %>"></span></div>
+						</h2>
+						<p>
+							<%= COMMENT %>
+						</p>						
+					</div>
+				<%/LOOP %>
+				</div>
+			</section>
+			<%/IF %>

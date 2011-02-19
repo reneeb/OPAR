@@ -6,7 +6,9 @@ use warnings;
 use parent qw(OTRS::OPR::Web::App);
 
 use File::Spec;
-use OTRS::OPR::Web::App::Forms qw(check_formid get_formid);
+use OTRS::OPR::DB::Helper::Package qw(page);
+use OTRS::OPR::Web::App::Forms     qw(check_formid get_formid);
+use OTRS::OPR::Web::Utils          qw(prepare_select page_list);
 
 sub setup {
     my ($self) = @_;
@@ -28,6 +30,7 @@ sub setup {
         send_feedback => \&send_feedback,
         static        => \&static,
         recent        => \&recent,
+        search        => \&search,
     );
 }
 
@@ -100,6 +103,28 @@ sub static {
     }
     
     $self->template( 'static/' . $page );
+}
+
+sub search {
+    my ($self) = @_;
+    
+    my %params      = $self->query->Vars;
+    my $search_term = $params{search_term};
+    my $page        = $self->param( 'page' ) || 1;
+    
+    if ( $page =~ m{\D}x or $page <= 0 ) {
+        $page = 1;
+    }
+    
+    my ($packages,$pages) = $self->page( $page, { search => $search_term, all => 1 } ); # TODO: remove "all" when cronjob is working
+    my $pagelist          = $self->page_list( $pages, $page );
+    
+    $self->template( 'index_search_result' );
+    $self->stash(
+        PACKAGES    => $packages,
+        PAGES       => $pagelist,
+        SEARCH_TERM => $search_term,
+    );
 }
 
 1;

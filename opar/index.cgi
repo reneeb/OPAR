@@ -12,7 +12,7 @@ CGI::Application::Dispatch->dispatch(
             app => 'Guest',
             rm  => 'start',
         },
-        'recent/:page' => {
+        'recent/:page?' => {
             app => 'Guest',
             rm  => 'recent',
         },
@@ -24,22 +24,21 @@ CGI::Application::Dispatch->dispatch(
             app => 'Guest::Package',
             rm  => 'dist',
         },
-        'oq/:package' => {
-            app => 'Guest::Package',
-            rm  => 'oq',
+        'search/:page?' => {
+            app => 'Guest',
+            rm  => 'search',
         },
         'registration/:rm?' => {
             app => 'Guest::Registration',
         },
-        ':initial/:short/:author/:package' => {
+        '/package/:initial/:short/:author/:package' => {
             app => 'Guest::Package',
             rm  => 'dist',
         },
-        ':initial/:short/:author' => {
+        '/package/:run/:id' => {
             app => 'Guest::Package',
-            rm  => 'author',
         },
-        ':rm' => {
+        ':run' => {
             app => 'Guest',
         },
     ],

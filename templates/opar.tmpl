@@ -17,8 +17,8 @@
 					Browseable collection of
 					plugins for the popular OTRS software.
 				</p>
-				<form>
-					<input type="text" id="query"/>
+				<form action="<%= __SCRIPT__ %>/search" method="post">
+					<input type="text" id="query" name="search_term" />
 					<input type="submit" value="Search"/>
 				</form>
 			</header>
