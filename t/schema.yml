@@ -8,6 +8,7 @@ schema:
     website: VARCHAR(255) 
     session_id: VARCHAR(255)
     active: TINYINT
+    registered: INTEGER
   opr_group:
     group_id: INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT
     group_name: VARCHAR(255) NOT NULL
