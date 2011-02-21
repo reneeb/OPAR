@@ -13,7 +13,7 @@ use Data::Dumper;
 sub Permission : ATTR(BEGIN) {
     my ($pkg,$sym,$code,$attrname,$params,$phase) = @_;
     
-    my $permission = $params->[0];
+    my $permission = ref $params ? $params->[0] : $params;
     $CGI::Application::__permissions{$code} = $permission;
 }
 
