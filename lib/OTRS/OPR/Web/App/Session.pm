@@ -16,8 +16,32 @@ sub new{
     $self->_config( $args{config} );
     $self->expire( $args{expire} );
 
+    $self->app( $args{app} );
+
+    {
+        no warnings 'redefine';
+        *ReneeB::Session::State::Cookie::save = sub {
+            my ($session,$id) = @_;
+
+            my $cookie = CGI::Cookie->new(
+                -name   => $session->cookiename,
+                -value  => $id,
+                -expire => $session->expire,
+            );
+
+            $self->app->header_add( -cookie => $cookie );
+        };
+    }
+
     return $self;
 }# new
+
+sub app {
+    my ($self,$value) = @_;
+
+    $self->{__app__} = $value if @_ == 2;
+    return $self->{__app__};
+}
 
 sub session{
     my ($self) = @_;

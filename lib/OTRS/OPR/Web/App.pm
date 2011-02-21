@@ -72,6 +72,7 @@ sub session {
         $self->{___session} = OTRS::OPR::Web::App::Session->new(
             config => $self->config,
             expire => $expire,
+            app    => $self,
         );
     }
 
