@@ -1,15 +1,17 @@
 <section>
-	<h2>Packages :: Page
-		<%LOOP PAGES %>
-				<%IF PAGE %>
-						<a href="<%= __SCRIPT__ %>/packages/list/<%= PAGE %>"><%= PAGE %></a>
-				<%ELSE %>
-						...
-				<%/IF %>
-		<%/LOOP %>	
-	</h2>
+	<h1>Packages</h1>
 </section>
 
+<section class="pages">
+	<span>Page</span>
+	<%LOOP PAGES %>
+    <%IF PAGE %>
+			<a href="<%= __SCRIPT__ %>/packages/list/<%= PAGE %>" class="button shallow"><%= PAGE %></a>
+    <%ELSE %>
+      ...
+    <%/IF %>
+	<%/LOOP %>
+</section>
 
 <section id="packages">		
 	<%LOOP PACKAGES %>

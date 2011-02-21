@@ -75,6 +75,50 @@ h1 {
 		font-size: 50%;
 		display: block;
 	}
+	h1 emph {
+		font-weight: bold;
+	}
+
+table {
+	margin: 14px 0;
+	border: solid 3px #bde; #b2bdce;
+	border-radius: 8px;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	padding: 5px;
+	border-spacing: 0;
+	width: 100%;
+}
+	tr {
+		
+	}
+		th, td {
+			font-size: 80%;
+			padding: 0.6em 1em;
+			text-align: left;
+		}
+		th {
+			color: #689;
+		}
+		td {
+			border-top: solid 1px #ccc;
+		}
+		
+		th:before,
+		td:before {
+			content: " ";
+		}
+		th:first-child,
+		td:first-child {
+			text-align: left;
+		}
+		th:last-child,
+		td:last-child {
+			text-align: right;
+		}
+		td:last-child {
+			padding-right: 0.2em;
+		}
 
 header,
 section,
@@ -153,6 +197,48 @@ section {
 		margin-bottom: 0.4em;
 	}
 
+section.pages {
+	
+}
+	section.pages span {
+		padding-right: 0.6em;
+	}
+	section.pages a {
+		
+	}
+
+section.message {
+
+}
+	section.message > div {
+		-moz-border-radius: 1em;
+		border-width: 2px;
+		-moz-box-shadow: 0px 2px 10px 0px #ccc;
+	}	
+	section.message.ok > div {
+		border-color: green;
+		background: #efe;
+	}
+	section.message.error > div {
+		border-color: red;
+		background: #fee;
+	}
+		section.message > div > div {
+			padding: 0.4em 0.5em 0.5em important;
+		}
+			section.message > div > div h4 {
+				margin: 0 0 0.4em;
+			}
+			section.message.ok > div > div h4 {
+				color: green;
+			}
+			section.message.error > div > div h4 {
+				color: red;
+			}
+			section.message > div > div p {
+				margin: 0.4em 0 0;
+			}
+
 section#entries {
 	
 }
@@ -162,20 +248,6 @@ section#entries {
 		-moz-box-shadow: 0px 2px 10px 0px #666;
 		border: solid 5px #eee;		
 	}
-	/*
-	#entries > div.element {
-		border: solid 5px #ff6;		
-	}
-	#entries > div.article {
-		border: solid 5px #f9c;	
-	}
-	#entries > div.tool {
-		border: solid 5px #6cf;	
-	}
-	#entries > div.design {
-		border: solid 5px #f96;	
-	}
-	*/
 		#entries > div > div {
 			padding: 0.9em 1.1em 1em;
 		}
@@ -445,6 +517,30 @@ section form input[type="submit"]:hover,
 section form button:hover {
 	background: -moz-linear-gradient(100% 100% 90deg, #444, #999);
 	cursor: pointer;
+}
+
+.button {
+	background: -moz-linear-gradient(100% 100% 90deg, #222, #777);
+	padding: 0.2em 0.5em 0.3em;
+	color: #fff;
+	-moz-border-radius: 0.6em;
+	-moz-box-shadow: 0 0 6px #ccc;
+	text-decoration: none;
+	font-size: 90%;
+	text-decoration: none;
+	border: none;
+}
+.button.shallow {
+	background: transparent;
+	color: #333;
+	border: solid 1px #333;
+}
+.button:hover {
+	background: -moz-linear-gradient(100% 100% 90deg, #444, #999);
+	cursor: pointer;
+}
+.button.shallow:hover {
+	background: -moz-linear-gradient(100% 100% 90deg, #ccc, #fff);
 }
 
 .clear {

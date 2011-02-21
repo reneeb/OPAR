@@ -1,4 +1,6 @@
-<h2>Versions of Package <%= PACKAGE_NAME %></h2>
+<section>
+	<h1>Versions of Package <emph><%= PACKAGE_NAME %></emph></h1>
+</section>
 
 <table id="version_list">
   <tr>
@@ -17,7 +19,7 @@
       </span>
       <a href="#"
          id="delete_link_<%= PACKAGE_ID %>"
-         onclick="OPAR.Package.<%= DELETION_PRE %>Delete( '<%= PACKAGE_ID %>' );">(un-)delete</a>
+         onclick="OPAR.Package.<%= DELETION_PRE %>Delete( '<%= PACKAGE_ID %>' );" class="button">(un-)delete</a>
     </td>
   </tr>
   <%/LOOP %>

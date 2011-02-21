@@ -1,16 +1,21 @@
-<h2>Packages xx</h2>
+<section>
+	<h1>Packages</h1>
+</section>
 
-<%LOOP PAGES %>
+<section class="pages">
+	<span>Page</span>
+	<%LOOP PAGES %>
     <%IF PAGE %>
-        <a href="<%= __SCRIPT__ %>/packages/list/<%= PAGE %>"><%= PAGE %></a>
+        <a href="<%= __SCRIPT__ %>/packages/list/<%= PAGE %>" class="button shallow"><%= PAGE %></a>
     <%ELSE %>
         ...
     <%/IF %>
-<%/LOOP %>
+	<%/LOOP %>
+</section>
 
 <table id="package_list">
   <tr>
-    <th>PackageNamex</th>
+    <th>Package Name</th>
     <th>Version</th>
     <th>Date</th>
     <th>State</th>
@@ -25,8 +30,8 @@
     <td><%= STATE %></td>
     <td><%= MYROLE %></td>
     <td>
-      <a href="<%= __SCRIPT__ %>/package/versions/<%= NAME %>">Versions</a>
-      <a href="<%= __SCRIPT__ %>/package/maintainer/<%= NAME %>">Co-Maintainer</a>
+      <a href="<%= __SCRIPT__ %>/package/versions/<%= NAME %>" class="button">Versions</a>
+      <a href="<%= __SCRIPT__ %>/package/maintainer/<%= NAME %>" class="button">Co-Maintainer</a>
     </td>
   </tr>
   <%/LOOP %>

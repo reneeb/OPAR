@@ -1,6 +1,10 @@
-<span class="error">
-  <h4><%= ERROR_HEADLINE %></h4>
-  <p>
-    <%= ERROR_MESSAGE %>
-  </p>
-</span>
+<section class="message error">
+	<div>
+		<div>
+			<h4><%= ERROR_HEADLINE %></h4>
+			<p>
+				<%= ERROR_MESSAGE %>
+			</p>
+	  </div>
+  </div>
+</section>
