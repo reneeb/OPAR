@@ -81,7 +81,7 @@ h1 {
 
 table {
 	margin: 14px 0;
-	border: solid 3px #bde; #b2bdce;
+	border: solid 3px #bde;
 	border-radius: 8px;
 	-webkit-border-radius: 8px;
 	-moz-border-radius: 8px;
@@ -239,6 +239,55 @@ section.message {
 				margin: 0.4em 0 0;
 			}
 
+section.menu {
+
+}
+	section.menu ul {
+		margin: 0;
+		padding: 0;
+		list-style: empty;
+	}
+		section.menu ul li {
+			margin: 0;
+			padding: 0;
+			list-style: empty;
+			display: inline-block;
+		}
+			section.menu ul li a {
+				padding: 0.4em 0.8em 0.5em;
+				margin: 0;
+				color: #333;
+				border: solid 1px #333;
+				border-width: 1px 1px 1px 0;
+				-moz-box-shadow: 0 0 6px #ccc;
+				text-decoration: none;
+				font-size: 90%;
+				text-decoration: none;
+				display: inline-block;
+				font-size: 100%;
+				color: #689;
+				xmin-width: 140px;
+				text-align: center;
+			}
+			section.menu ul li:first-child a {
+				border-left-width: 1px;
+				-moz-border-radius: 0.6em 0 0 0.6em;
+			}
+			section.menu ul li:last-child a {
+				-moz-border-radius: 0 0.6em 0.6em 0;
+			}
+			section.menu ul li:last-child:first-child a {
+				-moz-border-radius: 0.6em;
+			}
+			section.menu ul li.current a,
+			section.menu ul li a:hover {
+				background: -moz-linear-gradient(100% 100% 90deg, #eee, #fff);
+			}
+			section.menu ul li.current a {
+				font-weight: bold;
+				text-shadow: -1px 1px #eee;
+			}
+			
 section#entries {
 	
 }
@@ -512,6 +561,7 @@ section form button {
 	-moz-border-radius: 0.6em;
 	-moz-box-shadow: 0 0 6px #666;
 	text-decoration: none;
+	font-size: 90%;
 }
 section form input[type="submit"]:hover,
 section form button:hover {

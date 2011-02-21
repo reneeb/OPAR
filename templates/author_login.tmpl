@@ -1,7 +1,32 @@
-<form action="<%= __SCRIPT__ %>/do_login" method="post">
-    <fieldset>
-        User: <input type="text" name="user"/><br />
-        Passwd: <input type="password" name="password" />
-    </fieldset>
-    <button type="submit" value="Einloggen">Einloggen</button>
-</form>
+<section>
+	<h1>Login</h1>
+</section>
+
+<section id="login">		
+	<div>
+		<form action="<%= __SCRIPT__ %>/do_login" method="post">
+	    <fieldset>
+				<dl>
+					<dt>Username</dt>
+					<dd>
+						<input type="text" name="user"/>
+						<!--<a href="#" class="help">?</a><br/>
+						<a href="#">Forgot your username?</a>-->
+					</dd>
+	
+					<dt>Password</dt>
+					<dd>
+						<input type="password" name="password" />
+						<!--<a href="#" class="help">?</a><br/>
+						<a href="#">Forgot your password?</a>-->
+					</dd>
+	
+					<dt class="empty">&nbsp;</dt>
+					<dd class="right">
+						<button type="submit" value="Einloggen">Einloggen</button>
+					</dd>
+				</dl>
+			</fieldset>
+		</form>
+	</div>
+</section>
