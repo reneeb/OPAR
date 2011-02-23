@@ -5,7 +5,7 @@ use warnings;
 use File::Basename;
 use File::Spec;
 
-use Test::More tests => 29;
+use Test::More tests => 35;
 
 my $dir;
 my $lib;
@@ -110,4 +110,21 @@ ok $schema, 'schema was created';
     is $user->user_name, 'tester', 'Username ok';
     is $user->session_id, 12345, 'Session ID ok';
     ok !$user->_has_changed, 'User has not been changed';
+}
+
+{
+    # find user by user name
+    my $user = OTRS::OPR::DAO::User->new(
+        user_name => 'reneeb',
+        _schema   => $schema,
+    );
+    
+    ok $user, 'user object created';
+    
+    ok !$user->not_in_db, 'user is in db';
+    
+    is $user->user_name, 'reneeb', 'username is "reneeb"';
+    is $user->mail, 'opar@perl-services.de', 'mail address is correct';
+    ok $user->has_group( 'admin' ), 'user is an admin';
+    ok $user->has_group( 'author' ), 'user is not an author';
 }

@@ -53,6 +53,11 @@ sub BUILD {
             session_id => $self->session_id,
          });
     }
+    elsif ( $self->user_name ) {
+        ($user) = $self->ask_table( 'opr_user' )->search({
+            user_name => $self->user_name,
+        });
+    }
     elsif ( $self->user_id ) {
         ($user) = $self->ask_table( 'opr_user' )->find( $self->user_id );
     }
