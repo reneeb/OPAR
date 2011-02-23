@@ -27,10 +27,10 @@ sub check_formid {
 }
 
 sub get_formid {
-    my ($self) = @_;
+    my ($self, $expiration_span) = @_;
     
     my $formid = md5_hex( time . ( $ENV{REMOTE_ADDR} || '127.0.0.1' ) . rand 1000 );
-    my $expire = time + $self->config->get( 'formid.expire' );
+    my $expire = time + ( $expiration_span || $self->config->get( 'formid.expire' ) );
     
     my ($object) = $self->table( 'opr_formid' )->create( {
         formid => $formid,
