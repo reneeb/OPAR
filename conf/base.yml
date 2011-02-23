@@ -26,12 +26,16 @@ recaptcha:
   public_key: 6LcMqsESAAAAAD0ioZiFwRNDe3OcftdzwL_XIV81
   private_key: 6LcMqsESAAAAADEX18C3wWHJT7vGXWyE7OCWWnTm
 mail:
-  smtp: mail.perl-services.de
-  user: opar@perl-services.de
-  pass: 391TWgb!
+  smtp:
+    host: mail.perl-services.de
+    user: opar@perl-services.de
+    pass: 391TWgb!
   from: opar@perl-services.de
   to: reb@perl-services.de
-  subject: Mail von OPAR
+  subjects:
+    general: Mail from OPAR
+    forgot_password: Forgot password
+  tag: [OPAR]
 password:
   salt: OPAR
 admin:
