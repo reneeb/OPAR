@@ -26,6 +26,16 @@ sub import {
             }
         }
         
+        next METHOD if $ref;
+        
+        if ( $method eq ':all' ) {
+            for my $name ( @ok ) {
+                *{ $caller . '::' . $name } = *{ $class . '::' . $name };
+            }
+            
+            last METHOD;
+        }
+        
         next METHOD if !grep{ $_ eq $method }@ok;
         *{ $caller . '::' . $method } = *{ $class . '::' . $method };
     }
