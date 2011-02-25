@@ -10,6 +10,7 @@ __PACKAGE__->add_columns( qw/
     id
     token
     created
+    user_id
 /);
 __PACKAGE__->set_primary_key( qw/ id / );
 

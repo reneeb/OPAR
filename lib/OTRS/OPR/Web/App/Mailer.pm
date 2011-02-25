@@ -38,21 +38,30 @@ sub send_mail{
     my ($self,%args) = @_;
     
     my $config = $self->_config;
+    my $error = 0;
 
     my $mailer = Mail::Sender->new({
-        smtp      => $config->get( 'mail.smtp' ),
+        smtp      => $config->get( 'mail.smtp.host' ),
         from      => $args{from}    || $config->get( 'mail.from' ),
         auth      => 'LOGIN',
-        authid    => $config->get( 'mail.user' ),
-        authpwd   => $config->get( 'mail.pass' ),
-        on_errors => undef,
+        authid    => $config->get( 'mail.smtp.user' ),
+        authpwd   => $config->get( 'mail.smtp.pass' ),
     });
+    
+    if ( $mailer and !ref $mailer ) {
+        $error = 1;
+        print STDERR "MAILER: $Mail::Sender::Error\n";
+    }
+    
+    return if $error;
 
     $mailer->MailMsg({
         to        => $args{to}      || $config->get( 'mail.to' ),
         subject   => $args{subject} || $config->get( 'mail.subject' ),
         msg       => $self->{_tmpl}->output,
-    });
+    }) or $error = 1;
+    
+    return !$error;
 }
 
 sub _config{

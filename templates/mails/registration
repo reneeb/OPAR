@@ -1,0 +1,10 @@
+Dear <%= USER %>,
+
+you have requested an account for OPAR - the OTRS Package ARchive. To complete your request, please visit
+
+<%= URL %>/registration/change_passwd_form?token=<%= TOKEN %>
+
+The token is valid for 24 hours, after the 24 hours the token is invalid and the username is deleted.
+
+Yours,
+OPAR-Team

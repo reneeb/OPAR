@@ -16,6 +16,7 @@ use Path::Class;
 use OTRS::OPR::DAO::User;
 use OTRS::OPR::DB::Schema;
 use OTRS::OPR::Web::App::Config;
+use OTRS::OPR::Web::App::Mailer;
 use OTRS::OPR::Web::App::Session;
 use OTRS::OPR::Web::App::View qw(view);
 
@@ -57,7 +58,7 @@ sub base_url {
     
     my $uri = "http://$ENV{HTTP_HOST}/$ENV{SCRIPT_NAME}";
     
-    return $ENV{SCRIPT_NAME};
+    return $uri;
 }
 
 sub session {
@@ -161,6 +162,17 @@ sub config{
     }
     
     return $self->{_config};
+}
+
+sub mailer {
+    my ($self) = @_;
+    
+    unless( $self->{__mailer__} ){        
+        my $config = $self->config;
+        $self->{__mailer__} = OTRS::OPR::Web::App::Mailer->new($config);
+    }
+    
+    return $self->{__mailer__};
 }
 
 sub stash {

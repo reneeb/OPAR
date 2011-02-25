@@ -2,12 +2,13 @@ package OTRS::OPR::Web::App::Forms;
 
 use strict;
 use warnings;
+use Data::Validate::WithYAML;
 use Captcha::reCAPTCHA;
 use Digest::MD5 qw(md5_hex);
 
 use parent 'OTRS::OPR::Exporter::Aliased';
 
-our @EXPORT_OK = qw(check_formid get_formid validate_captcha validate_formid);
+our @EXPORT_OK = qw(check_formid get_formid validate_captcha validate_formid validate_fields);
 
 sub validate_formid {
     my ($self, $params) = @_;
