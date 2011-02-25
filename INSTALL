@@ -1,0 +1,16 @@
+INSTALLATION OF OPAR
+====================
+
+This document describes how the OPAR webportal is installed.
+
+    perl install.pl -home <HOME_DIR>
+
+where <HOME_DIR> is the directory OPAR should be installed.
+
+
+CRONJOB
+-------
+
+The cronjob is needed to analyze the uploaded packages. Without this analysis
+the packages are hidden for "guests".
+
