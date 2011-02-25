@@ -1,4 +1,12 @@
-﻿
+﻿/*
+		This file is NOT a pure CSS file, but a CSS file with LESS macros.
+		(see http://lesscss.org/ for details). It is possible to load
+		this file directly from a HTML file, but not recommended
+		(you have to add a JavaScript as well..), instead precompile this
+		file to a pure CSS version using "lessp.pl" on the commandline.
+		The Makefile in the same directory as this file does this for you :)
+*/
+
 @main-fontfamily: "Helvetica Neue", Helvetica, "Arial Unicode MS", Arial, sans-serif;
 
 body, h1, h2, h3, input, 
