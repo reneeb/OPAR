@@ -5,7 +5,7 @@ use OTRS::OPR::App::AttributeInformation;
 
 extends 'OTRS::OPR::DAO::Base';
 
-for my $attribute ( qw(session_id user_name user_password website mail active) ) {
+for my $attribute ( qw(session_id user_name user_password website mail active registered) ) {
     has $attribute => (
         metaclass    => 'OTRS::OPR::App::AttributeInformation',
         is_trackable => 1,
