@@ -260,7 +260,6 @@ sub confirm_password_change {
     # check token
     my $is_valid = $self->check_temp_passwd( \%params );
     if ( !$is_valid ) {
-        $self->template( 'blank' );
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
