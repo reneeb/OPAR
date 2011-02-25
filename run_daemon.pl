@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use lib qw(lib);
 
-use OPR::Backend::Daemon;
+use OTRS::OPR::Daemon;
 
-my $daemon = OPR::Backend::Daemon->new;
+my $daemon = OTRS::OPR::Daemon->new;
 $daemon->run;
