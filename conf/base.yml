@@ -19,7 +19,8 @@ templates:
   author: opar.tmpl
 logging: logging.web.conf
 formid:
-  expire: 200
+  expire: 300
+  passwd_expire: 1200
 time:
   deletion: 259200
 recaptcha:
@@ -35,11 +36,25 @@ mail:
   subjects:
     general: Mail from OPAR
     forgot_password: Forgot password
+    registration: Account for OPAR requested
   tag: [OPAR]
 password:
   salt: OPAR
 admin:
   startpage: menu
+errors:
+  captcha:
+    headline: Captcha not Correct!
+    message: Your captcha solution was wrong.
+  formid:
+    headline: Invalid FormID!
+    message: The form id expired, please try again.
+  input:
+    headline: Invalid Input!
+    message: One or more fields were not filled or not filled correctly.
+  username_exists:
+    headline: User already exists!
+    message: The username you have chosen is already in use.
 utils:
   perltidy:
     config: perltidyrc

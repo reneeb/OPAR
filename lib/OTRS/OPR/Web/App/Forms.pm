@@ -2,13 +2,44 @@ package OTRS::OPR::Web::App::Forms;
 
 use strict;
 use warnings;
-use Data::Validate::WithYAML;
 use Captcha::reCAPTCHA;
+use Data::Validate::WithYAML;
 use Digest::MD5 qw(md5_hex);
+use Path::Class;
 
 use parent 'OTRS::OPR::Exporter::Aliased';
 
 our @EXPORT_OK = qw(check_formid get_formid validate_captcha validate_formid validate_fields);
+
+sub validate_fields {
+    my ($self, $conf, $params) = @_;
+    
+    my $confdir    = $self->config->get( 'paths.conf' );
+    my $configfile = Path::Class::File->new( $confdir, $conf );
+    
+    my $validator  = Data::Validate::WithYAML->new( $configfile->stringify );
+    
+    my @fieldnames = $validator->fieldnames;
+    my %errors;
+        
+    for my $field ( @fieldnames ) {
+        my $valid = $validator->check( $field, $params->{$field} );
+        next if $valid;
+        
+        $errors{ 'ERROR_' . uc $field } = 'field_error';
+    }
+    
+    if ( %errors ) {
+        $self->notify({
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => $self->config->get( 'errors.input.headline' ),
+            ERROR_MESSAGE  => $self->config->get( 'errors.input.message' ),
+        });
+    }
+
+    return %errors;
+}
 
 sub validate_formid {
     my ($self, $params) = @_;
@@ -17,10 +48,10 @@ sub validate_formid {
     
     if ( !$success ) {
         $self->notify({
-            type    => 'error',
-            include => 'notifications/generic_error',
-            ERROR_HEADLINE => 'The form ID was invalid',
-            ERROR_MESSAGE  => 'The form ID was invalid',
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => $self->config->get( 'errors.formid.headline' ),
+            ERROR_MESSAGE  => $self->config->get( 'errors.formid.message' ),
         });
         
         return;
@@ -46,8 +77,8 @@ sub validate_captcha {
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
-            ERROR_HEADLINE => 'Captcha wrong!',
-            ERROR_MESSAGE  => 'Your solution of the captcha was wrong!',
+            ERROR_HEADLINE => $self->config->get( 'errors.captcha.headline' ),
+            ERROR_MESSAGE  => $self->config->get( 'errors.captcha.message' ),
         });
         
         return;

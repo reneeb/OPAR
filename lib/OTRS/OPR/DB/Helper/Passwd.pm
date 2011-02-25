@@ -5,6 +5,7 @@ use base 'OTRS::OPR::Exporter::Aliased';
 our @EXPORT_OK = qw(
     temp_passwd
     check_temp_passwd
+    delete_temp_passwd
 );
 
 sub temp_passwd {
@@ -26,16 +27,28 @@ sub temp_passwd {
 sub check_temp_passwd {
     my ($self,$params) = @_;
     
-    return if !($params->{user_id} and $params->{token});
+    return if !$params->{token};
     
-    my ($type) = $self->table( 'opr_temp_passwd' )->search($params)->all;
+    my ($type) = $self->table( 'opr_temp_passwd' )->search({
+        token => $params->{token},
+    })->all;
     
     return if !$type;
     
-    my $expire = $config->get( 'formid.passwd_expire' ) || 1200;
+    my $expire = $self->config->get( 'formid.passwd_expire' ) || 1200;
     
     return if time > $type->created + $expire;
-    return 1;
+    return $type->user_id;
+}
+
+sub delete_temp_passwd {
+    my ($self,$params) = @_;
+    
+    return if !$params->{token};
+    
+    my ($type) = $self->table( 'opr_temp_passwd' )->search({
+        token => $params->{token},
+    })->delete;
 }
 
 1;

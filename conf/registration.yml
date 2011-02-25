@@ -1,0 +1,8 @@
+---
+step1:
+  username:
+    regex: \A[A-Za-z]{3,}\z
+    type: required
+  email:
+    plugin: EMail
+    type: required

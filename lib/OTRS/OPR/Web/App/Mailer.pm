@@ -50,7 +50,6 @@ sub send_mail{
     
     if ( $mailer and !ref $mailer ) {
         $error = 1;
-        print STDERR "MAILER: $Mail::Sender::Error\n";
     }
     
     return if $error;

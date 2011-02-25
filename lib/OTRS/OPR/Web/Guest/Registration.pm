@@ -7,7 +7,7 @@ use parent qw(OTRS::OPR::Web::App);
 
 use Captcha::reCAPTCHA;
 use OTRS::OPR::DAO::User;
-use OTRS::OPR::DB::Helper::Passwd qw(temp_passwd);
+use OTRS::OPR::DB::Helper::Passwd qw(:all);
 use OTRS::OPR::Web::App::Forms qw(:all);
 
 sub setup {
@@ -38,14 +38,19 @@ sub setup {
 sub start {
     my ($self) = @_;
     
+    $self->logger->trace( 'Registration form' );
+    
     my $captcha = Captcha::reCAPTCHA->new;
     
     my $public_key = $self->config->get( 'recaptcha.public_key' );
     my $html       = $captcha->get_html( $public_key );
     
+    my $formid = $self->get_formid;
+    
     $self->template( 'index_registration' );
     $self->stash(
         CAPTCHA => $html,
+        FORMID  => $formid,
     );
 }
 
@@ -55,7 +60,7 @@ sub send {
     my %params = $self->query->Vars;
     
     # check captcha
-    my $success = $self->validate_captcha();
+    my $success = $self->validate_captcha( \%params );
     if ( !$success ) {
         return $self->start;
     }
@@ -67,17 +72,64 @@ sub send {
     }
     
     # validate user input
+    my %errors = $self->validate_fields( 'registration.yml', \%params );
+    if ( %errors ) {
+        return $self->start( %params, %errors );
+    }
+    
+    if ( $params{email} ne $params{emailcheck} ) {
+        $self->notify({
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => 'Mail addresses not identical',
+            ERROR_MESSAGE  => 'The mail address you submitted are not identical.',
+        });
+        return $self->start( %params );
+    }
     
     # create user
     my $user = OTRS::OPR::DAO::User->new(
-        _schema => $self->schema,
+        user_name => $params{username},
+        _schema   => $self->schema,
     );
     
+    # show error if username already exists
+    if ( !$user->not_in_db ) {
+        $self->notify({
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => $self->config->get( 'errors.username_exists.headline' ),
+            ERROR_MESSAGE  => $self->config->get( 'errors.username_exists.message' ),
+        });
+        return $self->start( %params, %errors );
+    }
+    
     # set attributes
+    $user->user_name( $params{username} );
+    $user->mail( $params{email} );
+    $user->registered( time );
     
-    # send mail to user with token to set password
+    # send mail to user with token to set password ({register => 1})
+    my $mail_sent = $self->_send_mail_to_user( $user, {register => 1} );
     
-    # show success message
+    $self->template( 'blank' );
+    
+    if ( $mail_sent ) {
+        $self->notify({
+            type             => 'success',
+            include          => 'notifications/generic_success',
+            SUCCESS_HEADLINE => 'Sent Mail!',
+            SUCCESS_MESSAGE  => 'We have sent an email to you with further instructions',
+        });
+    }
+    else {
+        $self->notify({
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => 'Cannot send mail!',
+            ERROR_MESSAGE  => 'Some problems with our mailsystem occured. Please try later again.',
+        });
+    }
 }
 
 sub forgot_password {
@@ -173,7 +225,7 @@ sub change_passwd {
     $self->stash(
         TOKEN   => $params{token},
         FORMID  => $formid,
-        CAPTCHA => $html,
+        #CAPTCHA => $html,
         %params,
     );
 }
@@ -183,16 +235,16 @@ sub confirm_password_change {
     
     my %params = $self->query->Vars;
     
+    # check formid
+    my $formid_ok = $self->validate_formid( \%params );
+    if ( !$formid_ok ) {
+        return $self->start;
+    }
+    
     # check userinput
     my %errors = $self->validate_fields( 'confirm_password_change.yml', \%params );
     if ( %errors ) {
-        $self->notify({
-            type           => 'error',
-            include        => 'notifications/generic_error',
-            ERROR_HEADLINE => 'Invalid Input!',
-            ERROR_MESSAGE  => 'One or more fields were not filled!',
-        });
-        return change_passwd( %params, %errors );
+        return $self->change_passwd( %params, %errors );
     }
     
     if ( $params{password} ne $params{password_check} ) {
@@ -202,7 +254,7 @@ sub confirm_password_change {
             ERROR_HEADLINE => 'New Password needed!',
             ERROR_MESSAGE  => 'The given password and the password check were not identical!',
         });
-        return change_passwd( %params, 'ERROR_PASSWORD' => 'error' );
+        return $self->change_passwd( %params, 'ERROR_PASSWORD' => 'error' );
     }
     
     # check token
@@ -215,18 +267,21 @@ sub confirm_password_change {
             ERROR_HEADLINE => 'Invalid Token!',
             ERROR_MESSAGE  => 'The token is no longer valid or it was given to some other user!',
         });
-        return;
+        return $self->change_passwd( %params, 'ERROR_TOKEN' => 'error' );;
     }
     
     # change password and set active = 1
     my $user = OTRS::OPR::DAO::User->new(
-        user_name => $params{username},
-        _schema   => $self->_schema,
+        user_id => $is_valid,,
+        _schema => $self->schema,
     );
     
     my $crypted_passwd = crypt $params{password}, $self->config->get( 'password.salt' );
-    $user->user_pass( $crypted_passwd );
+    $user->user_password( $crypted_passwd );
     $user->active( 1 );
+    $user->add_group( 'author' => 1 );
+    
+    $self->delete_temp_passwd( \%params );
     
     $self->template( 'blank' );
     $self->notify({
@@ -267,7 +322,7 @@ sub _send_mail_to_user {
     
     my $subject = 
         $config->get( 'mail.tag' ) . ' ' . 
-        $config->get( 'mail.subjects.forgot_password' );
+        $config->get( 'mail.subjects.' . $template_name );
     
     my $success = $mailer->send_mail(
         to      => $user->mail,

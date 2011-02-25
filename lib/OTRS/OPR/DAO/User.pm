@@ -91,6 +91,7 @@ sub DEMOLISH {
     my ($self) = @_;
     
     return if !$self->_has_changed;
+    return if !($self->user_name and $self->mail);
         
     my @changed_attrs = $self->changed_attrs;
     my $user          = $self->user_object;

@@ -6,6 +6,7 @@
 			<section id="register">		
 				<div>
 					<form action="<%= __SCRIPT__ %>/registration/send" method="post">
+						<input type="hidden" name="formid" value="<%= FORMID %>" />
 						<dl>
 							<dt>Name</dt>
 							<dd>

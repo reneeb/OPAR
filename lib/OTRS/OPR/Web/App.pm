@@ -56,7 +56,7 @@ sub notify {
 sub base_url {
     my ($self) = @_;
     
-    my $uri = "http://$ENV{HTTP_HOST}/$ENV{SCRIPT_NAME}";
+    my $uri = "http://$ENV{HTTP_HOST}$ENV{SCRIPT_NAME}";
     
     return $uri;
 }
