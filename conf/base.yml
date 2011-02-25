@@ -20,7 +20,7 @@ templates:
 logging: logging.web.conf
 formid:
   expire: 300
-  passwd_expire: 1200
+  passwd_expire: 86400
 time:
   deletion: 259200
 recaptcha:
