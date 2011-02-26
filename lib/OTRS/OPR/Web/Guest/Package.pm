@@ -25,11 +25,12 @@ sub setup {
     $self->mode_param( 'rm' );
     $self->run_modes(
         AUTOLOAD      => \&start,
-        comment       => \&feedback,
-        send_comment  => \&send_feedback,
+        comment       => \&comment,
+        send_comment  => \&send_comment,
         dist          => \&dist,
         author        => \&author,
         oq            => \&oq,
+        download      => \&download
     );
 }
 
@@ -136,7 +137,7 @@ sub dist {
     );
 }
 
-sub download : Stream {
+sub download : Stream('text/xml') {
     my ($self) = @_;
     
     my $package_id = $self->param( 'id' );
@@ -145,15 +146,33 @@ sub download : Stream {
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
-            ERROR_HEADLINE => 'Package Not Found',
-            ERROR_MESSAGE  => $self->config->get( 'error.package_not_found' ),
+            ERROR_HEADLINE => $self->config->get( 'errors.package_not_found.message' ),
+            ERROR_MESSAGE  => $self->config->get( 'errors.package_not_found.message' ),
         });
         
         $self->template( 'blank' );
         return;
     }
     
-    $self->stream();
+    my $dao = OTRS::OPR::DAO::Package->new(
+        package_id => $package_id,
+        _schema    => $self->schema,
+    );
+    
+    # if package can't be found show error message
+    if ( $dao->not_in_db or !$dao->is_in_index ) {
+        $self->notify({
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => $self->config->get( 'errors.package_not_found.message' ),
+            ERROR_MESSAGE  => $self->config->get( 'errors.package_not_found.message' ),
+        });
+        
+        $self->template( 'blank' );
+        return;
+    }
+    
+    return [ $dao->path ];
 }
 
 sub author {

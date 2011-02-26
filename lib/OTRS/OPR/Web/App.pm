@@ -90,6 +90,16 @@ sub json_method {
     return $CGI::Application::__json{$code};
 }
 
+sub is_stream {
+    my ($self) = @_;
+    
+    my $runmode  = $self->get_current_runmode;
+    my %runmodes = $self->run_modes;
+    
+    my $code = $runmodes{$runmode};
+    return $CGI::Application::__streams{$code};
+}
+
 sub user {
     my ($self,$session) = @_;
     
@@ -141,6 +151,28 @@ sub cgiapp_postrun{
         
         # create json output
         $$outref = $json->encode( $$outref );
+    }
+    elsif ( $self->is_stream and $$outref ) {
+        my $type                 = $self->is_stream;
+        my $arrayref             = $$outref;
+        my ($file_to_read,$name) = @{$arrayref};
+        
+        $name ||= basename( $file_to_read );
+        
+        $self->header_type( 'none' );
+        print $self->query->header(
+            -type                => $type,
+            -Content_length      => -s $file_to_read,
+            -Content_disposition => 'attachment; filename="' . $name . '"',
+        );
+        
+        if ( open my $fh, '<', $file_to_read ) {
+            binmode $fh;
+            $$outref = '';
+            while ( my $line = <$fh> ) {
+                $$outref .= $line;
+            }
+        }
     }
     elsif (
         $self->get_current_runmode ne 'dummy_redirect' &&

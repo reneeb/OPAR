@@ -52,6 +52,9 @@ errors:
   input:
     headline: Invalid Input!
     message: One or more fields were not filled or not filled correctly.
+  package_not_found:
+    headline: Package not Found!
+    message: The package you have requested cannot be found.
   username_exists:
     headline: User already exists!
     message: The username you have chosen is already in use.
