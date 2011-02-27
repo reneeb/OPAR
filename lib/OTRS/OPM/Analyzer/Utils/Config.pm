@@ -1,4 +1,4 @@
-package OPR::Backend::OPMAnalyzer::Utils::Config;
+package OTRS::OPM::Analyzer::Utils::Config;
 
 use strict;
 use warnings;
@@ -20,7 +20,7 @@ sub new{
     
     $file ||= $default_file;
     $self->load( $file ) if defined $file;
-    $self;
+    return $self;
 }
 
 sub load{

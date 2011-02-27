@@ -1,4 +1,4 @@
-package OPR::Backend::OPMAnalyzer::Utils::OPMFile;
+package OTRS::OPM::Analyzer::Utils::OPMFile;
 
 use Moose;
 use Moose::Util::TypeConstraints;
