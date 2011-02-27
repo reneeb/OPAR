@@ -131,7 +131,7 @@ sub _analyzer_conf {
     
     unless ( $self->{__analyzer_config__} ) {
         $self->{__analyzer_config__} = Path::Class::File->new(
-            $conf_dir,
+            $self->conf_dir,
             'base.yml',
         );
     }

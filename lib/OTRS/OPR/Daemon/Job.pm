@@ -227,7 +227,7 @@ sub delete_comment {
     my ($self,$job) = @_;
     
     $self->table( 'opr_comments' )->search({
-        comment_id => $job->package_id;
+        comment_id => $job->package_id,
     })->delete;
     
     return 1;
