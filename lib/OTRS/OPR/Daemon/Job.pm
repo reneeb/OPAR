@@ -99,7 +99,7 @@ sub analyze_package {
     # double check that there is no data about that package in the database
     $self->_save_analysis_data( $package, $result );
     
-    # remove job from queue
+    return 1;
 }
 
 sub _save_basic_info {
@@ -119,8 +119,7 @@ sub _save_basic_info {
     $package->website( $opm->url );
     $logger->trace( "set website for $name" );
     
-    $package->package_name( $name );
-    $logger->trace( "set packagename for $name" );
+    $package->is_in_index( 1 );
     
     # save the updates
     $package->update;
@@ -141,6 +140,8 @@ sub _save_basic_info {
         
         $logger->trace( 'added dependency ' . $dep->{name} . ' for package ' . $name );
     }
+    
+    return 1;
 }
 
 sub _save_analysis_data {
@@ -197,6 +198,8 @@ sub _save_analysis_data {
             $logger->info( "set oq result for module $module and package $package_id" );
         }
     }
+    
+    return 1;
 }
 
 sub delete_package {
@@ -217,7 +220,13 @@ sub delete_package {
     # this includes authorship, main info, job queue, dependencies, oq values
     $package->opr_oq_result->delete;
     $package->opr_package_dependencies->delete;
-    $package->opr_package_author->delete;
+    
+    # if this is the last package of the given name delete the authors, too.
+    my @packages = $package->opr_package_names->opr_package;
+    if ( !@packages ) {
+        $package->opr_package_author->delete;
+    }
+    
     $package->delete;
     
     return 1;
