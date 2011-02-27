@@ -6,3 +6,12 @@ OPAR
  * Reference: INSTALL
 
 How does it work?
+
+Analyzer
+--------
+
+The .opm files are analyzed by a cronjob. This cronjob uses Perl code that is
+maintained seperately. If you find any bugs in the analyzer code, please report
+them upstream at
+
+  https://github.com/reneeb/OTRS-OPM-Analyzer/issues
