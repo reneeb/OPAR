@@ -1,10 +1,10 @@
 ---
 db:
-  user: opr
-  host: localhost
-  name: opr
-  passwd: opr_db
   type: mysql
+  host: localhost
+  name: opar
+  user: dbu_1
+  passwd: dbp_opar
 analyzer:
   max_time: 86400
 fork:
