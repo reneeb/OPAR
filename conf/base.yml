@@ -59,6 +59,7 @@ errors:
     headline: User already exists!
     message: The username you have chosen is already in use.
 utils:
+  config: /home/opar/opar_sources/conf
   perltidy:
     config: perltidyrc
   perlcritic:
