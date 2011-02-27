@@ -1,7 +1,6 @@
 package OTRS::OPM::Analyzer::Role::Documentation;
 
 use Moose::Role;
-use PPI;
 
 sub analyze_unittests {
     my ($self,$opm) = @_;
@@ -10,7 +9,7 @@ sub analyze_unittests {
     
     FILE:
     for my $file ( $opm->files ) {
-        if ( $file->{filename} =~ m{ /doc/ .*?\.t \z } ) {
+        if ( $file->{filename} =~ m{ /doc/ .*?\.(?:xml|pod) \z } ) {
             $has_documentation = 1;
             last FILE;
         }

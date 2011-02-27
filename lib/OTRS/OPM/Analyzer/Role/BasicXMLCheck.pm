@@ -1,7 +1,7 @@
 package OTRS::OPM::Analyzer::Role::BasicXMLCheck;
 
 use Moose::Role;
-use HTML::Lint;
+use XML::LibXML;
 
 sub analyze_basicxmlcheck {
     my ( $self, $document ) = @_;
