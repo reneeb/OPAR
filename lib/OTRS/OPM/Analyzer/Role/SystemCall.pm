@@ -20,7 +20,7 @@ sub analyze_systemcall {
     my $qx = $ppi->find( 'PPI::Token::QuoteLike::Command' );
     push @system_calls, map{ $_->content }@{$qx || []};
     
-    my $words = $ppi->find( 'PPI::Token::Word' );
+    my $words = $ppi->find( 'PPI::Token::Word' ) || [];
     
     my %dispatcher = (
         system => \&_system,

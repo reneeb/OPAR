@@ -28,8 +28,11 @@ sub analyze_perltidy {
     close $fh_temp;
     
     my $default    = do{ local $/; <DATA> };
+    my $conf_path  = $self->config->get( 'utils.config' );
     my $perltidyrc = $self->config->get( 'utils.perltidy.config' );
-    my %option     = $perltidyrc ? ( perltidyrc => $perltidyrc ) : ( argv => $default );
+    
+    my %option     = $perltidyrc ? ( perltidyrc => $conf_path . '/' . $perltidyrc )
+                                 : ( argv => $default );
     
     # run Perl::Tidy
     Perl::Tidy::perltidy(

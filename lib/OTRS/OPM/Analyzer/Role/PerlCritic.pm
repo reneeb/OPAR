@@ -22,9 +22,10 @@ sub analyze_perlcritic {
     print $fh $document->{content};
     close $fh;
     
+    my $conf_path    = $self->config->get( 'utils.config' );
     my $perlcriticrc = $self->config->get( 'utils.perlcritic.config' );
     my %options;
-    $options{-profile} = $perlcriticrc if $perlcriticrc;
+    $options{-profile} = $conf_path . '/' . $perlcriticrc if $perlcriticrc;
     
     my $critic       = Perl::Critic->new(
         -theme    => 'otrs',
