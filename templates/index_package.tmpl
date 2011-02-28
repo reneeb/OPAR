@@ -16,7 +16,7 @@
 
 						<dt>Links</dt>
 						<dd>
-							<a href="<%= __SCRIPT__ %>/package/download/<%= PACKAGE_ID %>">Download</a>
+							<a href="<%= __SCRIPT__ %>/package/download/<%= PACKAGE_ID %>" class="download">Download</a>
 							<%IF WEBSITE %><a href="<%= WEBSITE %>" class="web">Website</a><%/IF %>
 							<%IF BUGTRACKER %><a href="<%= BUGTRACKER %>" class="bugs">Bugtracker</a><%/IF %>
 						</dd>
@@ -48,6 +48,10 @@
 				</div>
 			</section>
 			
+			<section>
+				<p class="right"><a href="<%= __SCRIPT__ %>/package/comment/<%= NAME %>-<%= VERSION %>" class="button">Rate/comment this package</a></p>
+			</section>
+
 			<%IF HAS_COMMENTS %>
 			<section>
 				<h2>Comments</h2>

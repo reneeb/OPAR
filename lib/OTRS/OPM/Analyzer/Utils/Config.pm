@@ -15,7 +15,7 @@ sub new{
     bless $self,$class;
 
     my $default_dir  = File::Spec->rel2abs( File::Basename::dirname( $0 ) );
-    my $default_file = File::Spec->catfile( $default_dir,  'conf', 'base.yml' );
+    my $default_file = File::Spec->catfile( $default_dir,  'conf', 'base_tom.yml' );
        $default_file = File::Spec->rel2abs( $default_file );
     
     $file ||= $default_file;

@@ -42,16 +42,19 @@ sub start {
 
 sub comment {
     my ($self) = @_;
-    
+        
+    my $package_full_name = $self->param( 'id' );
     my $form_id = $self->get_formid;
     
     $self->template( 'index_comment_form' );
     $self->stash(
         FORMID => $form_id,
+        PACKAGE_NAME => @{[split /\-/, $package_full_name]}[0],
+        PACKAGE_FULL_NAME => $package_full_name,
     );
 }
 
-sub send_comment {
+sub send_comment {    
     my ($self) = @_;
     
     my %params = $self->query->Vars();
@@ -64,6 +67,8 @@ sub send_comment {
     $self->notify({
         type    => $notification_type,
         include => 'notifications/comment_' . $notification_type,
+        SUCCESS_HEADLINE => 'Your comment was saved',
+        SUCCESS_MESSAGE  => 'The comment was saved for review and will be published soon.',
     });
     
     my %template_params;
