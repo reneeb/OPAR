@@ -1,0 +1,53 @@
+						
+			<section>
+				<h1>Comment on <i><%= PACKAGE_NAME %></i></h1>
+			</section>
+
+			<section>		
+				<div>
+					<form action="<%= __SCRIPT__ %>/package/send_comment/<%= PACKAGE_FULL_NAME %>" method="post">
+						<dl>
+							<dt>Name</dt>
+							<dd>
+								<input type="text" name="username"/>
+								<a href="#" onclick="OPAR.Global.ShowHelp('comment.username');" class="help">?</a><br />
+							</dd>
+
+							<dt>Rating</dt>
+							<dd>
+								<input type="radio" name="rating" value="1"/><span class="score-1"></span><br/>
+								<input type="radio" name="rating" value="2"/><span class="score-2"></span><br/>
+								<input type="radio" name="rating" value="3"/><span class="score-3"></span><br/>
+								<input type="radio" name="rating" value="4"/><span class="score-4"></span><br/>
+								<input type="radio" name="rating" value="5"/><span class="score-5"></span><br/>
+							
+								<div>
+									<a href="#" onclick="OPAR.Global.ShowHelp('comment.rating');" class="help">?</a>
+								</div>
+							</dd>
+
+							<dt>Headline</dt>
+							<dd>
+								<input type="text" name="headline"/>
+								<a href="#" onclick="OPAR.Global.ShowHelp('comment.headline');" class="help">?</a><br />
+							</dd>
+							
+							<dt>Comment</dt>
+							<dd>
+								<textarea name="comments"></textarea>
+								<a href="#" onclick="OPAR.Global.ShowHelp('comment.comments');" class="help">?</a><br />
+							</dd>
+							
+							<!--
+							<dt class="empty">&nbsp;</dt>
+							<dd><%= CAPTCHA ESCAPE=0 %></dd>
+							-->
+	
+							<dt class="empty">&nbsp;</dt>
+							<dd class="right">
+								<input type="submit" value="Send"/>
+							</dd>
+						</dl>
+					</form>
+				</div>
+			</section>
