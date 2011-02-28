@@ -7,6 +7,7 @@ use parent qw(OTRS::OPR::Web::App);
 
 use File::Spec;
 use OTRS::OPR::DAO::Package;
+use OTRS::OPR::DAO::Comment;
 use OTRS::OPR::DB::Helper::Package;
 use OTRS::OPR::Web::App::Forms qw(check_formid get_formid);
 
@@ -63,6 +64,19 @@ sub send_comment {
     
     $errors{formid} = $self->check_formid( $params{formid} );
     
+    # save data object to db
+    my $comment = OTRS::OPR::DAO::Comment->new(
+					_schema => $self->schema,
+		);
+		$comment->username( '' );
+		$comment->packagename( '' );
+		$comment->packageversion( '' );
+		$comment->comments( $params{'comments'} || '' );
+		$comment->rating( $params{'rating'} || 0 );
+    $comment->deletion_flag( 0 );
+    $comment->headline( $params{'headline'} || '' );
+    $comment->published( 0 );
+
     $notification_type = 'error' if keys %errors;
     $self->notify({
         type    => $notification_type,
