@@ -12,6 +12,7 @@ our @EXPORT_OK = qw(
     user_is_maintainer
     package_exists
     version_list
+    package_to_hash
 );
 
 sub package_exists {
@@ -83,7 +84,7 @@ sub page {
     for my $package ( @packages ) {
         
         # create the infos for the template
-        push @packages_for_template, _package_to_hash( $self, $package, $params );
+        push @packages_for_template, package_to_hash( $self, $package, $params );
     }
     
     return ( \@packages_for_template, $pages );
@@ -122,7 +123,7 @@ sub version_list {
     my @packages_for_template;
     for my $package ( @packages ) {
         
-        my $info = _package_to_hash( $self, $package, $params );
+        my $info = package_to_hash( $self, $package, $params );
         
         if ( $package->deletion_flag ) {
             $info->{DELETION_PRE}  = 'Un';
@@ -212,7 +213,7 @@ sub user_is_maintainer {
     return;
 }
 
-sub _package_to_hash {
+sub package_to_hash {
     my ($self,$package,$params) = @_;
         
     # show just a short excerpt of the text if it is too long
@@ -238,6 +239,7 @@ sub _package_to_hash {
         VIRTUAL_PATH => $package->virtual_path,
         WEBSITE      => $package->website,
         BUGTRACKER   => $package->bugtracker,
+        FRAMEWORK    => $package->framework,
     };
     
     return $info;

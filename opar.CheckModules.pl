@@ -10,9 +10,19 @@ no warnings 'prototype';
 
 my $dir      = dirname __FILE__;
 my $ini_file = $dir . '/dist.ini';
+
+my $section_seen = 0;
+
 open my $fh, '<', $ini_file or die $!;
 while ( my $line = <$fh> ) {
     chomp $line;
+    
+    next if $line ne '[Prereqs]' and !$section_seen;
+    
+    if ( $line eq '[Prereqs]' ) {
+        $section_seen++;
+        next;
+    }
 
     my ($module,$version) = split /\s*=\s*/, $line;
 

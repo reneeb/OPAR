@@ -46,7 +46,9 @@ sub view{
     $tmpl->param(
         BODY       => $tmpl_path . $template,
         __SCRIPT__ => $self->base_url,
-        __INDEX__  => $self->index_url,
+        __INDEX__  => $self->script_url( 'index' ),
+        __AUTHOR__ => $self->script_url( 'author' ),
+        __ADMIN__  => $self->script_url( 'admin' ),
         %{$self->stash},
         %notifications,
     );

@@ -10,7 +10,7 @@
 
 @main-fontfamily: "Helvetica Neue", Helvetica, "Arial Unicode MS", Arial, sans-serif;
 
-body, h1, h2, h3, input, 
+body, h1, h2, h3, input, select, 
 textarea, a, div, p, span, form, 
 header, section, footer {
 	font-weight: 300;
@@ -263,15 +263,18 @@ section.menu {
 		margin: 0;
 		padding: 0;
 		list-style: empty;
+		height: 40px;
+		display: block;
 	}
 		section.menu ul li {
 			margin: 0;
 			padding: 0;
 			list-style: empty;
-			display: inline-block;
+			display: block;
+			float: left;
 		}
 			section.menu ul li a {
-				padding: 0.2em 0.3em 0.2em;
+				padding: 0.4em 0.6em;
 				margin: 0;
 				color: #333;
 				border: solid 1px #333;
@@ -488,35 +491,43 @@ section#register {
 		}
 		section dl dd {
 			position: relative;
-			left: 15%;
+			left: 25%;
 			top: -1.2em;
-			width: 80%;
+			width: 70%;
 			margin-bottom: -0.5em;
 		}
 		section dl dd:last-child {
 			margin-bottom: -1.5em;
 		}
-		
+
+	section form dl {
+		padding-top: 0.5em;
+	}	
 		section form dl dt {
 			border-top: dotted 1px #ccc;
-			padding-top: 1.6em;
+			padding-top: 0.6em;
 			font-size: 100%;
 		}
 		section form dl dt:first-child {
 			border-top: none;
-			padding-top: 1em;
+			padding-top: 0em;
 		}
 		section form dl dd {
 			top: -1.4em;
-			margin-bottom: 0em;
+			margin-bottom: -1em;
 		}
 			section form dl dd a {
 				font-size: 80%;
 			}
-			section form dl dd div {
+			section form dl dd > div {
 				position: absolute;
 				top: 0;
 				left: 81%;
+			}
+			section form dl dd > div#recaptcha_widget_div {
+				position: static;
+				left: 0;
+				top: 0;
 			}
 
 		section ul {
@@ -568,10 +579,16 @@ footer {
 
 section form input[type="text"],
 section form input[type="password"],
-section form textarea {
+section form textarea,
+section form select {
 	width: 80%;
 	margin-bottom: 4pt;
 	padding: 0.1em 0.2em;
+	font-size: inherit;
+}
+section form select {
+	font-size: 90%
+	padding: 0.2em 0.3em;
 }
 section form textarea {
 	border: solid 1px #ccc;

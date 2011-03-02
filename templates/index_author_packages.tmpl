@@ -1,0 +1,34 @@
+<section>
+    <h1><%= USER %>s' Packages</h1>
+</section>
+
+<section class="entry">
+    <dl>
+        <dt>Username</dt>
+        <dd><%= USER %></dd>
+        
+        <dt>Website</dt>
+        <dd><%= WEBSITE %></dd>
+    </dl>
+</section>
+
+<section>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Version</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+<%LOOP PACKAGES %>
+        <tr>
+            <td><a href="<%= __SCRIPT__ %>/package/<%= VIRTUAL_PATH %>"><%= NAME %></a></td>
+            <td><%= VERSION %></td>
+            <td><%= DATE %></td>
+        </tr>
+<%/LOOP %>
+    </tbody>
+</table>
+</section>

@@ -1,15 +1,29 @@
 <section class="menu">
 	<ul>
 		<li><a href="<%= __SCRIPT__ %>/authors">List of Authors</a></li>
-		<li>&nbsp;</li>
 		<li><a href="<%= __SCRIPT__ %>/registration">Register</a></li>
 	</ul>
+	<br/>
+	<h1>Search for OTRS packages</h1>
 </section>
 
-<section>
-  	Search for OTRS packages
-	<form action="<%= __SCRIPT %>/search" method="post">
-		<input type="text" id="query" name="search_term" />
-		<input type="submit" value="Search"/>
-	</form>
+<section>		
+	<div>
+		<form action="<%= __SCRIPT__ %>/search" method="post">
+	    <fieldset>
+				<dl>
+					<dt>Keywords</dt>
+					<dd>
+						<input type="text" id="query" name="search_term" />
+					</dd>
+	
+					<dt class="empty">&nbsp;</dt>
+					<dd class="right">
+						<input type="submit" value="Search"/>
+					</dd>
+				</dl>
+			</fieldset>
+		</form>
+	</div>
 </section>
+
