@@ -5,7 +5,9 @@ use warnings;
 
 use parent qw(OTRS::OPR::Web::App);
 
+use Data::Tabulate;
 use File::Spec;
+use OTRS::OPR::DB::Helper::Author  { list => 'author_list' };
 use OTRS::OPR::DB::Helper::Package qw(page);
 use OTRS::OPR::Web::App::Forms     qw(check_formid get_formid);
 use OTRS::OPR::Web::Utils          qw(prepare_select page_list);
@@ -31,6 +33,7 @@ sub setup {
         static        => \&static,
         recent        => \&recent,
         search        => \&search,
+        authors       => \&authors,
     );
 }
 
@@ -38,6 +41,31 @@ sub start {
     my ($self) = @_;
     
     $self->template( 'index_home' );
+}
+
+sub authors {
+    my ($self) = @_;
+    
+    my $short   = $self->param( 'short' )   || undef;
+    my $initial = $self->param( 'initial' ) || undef;
+    
+    my @authors   = $self->author_list( initial => $initial, short => $short );
+    my $tabulator = Data::Tabulate->new;
+    
+    $tabulator->max_columns( 6 );
+    $tabulator->min_columns( 3 );
+    
+    @authors = map{ { NAME => $_, __SCRIPT__ => $self->base_url, LISTURL => $short, INITIAL => $initial } }@authors;
+    @authors = $tabulator->tabulate( @authors );
+    @authors = map{ { INNER => $_ } }@authors;
+    
+    use Data::Dumper;
+    print STDERR Dumper \@authors;
+    
+    $self->template( 'index_authors' );
+    $self->stash(
+        AUTHORS => \@authors,
+    );
 }
 
 sub feedback {

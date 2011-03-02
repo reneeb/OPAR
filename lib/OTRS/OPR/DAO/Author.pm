@@ -41,10 +41,29 @@ has comaintainer => (
 );
 
 sub packages {
+    my ($self, %params) = @_;
+    
+    my ($object) = $self->user_object;
+    
+    return if !$object;
+    
+    my @packages = $object->opr_package;
+    
+    if ( $params{is_in_index} ) {
+        @packages = grep{ $_->is_in_index }@packages;
+    }
+    
+    return @packages;
+};
+
+sub to_hash {
     my ($self) = @_;
     
-    
-};
+    my %info = (
+        USER    => $self->user_name || '',
+        WEBSITE => $self->website   || '',
+    );
+}
 
 sub BUILD {
     my ($self) = @_;

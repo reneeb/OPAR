@@ -6,10 +6,12 @@ use warnings;
 use parent qw(OTRS::OPR::Web::App);
 
 use File::Spec;
+use OTRS::OPR::DAO::Author;
 use OTRS::OPR::DAO::Package;
 use OTRS::OPR::DAO::Comment;
-use OTRS::OPR::DB::Helper::Package;
-use OTRS::OPR::Web::App::Forms qw(:all);
+use OTRS::OPR::DB::Helper::Author  qw(id_by_uppercase);
+use OTRS::OPR::DB::Helper::Package qw(:all);
+use OTRS::OPR::Web::App::Forms     qw(:all);
 
 sub setup {
     my ($self) = @_;
@@ -154,7 +156,7 @@ sub dist {
     );
     
     # if package can't be found show error message
-    if ( $dao->not_in_db ) {
+    if ( $dao->not_in_db || !$dao->is_in_index ) {
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
@@ -184,7 +186,7 @@ sub download : Stream('text/xml') {
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
-            ERROR_HEADLINE => $self->config->get( 'errors.package_not_found.message' ),
+            ERROR_HEADLINE => $self->config->get( 'errors.package_not_found.headline' ),
             ERROR_MESSAGE  => $self->config->get( 'errors.package_not_found.message' ),
         });
         
@@ -202,7 +204,7 @@ sub download : Stream('text/xml') {
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
-            ERROR_HEADLINE => $self->config->get( 'errors.package_not_found.message' ),
+            ERROR_HEADLINE => $self->config->get( 'errors.package_not_found.headline' ),
             ERROR_MESSAGE  => $self->config->get( 'errors.package_not_found.message' ),
         });
         
@@ -214,7 +216,48 @@ sub download : Stream('text/xml') {
 }
 
 sub author {
+    my ($self) = @_;
     
+    my ($name) = $self->param( 'id' );
+    
+    if ( !$name ) {
+        $self->template( 'blank' );
+        $self->notify({
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => $self->config->get( 'errors.author_not_found.headline' ),
+            ERROR_MESSAGE  => $self->config->get( 'errors.author_not_found.message' ),
+        });
+        return;
+    }
+    
+    my $id = $self->id_by_uppercase( $name );
+    if ( !$id ) {
+        $self->template( 'blank' );
+        $self->notify({
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => $self->config->get( 'errors.author_not_found.headline' ),
+            ERROR_MESSAGE  => $self->config->get( 'errors.author_not_found.message' ),
+        });
+        return;
+    }
+    
+    my $dao = OTRS::OPR::DAO::Author->new(
+        user_id => $id,
+        _schema => $self->schema,
+    );
+    
+    my @packages = $dao->packages( is_in_index => 1 );
+    my @for_tmpl = map{ $self->package_to_hash( $_ ) }@packages;
+    
+    my %info = $dao->to_hash;
+    
+    $self->template( 'index_author_packages' );
+    $self->stash(
+        %info,
+        PACKAGES => \@for_tmpl,
+    );
 }
 
 sub ok {

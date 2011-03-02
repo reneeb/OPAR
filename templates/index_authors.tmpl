@@ -1,0 +1,9 @@
+<table>
+<%LOOP AUTHORS %>
+    <tr>
+    <%LOOP INNER %>
+        <td><a href="<%= __SCRIPT__ %>/<%UNLESS LISTURL %>authors<%IF INITIAL %>/<%= INITIAL %><%/IF %><%ELSE %>package/author<%/UNLESS %>/<%= NAME %>"><%= NAME %></a></td>
+    <%/LOOP %>
+    </tr>
+<%/LOOP %>
+</table>
