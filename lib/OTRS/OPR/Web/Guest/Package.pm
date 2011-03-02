@@ -9,7 +9,7 @@ use File::Spec;
 use OTRS::OPR::DAO::Package;
 use OTRS::OPR::DAO::Comment;
 use OTRS::OPR::DB::Helper::Package;
-use OTRS::OPR::Web::App::Forms qw(check_formid get_formid);
+use OTRS::OPR::Web::App::Forms qw(:all);
 
 sub setup {
     my ($self) = @_;
@@ -44,26 +44,44 @@ sub start {
 sub comment {
     my ($self) = @_;
         
+		my $captcha = Captcha::reCAPTCHA->new;
+	 
+		my $public_key        = $self->config->get( 'recaptcha.public_key' );
+		my $html              = $captcha->get_html( $public_key );
     my $package_full_name = $self->param( 'id' );
-    my $form_id = $self->get_formid;
-    
+
+    my $form_id = $self->get_formid;    
     $self->template( 'index_comment_form' );
     $self->stash(
         FORMID => $form_id,
         PACKAGE_NAME => @{[split /\-/, $package_full_name]}[0],
         PACKAGE_FULL_NAME => $package_full_name,
+				CAPTCHA => $html,
     );
 }
 
 sub send_comment {    
-    my ($self) = @_;
+		my ($self) = @_;
     
     my %params = $self->query->Vars();
     my %errors;
     my $notification_type = 'success';
     
-    $errors{formid} = $self->check_formid( $params{formid} );
-    
+		my %params = $self->query->Vars;
+		my %uppercase = map { uc $_ => $params{$_} }keys %params;
+				 
+		# check formid
+		my $formid_ok = $self->validate_formid( \%params );
+		if ( !$formid_ok ) {
+				#return $self->forgot_password( %uppercase );
+		}
+	 
+		# check captcha
+		my $success = $self->validate_captcha( \%params );
+		if ( !$success ) {
+				#return $self->forgot_password( %uppercase );
+		}
+
     # save data object to db
     my $comment = OTRS::OPR::DAO::Comment->new(
         _schema => $self->schema,

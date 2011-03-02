@@ -6,6 +6,7 @@
 			<section>		
 				<div>
 					<form action="<%= __SCRIPT__ %>/package/send_comment/<%= PACKAGE_FULL_NAME %>" method="post">
+						<input type="hidden" name="formid" value="<%= FORMID %>" />
 						<dl>
 							<dt>Name</dt>
 							<dd>
@@ -38,10 +39,8 @@
 								<a href="#" onclick="OPAR.Global.ShowHelp('comment.comments');" class="help">?</a><br />
 							</dd>
 							
-							<!--
 							<dt class="empty">&nbsp;</dt>
 							<dd><%= CAPTCHA ESCAPE=0 %></dd>
-							-->
 	
 							<dt class="empty">&nbsp;</dt>
 							<dd class="right">

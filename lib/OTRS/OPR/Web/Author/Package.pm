@@ -11,9 +11,10 @@ use Path::Class;
 
 use OTRS::OPR::DAO::Package;
 use OTRS::OPR::DAO::Author;
+use OTRS::OPR::DAO::Maintainer;
 use OTRS::OPR::DB::Helper::Job     qw(create_job find_job);
 use OTRS::OPR::DB::Helper::Package (qw(page user_is_maintainer package_exists), { version_list => 'versions' } );
-use OTRS::OPR::Web::App::Forms     qw(check_formid get_formid);
+use OTRS::OPR::Web::App::Forms     qw(:all);
 use OTRS::OPR::Web::App::Prerun    qw(cgiapp_prerun);
 use OTRS::OPR::Web::Utils          qw(prepare_select page_list time_to_date);
 
@@ -38,6 +39,7 @@ sub setup {
         delete       => \&delete_package,
         undelete     => \&undelete_package,
         maintainer   => \&maintainer,
+        edit_maintainer => \&edit_maintainer,
         versions     => \&version_list,
         show         => \&show,
     );
@@ -201,14 +203,81 @@ sub do_upload : Permission( 'author' ) {
     });
 }
 
+sub edit_maintainer : Permission( 'author' ) {
+	my ($self) = @_;
+	my %params = $self->query->Vars;
+ 
+	# check formid
+	my $formid_ok = $self->validate_formid( \%params );
+	if ( !$formid_ok ) {
+			#return $self->forgot_password( %uppercase );
+	}
+	
+	my ($package_name, $package_version) = split /\-/, $self->param( 'id' );    
+	$package_name = $self->schema->resultset('opr_package_names')->find({ package_name => $package_name });	
+	my $name_id = $package_name->get_column("name_id");
+
+	if ($params{'add'}) {
+		my $maintainer = OTRS::OPR::DAO::Maintainer->new(
+			_schema => $self->schema,
+		);
+		$maintainer->user_id( $params{'add'} );
+		$maintainer->name_id( $package_name->get_column('name_id') );
+		$maintainer->is_main_author( 0 );
+	}
+
+	if ($params{'remove'}) {
+		my $maintainer = 
+			$self->schema->resultset('opr_package_author')->find({ 
+				user_id => $params{'remove'}, name_id => $package_name->get_column('name_id') });	
+		
+		$maintainer->delete() if $maintainer;
+	}
+	
+	$self->maintainer(); 
+}
+
 sub maintainer : Permission( 'author' ) {
     my ($self) = @_;
     
-    my $formid = $self->get_formid;
+    my ($package_name, $package_version) = split /\-/, $self->param( 'id' );        
+    my $package = OTRS::OPR::DAO::Package->new(
+    	package_name => $package_name,
+    	version => $package_version,
+			_schema => $self->schema,
+		);
     
+		my @co_maintainers = $package->maintainer_list();
+    my $maintainer = shift @co_maintainers;
+    
+    # get possible co maintainers
+    my @possible_co_maintainers = ();
+    foreach my $user ($self->schema->resultset('opr_user')->all()) {
+    	my $user_id = $user->get_column('user_id');
+			push @possible_co_maintainers, {
+					USER_NAME => $user->get_column('user_name'),
+					USER_ID   => $user_id,
+				}
+				unless scalar
+					grep { $_->{'USER_ID'} == $user_id } ($maintainer, @co_maintainers);
+		}
+
+		#use Data::Dumper;
+		#print STDERR Dumper([$maintainer,\@co_maintainers]);
+    
+    my $is_main_author = ($maintainer->{'USER_ID'} == $self->user->user_id);
+    
+    my $formid = $self->get_formid;
     $self->template( 'author_package_maintainer' );
     $self->stash(
         FORMID => $formid,
+        MAINTAINER => $maintainer,
+        IS_MAIN_AUTHOR => $is_main_author,
+        HAS_CO_MAINTAINERS => (scalar @co_maintainers > 0),
+        CO_MAINTAINERS => \@co_maintainers,
+        POSSIBLE_CO_MAINTAINERS => \@possible_co_maintainers,
+        HAS_POSSIBLE_CO_MAINTAINERS => (scalar @possible_co_maintainers > 0),
+        PACKAGE_NAME => $package_name,
     );
 }
 
