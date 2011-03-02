@@ -159,6 +159,12 @@ sub to_hash {
     return %info;
 }
 
+sub save {
+    my ($self) = @_;
+    
+    $self->DEMOLISH;
+}
+
 sub BUILD {
     my ($self) = @_;
     
@@ -232,6 +238,8 @@ sub DEMOLISH {
             uploaded_by => 0,
             name_id     => 0,
         });
+    
+        $self->add_object( package => $package );
     }
     
     #$self->_schema->storage->debug( 1 );
@@ -268,6 +276,7 @@ sub DEMOLISH {
     }
     
     $package->in_storage ? $package->update : $package->insert;
+    $self->package_id( $package->package_id );
 }
 
 no Moose;

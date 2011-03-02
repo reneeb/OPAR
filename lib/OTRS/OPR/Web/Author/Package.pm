@@ -9,10 +9,10 @@ use File::Basename;
 use File::Spec;
 use Path::Class;
 
-use OTRS::OPR::DAO::Package;
 use OTRS::OPR::DAO::Author;
-use OTRS::OPR::DAO::Maintainer;
 use OTRS::OPR::DAO::Comment;
+use OTRS::OPR::DAO::Maintainer;
+use OTRS::OPR::DAO::Package;
 use OTRS::OPR::DB::Helper::Job     qw(create_job find_job);
 use OTRS::OPR::DB::Helper::Package (qw(page user_is_maintainer package_exists), { version_list => 'versions' } );
 use OTRS::OPR::Web::App::Forms     qw(:all);
@@ -191,6 +191,10 @@ sub do_upload : Permission( 'author' ) {
     $package->virtual_path( $virtual_path );
     $package->name_id( $name_id );
     $package->upload_time( time );
+    
+    $package->save;
+    
+    $self->logger->trace( 'created package id ' . $package->package_id );
     
     # create an entry in job queue that the package
     # should be analyzed    
@@ -474,6 +478,10 @@ sub _upload_file {
     );
     
     $self->logger->debug( "Target file: $file_path" );
+    
+    if ( -e $file_path ) {
+        return 0, 'File already exists';
+    }
     
     my $path_stringified = $path->stringify;
     

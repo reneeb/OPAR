@@ -61,11 +61,13 @@ sub base_url {
     return $uri;
 }
 
-sub index_url {
-    my ($self) = @_;
+sub script_url {
+    my ($self,$name) = @_;
+    
+    $name ||= 'index';
     
     my $script = $ENV{SCRIPT_NAME};
-    $script    =~ s{[a-z]*\.cgi}{index.cgi};
+    $script    =~ s{[a-z]*\.cgi}{$name.cgi};
     my $uri    = "http://$ENV{HTTP_HOST}$script";
     
     return $uri;

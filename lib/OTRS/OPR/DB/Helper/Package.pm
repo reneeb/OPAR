@@ -239,6 +239,7 @@ sub package_to_hash {
         VIRTUAL_PATH => $package->virtual_path,
         WEBSITE      => $package->website,
         BUGTRACKER   => $package->bugtracker,
+        FRAMEWORK    => $package->framework,
     };
     
     return $info;

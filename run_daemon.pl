@@ -8,9 +8,10 @@ use Path::Class;
 my $dir;
 
 BEGIN {
-    $dir      = dirname __FILE__;
-    use lib "$dir/lib";
+    $dir = dirname __FILE__;
 }
+
+use lib "$dir/lib";
 
 use OTRS::OPR::Daemon;
 

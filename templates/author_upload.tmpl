@@ -7,27 +7,13 @@
 	<div>
 		<form action="<%= __SCRIPT__ %>/package/do_upload" method="post" enctype="multipart/form-data">
   		<input type="hidden" name="formid" value="<%= FORMID %>" />
-  		<fieldset class="table_like">
-				<dl>
-					<dt>
-						<label for="opm_file">
-        			<span class="<%= ERROR_OPM_FILE %>">File</span>
-      			</label>
-      		</dt>
-					<dd>
-						<div class="field <%= ERROR_OPM_FILE %>">
-        			<input type="file" name="opm_file" id="opm_file" class="px290" />
-      			</div>
-					</dd>
+			<dl>
+				<dt>File</dt>
+				<dd><input type="file" name="opm_file" id="opm_file" class="px290" /></dd>
 		
-					<dt class="empty">&nbsp;</dt>
-					<dd class="right">
-						<div class="button_row">
-    					<button type="submit" name="submit" value="Upload">Upload</button>
-  					</div>
-					</dd>
-				</dl>
-			</fieldset>
+				<dt class="empty">&nbsp;</dt>
+				<dd class="right"><button type="submit" name="submit" value="Upload">Upload</button></dd>
+			</dl>
 		</form>
 	</div>
 </section>
