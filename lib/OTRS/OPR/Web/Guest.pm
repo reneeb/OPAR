@@ -59,9 +59,6 @@ sub authors {
     @authors = $tabulator->tabulate( @authors );
     @authors = map{ { INNER => $_ } }@authors;
     
-    use Data::Dumper;
-    print STDERR Dumper \@authors;
-    
     $self->template( 'index_authors' );
     $self->stash(
         AUTHORS => \@authors,

@@ -42,6 +42,10 @@ CGI::Application::Dispatch->dispatch(
             app => 'Guest',
             rm  => 'authors',
         },
+        '/rss/recent/packages' => {
+        		app => 'Guest::Package',
+        		rm  => 'recent_packages',
+        },
         ':run' => {
             app => 'Guest',
         },

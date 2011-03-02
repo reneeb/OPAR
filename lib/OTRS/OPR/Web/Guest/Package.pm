@@ -13,6 +13,8 @@ use OTRS::OPR::DB::Helper::Author  qw(id_by_uppercase);
 use OTRS::OPR::DB::Helper::Package qw(:all);
 use OTRS::OPR::Web::App::Forms     qw(:all);
 
+use XML::RSS;
+
 sub setup {
     my ($self) = @_;
 
@@ -33,7 +35,8 @@ sub setup {
         dist          => \&dist,
         author        => \&author,
         oq            => \&oq,
-        download      => \&download
+        download      => \&download,
+        recent_packages => \&recent_packages,
     );
 }
 
@@ -41,6 +44,73 @@ sub start {
     my ($self) = @_;
     
     $self->forward( '/' );
+}
+
+sub recent_packages {
+	my ($self) = @_;
+	
+	my $rss = XML::RSS->new(version => '1.0');
+	my $host = 'http://localhost';
+	
+	$rss->channel(
+		 title        => "OPAR Recent Packages",
+		 link         => $host."/bin/index.cgi/rss/recent/packages",
+		 description  => "The most recent packages in the OTRS package directory (OPAR).",
+		 dc => {
+			 date       => '2011-01-01T07:00+00:00',
+			 subject    => "OTRS Packages",
+			 creator    => 'info@perl-services.de',
+			 publisher  => 'info@perl-services.de',
+			 rights     => 'Copyright 2011, Perl-Services',
+			 language   => 'en-us',
+		 },
+		 syn => {
+			 updatePeriod     => "hourly",
+			 updateFrequency  => "1",
+			 updateBase       => "1901-01-01T00:00+00:00",
+		 },
+		 #taxo => [
+		 #	 'http://dmoz.org/Computers/Internet',
+		 #	 'http://dmoz.org/Computers/PC'
+		 #],
+	);
+
+	my @packages = ();
+	foreach my $package ($self->schema->resultset('opr_package')->all()) {
+		push @packages, $package;
+	}
+	@packages = sort { $a->get_column('upload_time') <=> $b->get_column('upload_time') } @packages;
+
+	foreach my $package (@packages) {
+		my $package_name = $self->schema->resultset('opr_package_names')->find({ name_id => $package->get_column('name_id') });
+		my $author = $self->schema->resultset('opr_package_author')->find({
+										name_id => $package->get_column('name_id'),
+										is_main_author => 1,
+									});
+		if ($author) {
+			my $user = $self->schema->resultset('opr_user')->find({ user_id => $author->get_column('user_id') });
+		
+			$rss->add_item(
+				 title       => $package_name->get_column('package_name'),
+				 link        => $host."/bin/index.cgi/dist/".$package_name->get_column('package_name'),
+				 description => $package->get_column('description'),
+				 dc => {
+					 subject  => "X11/Utilities",
+					 creator  => $user->get_column('user_name')." (".$user->get_column('mail').")",
+				 },
+				 #taxo => [
+				 #	 'http://dmoz.org/Computers/Internet',
+				 #	 'http://dmoz.org/Computers/PC'
+				 #]
+			 );
+		}
+	}
+	
+  $self->main_tmpl( 'rss.tmpl' );
+	$self->template( 'rss' );
+	$self->stash(
+			RSS_STRING => $rss->as_string,
+	);
 }
 
 sub comment {
@@ -69,7 +139,6 @@ sub send_comment {
     my %errors;
     my $notification_type = 'success';
     
-		my %params = $self->query->Vars;
 		my %uppercase = map { uc $_ => $params{$_} }keys %params;
 				 
 		# check formid
