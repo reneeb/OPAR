@@ -24,15 +24,15 @@ formid:
 time:
   deletion: 259200
 recaptcha:
-  public_key: 6LcMqsESAAAAAD0ioZiFwRNDe3OcftdzwL_XIV81
-  private_key: 6LcMqsESAAAAADEX18C3wWHJT7vGXWyE7OCWWnTm
+  public_key: public
+  private_key: private
 mail:
   smtp:
-    host: mail.perl-services.de
-    user: opar@perl-services.de
-    pass: 391TWgb!
-  from: opar@perl-services.de
-  to: reb@perl-services.de
+    host: your_smtp.example
+    user: smtp_user
+    pass: smtp_password
+  from: opar@fqdn.example
+  to: you@fqdn.example
   subjects:
     general: Mail from OPAR
     forgot_password: Forgot password
