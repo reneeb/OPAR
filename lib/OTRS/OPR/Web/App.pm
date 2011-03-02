@@ -61,6 +61,16 @@ sub base_url {
     return $uri;
 }
 
+sub index_url {
+    my ($self) = @_;
+    
+    my $script = $ENV{SCRIPT_NAME};
+    $script    =~ s{[a-z]*\.cgi}{index.cgi};
+    my $uri    = "http://$ENV{HTTP_HOST}$script";
+    
+    return $uri;
+}
+
 sub session {
     my ($self) = @_;
     
@@ -186,7 +196,7 @@ sub config{
     my ($self) = @_;
     
     unless( $self->{config} ){        
-        my $configfile = Path::Class::File->new( $libdir, 'conf', 'base_tom.yml' );
+        my $configfile = Path::Class::File->new( $libdir, 'conf', 'base.yml' );
         
         $self->{_config} = OTRS::OPR::Web::App::Config->new(
             $configfile->stringify,
