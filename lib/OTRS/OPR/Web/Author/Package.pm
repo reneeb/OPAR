@@ -12,6 +12,7 @@ use Path::Class;
 use OTRS::OPR::DAO::Package;
 use OTRS::OPR::DAO::Author;
 use OTRS::OPR::DAO::Maintainer;
+use OTRS::OPR::DAO::Comment;
 use OTRS::OPR::DB::Helper::Job     qw(create_job find_job);
 use OTRS::OPR::DB::Helper::Package (qw(page user_is_maintainer package_exists), { version_list => 'versions' } );
 use OTRS::OPR::Web::App::Forms     qw(:all);
@@ -42,6 +43,9 @@ sub setup {
         edit_maintainer => \&edit_maintainer,
         versions     => \&version_list,
         show         => \&show,
+        comments          => \&comments,
+        publish_comment   => \&publish_comment,
+        unpublish_comment => \&unpublish_comment,
     );
 }
 
@@ -55,7 +59,7 @@ sub delete_package : Permission( 'author' ) : Json {
     }
     
     if ( !$self->user_is_maintainer( $self->user, { id => $package } ) ) {
-        return { ERROR => 'User is not mainteiner' };
+        return { ERROR => 'User is not maintainer' };
     }
     
     my $package_dao = OTRS::OPR::DAO::Package->new(
@@ -235,6 +239,67 @@ sub edit_maintainer : Permission( 'author' ) {
 	}
 	
 	$self->maintainer(); 
+}
+
+sub goto_comments : Permission( 'author' ) {
+	my ($self) = @_;
+	
+	my $comment_id = $self->param( 'id' );
+	my $comment = $self->schema->resultset('opr_comments')->find({ comment_id => $comment_id });
+	my $package_name = $self->schema->resultset('opr_package_names')->find({ package_name => $comment->packagename });
+  my $package = $self->schema->resultset('opr_package')->find({ name_id => $package_name->name_id });
+  
+  $self->param('id', $package_name->package_name);
+	$self->comments();
+}
+
+sub publish_comment : Permission( 'author' ) {
+	my ($self) = @_;
+
+    my $comment_id = $self->param( 'id' );
+    my $comment = OTRS::OPR::DAO::Comment->new(
+        comment_id => $comment_id,
+        _schema      => $self->schema,
+    );
+    $comment->published( time() );
+    $comment = undef;
+
+	$self->goto_comments();
+}
+
+sub unpublish_comment : Permission( 'author' ) {
+	my ($self) = @_;
+
+    my $comment_id = $self->param( 'id' );
+    my $comment = OTRS::OPR::DAO::Comment->new(
+        comment_id => $comment_id,
+        _schema      => $self->schema,
+    );
+    $comment->published( 0 );
+    $comment = undef;
+
+	$self->goto_comments();
+}
+
+sub comments : Permission( 'author' ) {
+	my ($self) = @_;
+
+    my ($package_name, $package_version) = split /\-/, $self->param( 'id' );        
+    my $package = OTRS::OPR::DAO::Package->new(
+        package_name => $package_name,
+        _schema      => $self->schema,
+    );
+
+		my @comments = $package->comments();
+
+    my $formid = $self->get_formid;
+    $self->template( 'author_package_comments' );
+    $self->stash(
+        FORMID => $formid,
+        NAME => $package_name,
+        HAS_COMMENTS => (scalar @comments > 0),
+        COMMENTS => \@comments,
+    );
 }
 
 sub maintainer : Permission( 'author' ) {

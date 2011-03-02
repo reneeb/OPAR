@@ -110,7 +110,7 @@ sub maintainer_list {
 }
 
 sub comments {
-	my ($self) = @_;
+	my ($self, %opts) = @_;
 		
 	my @comments = ();
 	foreach my $comment ($self->_schema->resultset('opr_comments')->search({ packagename => $self->package_name })) {
@@ -119,6 +119,8 @@ sub comments {
 			'DATE'    => time_to_date( $self, $comment->published ),
 			'SCORE'   => $comment->rating,
 			'COMMENT' => $comment->comments,
+			'COMMENT_ID' => $comment->comment_id,
+			'IS_PUBLISHED' => ($comment->published > 0),
 		};
 	}
 	
