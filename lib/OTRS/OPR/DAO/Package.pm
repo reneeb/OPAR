@@ -80,6 +80,22 @@ sub author {
 sub maintainer_list {
 }
 
+sub comments {
+	my ($self) = @_;
+		
+	my @comments = ();
+	foreach my $comment ($self->_schema->resultset('opr_comments')->search({ packagename => $self->package_name })) {
+		push @comments, {
+			#'WEBSITE' => $comment->website,
+			'DATE'    => time_to_date( $self, $comment->published ),
+			'SCORE'   => $comment->rating,
+			'COMMENT' => $comment->comments,
+		};
+	}
+	
+	return @comments;
+}
+
 sub to_hash {
     my ($self) = @_;
     
@@ -90,6 +106,7 @@ sub to_hash {
     my ($author) = $package->opr_user;
     my ($text)   = $package->opr_package_names->package_name;
     my $desc     = $package->description;
+    my @comments = $self->comments;
         
     # create the infos for the template
     my %info = (
@@ -103,6 +120,9 @@ sub to_hash {
         VIRTUAL_PATH => $package->virtual_path,
         WEBSITE      => $package->website,
         BUGTRACKER   => $package->bugtracker,
+        
+        HAS_COMMENTS => (scalar @comments > 0),
+        COMMENTS     => \@comments,
     );
     
     return %info;

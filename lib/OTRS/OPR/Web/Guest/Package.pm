@@ -7,6 +7,7 @@ use parent qw(OTRS::OPR::Web::App);
 
 use File::Spec;
 use OTRS::OPR::DAO::Package;
+use OTRS::OPR::DAO::Comment;
 use OTRS::OPR::DB::Helper::Package;
 use OTRS::OPR::Web::App::Forms qw(check_formid get_formid);
 
@@ -42,16 +43,19 @@ sub start {
 
 sub comment {
     my ($self) = @_;
-    
+        
+    my $package_full_name = $self->param( 'id' );
     my $form_id = $self->get_formid;
     
     $self->template( 'index_comment_form' );
     $self->stash(
         FORMID => $form_id,
+        PACKAGE_NAME => @{[split /\-/, $package_full_name]}[0],
+        PACKAGE_FULL_NAME => $package_full_name,
     );
 }
 
-sub send_comment {
+sub send_comment {    
     my ($self) = @_;
     
     my %params = $self->query->Vars();
@@ -60,10 +64,25 @@ sub send_comment {
     
     $errors{formid} = $self->check_formid( $params{formid} );
     
+    # save data object to db
+    my $comment = OTRS::OPR::DAO::Comment->new(
+					_schema => $self->schema,
+		);
+		$comment->username( '' );
+		$comment->packagename( '' );
+		$comment->packageversion( '' );
+		$comment->comments( $params{'comments'} || '' );
+		$comment->rating( $params{'rating'} || 0 );
+    $comment->deletion_flag( 0 );
+    $comment->headline( $params{'headline'} || '' );
+    $comment->published( 0 );
+
     $notification_type = 'error' if keys %errors;
     $self->notify({
         type    => $notification_type,
         include => 'notifications/comment_' . $notification_type,
+        SUCCESS_HEADLINE => 'Your comment was saved',
+        SUCCESS_MESSAGE  => 'The comment was saved for review and will be published soon.',
     });
     
     my %template_params;

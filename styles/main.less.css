@@ -1,4 +1,5 @@
-﻿/*
+﻿
+/*
 		This file is NOT a pure CSS file, but a CSS file with LESS macros.
 		(see http://lesscss.org/ for details). It is possible to load
 		this file directly from a HTML file, but not recommended
@@ -45,6 +46,11 @@ a:hover {
 	text-shadow: 0px 0px 10px #ccc;
 }
 
+a.download {
+	background: url(../img/icon-download.png) left top no-repeat;
+	padding: 2px 0 4px 27px;
+	border: none;
+}
 a.web {
 	background: url(../img/icon-link.png) left top no-repeat;
 	padding: 2px 0 4px 27px;
@@ -507,6 +513,11 @@ section#register {
 			section form dl dd a {
 				font-size: 80%;
 			}
+			section form dl dd div {
+				position: absolute;
+				top: 0;
+				left: 81%;
+			}
 
 		section ul {
 			padding: 2pt 0 0 12pt;
@@ -556,10 +567,21 @@ footer {
 }
 
 section form input[type="text"],
-section form input[type="password"] {
+section form input[type="password"],
+section form textarea {
 	width: 80%;
 	margin-bottom: 4pt;
 	padding: 0.1em 0.2em;
+}
+section form textarea {
+	border: solid 1px #ccc;
+	border-top-color: #999;
+	border-right-color: #bbb;
+	border-bottom-color: #ddd;
+	-moz-box-shadow: -1px 1px 5px #ddd inset;
+	vertical-align: top;
+	height: 10em;
+	padding: 0.4em;
 }
 
 section form input[type="submit"],
