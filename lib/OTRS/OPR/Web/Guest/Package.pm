@@ -66,21 +66,22 @@ sub send_comment {
     
     # save data object to db
     my $comment = OTRS::OPR::DAO::Comment->new(
-					_schema => $self->schema,
-		);
-		$comment->username( '' );
-		$comment->packagename( '' );
-		$comment->packageversion( '' );
-		$comment->comments( $params{'comments'} || '' );
-		$comment->rating( $params{'rating'} || 0 );
+        _schema => $self->schema,
+    );
+    
+    $comment->username( '' );
+    $comment->packagename( '' );
+    $comment->packageversion( '' );
+    $comment->comments( $params{'comments'} || '' );
+    $comment->rating( $params{'rating'} || 0 );
     $comment->deletion_flag( 0 );
     $comment->headline( $params{'headline'} || '' );
     $comment->published( 0 );
 
     $notification_type = 'error' if keys %errors;
     $self->notify({
-        type    => $notification_type,
-        include => 'notifications/comment_' . $notification_type,
+        type             => $notification_type,
+        include          => 'notifications/comment_' . $notification_type,
         SUCCESS_HEADLINE => 'Your comment was saved',
         SUCCESS_MESSAGE  => 'The comment was saved for review and will be published soon.',
     });
@@ -195,6 +196,7 @@ sub download : Stream('text/xml') {
 }
 
 sub author {
+    
 }
 
 sub ok {
