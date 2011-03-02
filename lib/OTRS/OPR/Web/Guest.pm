@@ -116,7 +116,7 @@ sub search {
         $page = 1;
     }
     
-    my ($packages,$pages) = $self->page( $page, { search => $search_term, all => 1 } ); # TODO: remove "all" when cronjob is working
+    my ($packages,$pages) = $self->page( $page, { search => $search_term } );
     my $pagelist          = $self->page_list( $pages, $page );
     
     $self->template( 'index_search_result' );
