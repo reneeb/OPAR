@@ -38,6 +38,7 @@ mail:
     general: Mail from OPAR
     forgot_password: Forgot password
     registration: Account for OPAR requested
+    feedback: Feedback
   tag: [OPAR]
 password:
   salt: OPAR
