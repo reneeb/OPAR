@@ -120,6 +120,7 @@ sub user {
     unless( $self->{___user} ) {
         my $session_id = $session->id;
         if( $session_id and not $session->is_expired ){
+            $self->logger->trace( 'Get User by Session: ' . $session_id );
             my ($user) = OTRS::OPR::DAO::User->new(
                 session_id => $session_id,
                 _schema    => $self->schema,
