@@ -151,6 +151,7 @@ sub to_hash {
         VIRTUAL_PATH => $package->virtual_path,
         WEBSITE      => $package->website,
         BUGTRACKER   => $package->bugtracker,
+        FRAMEWORK    => $package->framework,
         
         HAS_COMMENTS => (scalar @comments > 0),
         COMMENTS     => \@comments,
