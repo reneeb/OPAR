@@ -288,13 +288,31 @@ sub unpublish_comment : Permission( 'author' ) {
 sub comments : Permission( 'author' ) {
 	my ($self) = @_;
 
-    my ($package_name, $package_version) = split /\-/, $self->param( 'id' );        
-    my $package = OTRS::OPR::DAO::Package->new(
-        package_name => $package_name,
-        _schema      => $self->schema,
-    );
+    my ($package_name, $package_version) = split /\-/, $self->param( 'id' );    
 
-		my @comments = $package->comments();
+		my @packages = (); # all packages of author OR the single one requested
+		my @comments = ();
+		if (defined $package_name) {
+			my $package_dao = OTRS::OPR::DAO::Package->new(
+					package_name => $package_name,
+					_schema      => $self->schema,
+			);
+			push @packages, $package_dao;
+		}
+		else {
+			foreach my $author ($self->schema->resultset('opr_package_author')->find({ user_id => $self->user->user_id })) {
+				foreach my $package ($self->schema->resultset('opr_package')->search({ name_id => $author->get_column('name_id') })) {
+					my $package_dao = OTRS::OPR::DAO::Package->new(
+						package_id => $package->package_id,
+						_schema      => $self->schema,
+					);
+					push @packages, $package_dao;
+				}
+			}
+		}
+		foreach my $package (@packages) {
+			push @comments, $package->comments();
+		}
 
     my $formid = $self->get_formid;
     $self->template( 'author_package_comments' );

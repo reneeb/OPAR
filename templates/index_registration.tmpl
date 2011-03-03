@@ -11,13 +11,21 @@
 							<dt>Name</dt>
 							<dd>
 								<input type="text" name="username"/>
-								<a href="#" onclick="OPAR.Global.ShowHelp('registration.username');" class="help">?</a><br />
+								<a href="#"
+								   onclick="OPAR.Help.Show('username_help', 'registration.username');" 
+								   onmouseout="OPAR.Help.Hide('username_help');"
+								   class="help">?</a><br />
+								<span id="username_help"></span>
 							</dd>
 	
 							<dt>Email</dt>
 							<dd>
 								<input type="text" name="email"/>
-								<a href="#" onclick="OPAR.Global.ShowHelp('registration.email');" class="help">?</a>
+								<a href="#"
+								   onclick="OPAR.Help.Show( 'email_help', 'registration.email');"
+								   onmouseout="OPAR.Help.Hide( 'email_help' );"
+								   class="help">?</a>
+								<br /><span id="email_help"></span>
 								<input type="text" name="emailcheck"/> (repeat)
 							</dd>
 							

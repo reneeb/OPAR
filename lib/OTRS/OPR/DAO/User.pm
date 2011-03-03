@@ -44,6 +44,12 @@ has groups        => (
 after 'add_group'    => sub{ shift->_dirty_flag( 'groups' ) };
 after 'remove_group' => sub{ shift->_dirty_flag( 'groups' ) };
 
+sub save {
+    my ($self) = @_;
+    
+    $self->DEMOLISH;
+}
+
 sub BUILD {
     my ($self) = @_;
     
@@ -98,6 +104,9 @@ sub DEMOLISH {
     
     if ( !$user ) {
         ($user) = $self->ask_table( 'opr_user' )->create( {} );
+        
+    
+        $self->user_object( $user );
     }
     
     ATTRELEMENT:
@@ -130,7 +139,9 @@ sub DEMOLISH {
             }
         }
     }
+    
     $user->update;
+    $self->user_id( $user->user_id );
 }
 
 no Moose;

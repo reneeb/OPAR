@@ -46,11 +46,21 @@ sub start {
     my $html       = $captcha->get_html( $public_key );
     
     my $formid = $self->get_formid;
+
+    my @js_help;    
+    for my $key ( qw(username email) ) {
+        my $config_key = 'registration.' . $key;
+        push @js_help, {
+            NAME  => $config_key,
+            VALUE => $self->config->get( 'help.' . $config_key ),
+        };
+    }
     
     $self->template( 'index_registration' );
     $self->stash(
         CAPTCHA => $html,
         FORMID  => $formid,
+        JSHELP  => \@js_help,
     );
 }
 
@@ -108,6 +118,8 @@ sub send {
     $user->user_name( $params{username} );
     $user->mail( $params{email} );
     $user->registered( time );
+    
+    $user->save;
     
     # send mail to user with token to set password ({register => 1})
     my $mail_sent = $self->_send_mail_to_user( $user, {register => 1} );

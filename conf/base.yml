@@ -16,7 +16,8 @@ defaults:
   static: imprint
 templates:
   base: opar.tmpl
-  author: opar.tmpl
+  author: author.tmpl
+  admin: admin.tmpl
 logging: logging.web.conf
 formid:
   expire: 300
@@ -66,3 +67,7 @@ utils:
     config: perlcriticrc
 general:
   perl_version: 5.008001
+help:
+  registration:
+    username: Username has to be longer than 3 characters (A-Z, a-z), no special characters
+    email: Must be in valid email format
