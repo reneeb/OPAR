@@ -8,7 +8,8 @@ CREATE TABLE `opr_user` (
   website VARCHAR(255) ,
   mail VARCHAR(255) NOT NULL,
   active TINYINT ,
-  registered INTEGER,
+  registered INTEGER ,
+  realname VARCHAR(255),
   PRIMARY KEY(user_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -153,6 +154,7 @@ DROP TABLE IF EXISTS `opr_temp_passwd`;
 
 CREATE TABLE `opr_temp_passwd` (
   id INTEGER NOT NULL AUTO_INCREMENT,
+  user_id INTEGER NOT NULL,
   token VARCHAR(255) ,
   created INTEGER,
   PRIMARY KEY(id)
