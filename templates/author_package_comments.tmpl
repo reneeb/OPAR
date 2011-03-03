@@ -1,11 +1,15 @@
 			<section>
+			  <%IF NAME %>
 				<h1>Comments for <i><%= NAME %></i></h1>
+				<%ELSE%>
+				<h1>Comments for all your packages</h1>
+				<%/IF%>
 			</section>
 		
 			<%IF HAS_COMMENTS %>
 			<section id="comments">
-				<div>
 				<%LOOP COMMENTS %>
+				<div>
 					<div>
 						<h2>
 							<a href="<%= WEBSITE %>">Mr. Y</a>
@@ -25,7 +29,7 @@
 							<%/IF%>
 						</p>
 					</div>
-				<%/LOOP %>
 				</div>
+				<%/LOOP %>
 			</section>
 			<%/IF %>

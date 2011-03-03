@@ -157,6 +157,8 @@ header {
 		font-size: 80%;
 		background: #eee;
 		padding: 0.6em 0.8em;
+		border-radius: 0 0 0.4em 0.4em;
+		-webkit-border-radius: 0 0 0.4em 0.4em;
 		-moz-border-radius: 0 0 0.4em 0.4em;
 	}
 	header form {
@@ -181,13 +183,19 @@ header {
 			color: #fff;
 			background: #666;
 			padding-left: 0.6em;
+			border-radius: 0.4em 0 0 0.4em;
+			-webkit-border-radius: 0.4em 0 0 0.4em;
 			-moz-border-radius: 0.4em 0 0 0.4em;
 			cursor: pointer;
 
+			background: -webkit-linear-gradient(100% 100% 90deg, #222, #777);
 			background: -moz-linear-gradient(100% 100% 90deg, #222, #777);
 		}
 		header form input[type="submit"]:hover {
+			background: -webkit-linear-gradient(100% 100% 90deg, #444, #999);
 			background: -moz-linear-gradient(100% 100% 90deg, #444, #999);
+			box-shadow: 0 0 6px #666;
+			-webkit-box-shadow: 0 0 6px #666;
 			-moz-box-shadow: 0 0 6px #666;
 		}
 
@@ -203,6 +211,8 @@ section {
 	section > div {
 		display: block;
 		margin: 0 0 1em 0;
+		box-shadow: 0px 2px 10px 0px #666;
+		-webkit-box-shadow: 0px 2px 10px 0px #666;
 		-moz-box-shadow: 0px 2px 10px 0px #666;
 		border: solid 5px #eee;				
 	}
@@ -228,8 +238,12 @@ section.message {
 
 }
 	section.message > div {
+		border-radius: 1em;
+		-webkit-border-radius: 1em;
 		-moz-border-radius: 1em;
 		border-width: 2px;
+		box-shadow: 0px 2px 10px 0px #ccc;
+		-webkit-box-shadow: 0px 2px 10px 0px #ccc;
 		-moz-box-shadow: 0px 2px 10px 0px #ccc;
 	}	
 	section.message.ok > div {
@@ -279,6 +293,8 @@ section.menu {
 				color: #333;
 				border: solid 1px #333;
 				border-width: 1px 1px 1px 0;
+				box-shadow: 0 0 6px #ccc;
+				-webkit-box-shadow: 0 0 6px #ccc;
 				-moz-box-shadow: 0 0 6px #ccc;
 				text-decoration: none;
 				font-size: 90%;
@@ -290,16 +306,23 @@ section.menu {
 			}
 			section.menu ul li:first-child a {
 				border-left-width: 1px;
+				border-radius: 0.6em 0 0 0.6em;
+				-webkit-border-radius: 0.6em 0 0 0.6em;
 				-moz-border-radius: 0.6em 0 0 0.6em;
 			}
 			section.menu ul li:last-child a {
+				border-radius: 0 0.6em 0.6em 0;
+				-webkit-border-radius: 0 0.6em 0.6em 0;
 				-moz-border-radius: 0 0.6em 0.6em 0;
 			}
 			section.menu ul li:last-child:first-child a {
+				border-radius: 0.6em;
+				-webkit-border-radius: 0.6em;
 				-moz-border-radius: 0.6em;
 			}
 			section.menu ul li.current a,
 			section.menu ul li a:hover {
+				background: -webkit-linear-gradient(100% 100% 90deg, #eee, #fff);
 				background: -moz-linear-gradient(100% 100% 90deg, #eee, #fff);
 			}
 			section.menu ul li.current a {
@@ -313,6 +336,8 @@ section#entries {
 	#entries > div {
 		display: block;
 		margin: 0 0 1em 0;
+		box-shadow: 0px 2px 10px 0px #666;
+		-webkit-box-shadow: 0px 2px 10px 0px #666;
 		-moz-box-shadow: 0px 2px 10px 0px #666;
 		border: solid 5px #eee;		
 	}
@@ -322,10 +347,13 @@ section#entries {
 			#entries h2 {
 				font-size: 120%;
 				border: solid 1px #ddd;
+				background: -webkit-linear-gradient(0% 100% 0deg, #ddd, #fff);
 				background: -moz-linear-gradient(0% 100% 0deg, #ddd, #fff);
 				color: #666;
 				padding: 0.4em 0.8em;
 				margin: 1em -0.7em 1em -0.7em;
+				border-radius: 0.4em; 0 0 0.4em;
+				-webkit-border-radius: 0.4em; 0 0 0.4em;
 				-moz-border-radius: 0.4em; 0 0 0.4em;
 			}
 
@@ -368,6 +396,8 @@ section#tabs {
 		display: inline-block;
 		border: solid 1px #333;
 		border-width: 1px 1px 0 1px;
+		border-radius: 0.4em 0.4em 0 0;
+		-webkit-border-radius: 0.4em 0.4em 0 0;
 		-moz-border-radius: 0.4em 0.4em 0 0;
 		padding: 0.4em 0.8em;
 		background: #fff;
@@ -541,6 +571,8 @@ section#comments {
 
 }
 	section#comments > div {
+		border-radius: 1em;
+		-webkit-border-radius: 1em;
 		-moz-border-radius: 1em;
 	}
 
@@ -595,6 +627,8 @@ section form textarea {
 	border-top-color: #999;
 	border-right-color: #bbb;
 	border-bottom-color: #ddd;
+	box-shadow: -1px 1px 5px #ddd inset;
+	-webkit-box-shadow: -1px 1px 5px #ddd inset;
 	-moz-box-shadow: -1px 1px 5px #ddd inset;
 	vertical-align: top;
 	height: 10em;
@@ -604,25 +638,36 @@ section form textarea {
 section form input[type="submit"],
 section form button {
 	border: solid 2px #fff;
+	background: -webkit-linear-gradient(100% 100% 90deg, #222, #777);
 	background: -moz-linear-gradient(100% 100% 90deg, #222, #777);
 	padding: 0.6em 1.2em;
 	color: #fff;
+	border-radius: 0.6em;
+	-webkit-border-radius: 0.6em;
 	-moz-border-radius: 0.6em;
+	box-shadow: 0 0 6px #666;
+	-webkit-box-shadow: 0 0 6px #666;
 	-moz-box-shadow: 0 0 6px #666;
 	text-decoration: none;
 	font-size: 90%;
 }
 section form input[type="submit"]:hover,
 section form button:hover {
+	background: -webkit-linear-gradient(100% 100% 90deg, #444, #999);
 	background: -moz-linear-gradient(100% 100% 90deg, #444, #999);
 	cursor: pointer;
 }
 
 .button {
+	background: -webkit-linear-gradient(100% 100% 90deg, #222, #777);
 	background: -moz-linear-gradient(100% 100% 90deg, #222, #777);
 	padding: 0.2em 0.5em 0.3em;
 	color: #fff;
+	border-radius: 0.6em;
+	-webkit-border-radius: 0.6em;
 	-moz-border-radius: 0.6em;
+	box-shadow: 0 0 6px #ccc;
+	-webkit-box-shadow: 0 0 6px #ccc;
 	-moz-box-shadow: 0 0 6px #ccc;
 	text-decoration: none;
 	font-size: 90%;
@@ -635,10 +680,12 @@ section form button:hover {
 	border: solid 1px #333;
 }
 .button:hover {
+	background: -webkit-linear-gradient(100% 100% 90deg, #444, #999);
 	background: -moz-linear-gradient(100% 100% 90deg, #444, #999);
 	cursor: pointer;
 }
 .button.shallow:hover {
+	background: -webkit-linear-gradient(100% 100% 90deg, #ccc, #fff);
 	background: -moz-linear-gradient(100% 100% 90deg, #ccc, #fff);
 }
 

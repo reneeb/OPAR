@@ -1,0 +1,10 @@
+<section class="message ok">
+	<div>
+		<div>
+			<h4><%= SUCCESS_HEADLINE %></h4>
+			<p>
+				<%= SUCCESS_MESSAGE %>
+			</p>
+	  </div>
+  </div>
+</section>
