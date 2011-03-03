@@ -20,6 +20,7 @@ __PACKAGE__->add_columns( qw/
     upload_time
     virtual_path
     deletion_flag
+    documentation
 /);
 __PACKAGE__->set_primary_key( qw/ package_id / );
 

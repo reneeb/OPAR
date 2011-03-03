@@ -5,7 +5,8 @@ use OTRS::OPR::App::AttributeInformation;
 
 extends 'OTRS::OPR::DAO::Base';
 
-for my $attribute ( qw(session_id user_name user_password website mail active registered) ) {
+my @attributes = qw(session_id user_name user_password website mail active registered realname);
+for my $attribute ( @attributes ) {
     has $attribute => (
         metaclass    => 'OTRS::OPR::App::AttributeInformation',
         is_trackable => 1,
@@ -72,10 +73,11 @@ sub BUILD {
     
     $self->not_in_db( 0 );
     
+    for my $attr ( @attributes ) {
+        $self->$attr( $user->$attr() );
+    }
+    
     $self->user_id( $user->user_id );
-    $self->user_name( $user->user_name );
-    $self->website( $user->website );
-    $self->mail( $user->mail );
     
     my @group_user_objects = $user->opr_group_user;
     my @group_objects;

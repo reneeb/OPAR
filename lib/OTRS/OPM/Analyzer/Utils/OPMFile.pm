@@ -51,6 +51,45 @@ has dependencies => (
     },
 );
 
+sub documentation {
+    my ($self,%params) = @_;
+    
+    my $doc_file;
+    my $found_file;
+    
+    for my $file ( $self->files ) {
+        my $filename = $file->{filename};
+        next if $filename !~ m{ \A doc/ }x;
+        
+        if ( !$doc_file ) {
+            $doc_file   = $file;
+            $found_file = $filename;
+        }
+        
+        my $lang = $params{lang} || '';
+        next if $lang && $filename !~ m{ \A doc/$lang/ }x;
+        
+        if ( $lang && $found_file !~ m{ \A doc/$lang/ }x ) {
+            $doc_file   = $file;
+            $found_file = $filename;
+        }
+        
+        my $type = $params{type} || '';
+        next if $type && $filename !~ m{ \A doc/[^/]+/.*\.$type \z }x;
+        
+        if ( $type && $found_file !~ m{ \A doc/$lang/ }x ) {
+            $doc_file   = $file;
+            $found_file = $filename;
+            
+            if ( !$lang || ( $lang && $found_file !~ m{ \A doc/$lang/ }x ) ) {                
+                last;
+            }
+        }
+    }
+    
+    return $doc_file;
+}
+
 sub parse {
     my ($self) = @_;
     

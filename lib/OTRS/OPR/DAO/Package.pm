@@ -11,7 +11,7 @@ extends 'OTRS::OPR::DAO::Base';
 my @attributes = qw(
     uploaded_by description version name_id
     framework path virtual_path is_in_index website bugtracker upload_time
-    deletion_flag
+    deletion_flag documentation
 );
 
 for my $attribute ( @attributes ) {
@@ -141,19 +141,21 @@ sub to_hash {
         
     # create the infos for the template
     my %info = (
-        NAME         => $text,
-        VERSION      => $package->version,
-        DESCRIPTION  => $desc,
-        AUTHOR       => ($author ? $author->user_name : '' ),
-        DATE         => time_to_date( $self, $package->upload_time ),
-        PACKAGE_ID   => $package->package_id,
-        DELETION     => $package->deletion_flag,
-        VIRTUAL_PATH => $package->virtual_path,
-        WEBSITE      => $package->website,
-        BUGTRACKER   => $package->bugtracker,
+        NAME          => $text,
+        VERSION       => $package->version,
+        DESCRIPTION   => $desc,
+        AUTHOR        => ($author ? $author->user_name : '' ),
+        DATE          => time_to_date( $self, $package->upload_time ),
+        PACKAGE_ID    => $package->package_id,
+        DELETION      => $package->deletion_flag,
+        VIRTUAL_PATH  => $package->virtual_path,
+        WEBSITE       => $package->website,
+        BUGTRACKER    => $package->bugtracker,
+        FRAMEWORK     => $package->framework,
+        DOCUMENTATION => $package->documentation,
         
-        HAS_COMMENTS => (scalar @comments > 0),
-        COMMENTS     => \@comments,
+        HAS_COMMENTS  => (scalar @comments > 0),
+        COMMENTS      => \@comments,
     );
     
     return %info;

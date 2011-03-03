@@ -41,7 +41,7 @@ sub package_exists {
 sub page {
     my ($self,$page,$params) = @_;
     
-    my $rows = $self->config->get( 'rows.search' );
+    my $rows = $params->{rows} || $self->config->get( 'rows.search' );
     
     my %search_clauses;
     if ( exists $params->{search} ) {
@@ -240,6 +240,7 @@ sub package_to_hash {
         WEBSITE      => $package->website,
         BUGTRACKER   => $package->bugtracker,
         FRAMEWORK    => $package->framework,
+        UPLOAD       => $package->upload_time,
     };
     
     return $info;

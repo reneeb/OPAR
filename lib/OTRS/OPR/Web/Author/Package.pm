@@ -162,6 +162,8 @@ sub do_upload : Permission( 'author' ) {
     $self->logger->trace( "Uploaded package: $package_name" );
     my $name_id      = $self->user_is_maintainer( $self->user, { name => $package_name, add => 1 } );
     if ( !$name_id ) {
+        $self->logger->debug( sprintf "UserID: %d -> Package: %s", $self->user->user_id, $package_name );
+        
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
@@ -212,107 +214,113 @@ sub do_upload : Permission( 'author' ) {
 }
 
 sub edit_maintainer : Permission( 'author' ) {
-	my ($self) = @_;
-	my %params = $self->query->Vars;
+    my ($self) = @_;
+    my %params = $self->query->Vars;
  
-	# check formid
-	my $formid_ok = $self->validate_formid( \%params );
-	if ( !$formid_ok ) {
-			#return $self->forgot_password( %uppercase );
-	}
-	
-	my ($package_name, $package_version) = split /\-/, $self->param( 'id' );    
-	$package_name = $self->schema->resultset('opr_package_names')->find({ package_name => $package_name });	
-	my $name_id = $package_name->get_column("name_id");
+    # check formid
+    my $formid_ok = $self->validate_formid( \%params );
+    if ( !$formid_ok ) {
+        #return $self->forgot_password( %uppercase );
+    }
 
-	if ($params{'add'}) {
-		my $maintainer = OTRS::OPR::DAO::Maintainer->new(
-			_schema => $self->schema,
-		);
-		$maintainer->user_id( $params{'add'} );
-		$maintainer->name_id( $package_name->get_column('name_id') );
-		$maintainer->is_main_author( 0 );
-	}
+    my ($package_name, $package_version) = split /\-/, $self->param( 'id' );    
+    $package_name = $self->schema->resultset('opr_package_names')->find({ package_name => $package_name });	
+    my $name_id = $package_name->get_column("name_id");
 
-	if ($params{'remove'}) {
-		my $maintainer = 
-			$self->schema->resultset('opr_package_author')->find({ 
-				user_id => $params{'remove'}, name_id => $package_name->get_column('name_id') });	
+    if ($params{'add'}) {
+        my $maintainer = OTRS::OPR::DAO::Maintainer->new(
+            _schema => $self->schema,
+        );
+        
+        $maintainer->user_id( $params{'add'} );
+        $maintainer->name_id( $package_name->get_column('name_id') );
+        $maintainer->is_main_author( 0 );
+    }
+
+    if ($params{'remove'}) {
+        my $maintainer = $self->schema->resultset('opr_package_author')->find({ 
+            user_id => $params{'remove'},
+            name_id => $package_name->name_id
+        });	
 		
-		$maintainer->delete() if $maintainer;
-	}
-	
-	$self->maintainer(); 
+        $maintainer->delete() if $maintainer;
+    }
+
+    $self->maintainer;
 }
 
 sub goto_comments : Permission( 'author' ) {
-	my ($self) = @_;
+    my ($self) = @_;
 	
-	my $comment_id = $self->param( 'id' );
-	my $comment = $self->schema->resultset('opr_comments')->find({ comment_id => $comment_id });
-	my $package_name = $self->schema->resultset('opr_package_names')->find({ package_name => $comment->packagename });
-  my $package = $self->schema->resultset('opr_package')->find({ name_id => $package_name->name_id });
+    my $comment_id = $self->param( 'id' );
+    my $comment = $self->schema->resultset('opr_comments')->find({ comment_id => $comment_id });
+    my $package_name = $self->schema->resultset('opr_package_names')->find({ package_name => $comment->packagename });
+    my $package = $self->schema->resultset('opr_package')->find({ name_id => $package_name->name_id });
   
-  $self->param('id', $package_name->package_name);
-	$self->comments();
+    $self->param('id', $package_name->package_name);
+    $self->comments();
 }
 
 sub publish_comment : Permission( 'author' ) {
-	my ($self) = @_;
+    my ($self) = @_;
 
     my $comment_id = $self->param( 'id' );
     my $comment = OTRS::OPR::DAO::Comment->new(
         comment_id => $comment_id,
         _schema      => $self->schema,
     );
-    $comment->published( time() );
+    $comment->published( time );
     $comment = undef;
 
-	$self->goto_comments();
+    $self->goto_comments;
 }
 
 sub unpublish_comment : Permission( 'author' ) {
 	my ($self) = @_;
 
     my $comment_id = $self->param( 'id' );
-    my $comment = OTRS::OPR::DAO::Comment->new(
+    my $comment    = OTRS::OPR::DAO::Comment->new(
         comment_id => $comment_id,
-        _schema      => $self->schema,
+        _schema    => $self->schema,
     );
     $comment->published( 0 );
     $comment = undef;
 
-	$self->goto_comments();
+    $self->goto_comments;
 }
 
 sub comments : Permission( 'author' ) {
-	my ($self) = @_;
+    my ($self) = @_;
 
     my ($package_name, $package_version) = split /\-/, $self->param( 'id' );    
 
-		my @packages = (); # all packages of author OR the single one requested
-		my @comments = ();
-		if (defined $package_name) {
-			my $package_dao = OTRS::OPR::DAO::Package->new(
-					package_name => $package_name,
-					_schema      => $self->schema,
-			);
-			push @packages, $package_dao;
-		}
-		else {
-			foreach my $author ($self->schema->resultset('opr_package_author')->find({ user_id => $self->user->user_id })) {
-				foreach my $package ($self->schema->resultset('opr_package')->search({ name_id => $author->get_column('name_id') })) {
-					my $package_dao = OTRS::OPR::DAO::Package->new(
-						package_id => $package->package_id,
-						_schema      => $self->schema,
-					);
-					push @packages, $package_dao;
-				}
-			}
-		}
-		foreach my $package (@packages) {
-			push @comments, $package->comments();
-		}
+    my @packages = (); # all packages of author OR the single one requested
+    my @comments = ();
+
+    if (defined $package_name) {
+        my $package_dao = OTRS::OPR::DAO::Package->new(
+            package_name => $package_name,
+            _schema      => $self->schema,
+        );
+        
+        push @packages, $package_dao;
+    }
+    else {
+        for my $author ($self->table('opr_package_author')->find({ user_id => $self->user->user_id })) {
+            for my $package ($self->table('opr_package')->search({ name_id => $author->name_id })) {
+                my $package_dao = OTRS::OPR::DAO::Package->new(
+                    package_id => $package->package_id,
+                    _schema      => $self->schema,
+                );
+
+                push @packages, $package_dao;
+            }
+        }
+    }
+    
+    for my $package ( @packages ) {
+        push @comments, $package->comments;
+    }
 
     my $formid = $self->get_formid;
     $self->template( 'author_package_comments' );
@@ -330,27 +338,22 @@ sub maintainer : Permission( 'author' ) {
     my ($package_name, $package_version) = split /\-/, $self->param( 'id' );        
     my $package = OTRS::OPR::DAO::Package->new(
     	package_name => $package_name,
-    	version => $package_version,
-			_schema => $self->schema,
-		);
+    	version      => $package_version,
+        _schema      => $self->schema,
+    );
     
-		my @co_maintainers = $package->maintainer_list();
+    my @co_maintainers = $package->maintainer_list();
     my $maintainer = shift @co_maintainers;
     
     # get possible co maintainers
     my @possible_co_maintainers = ();
-    foreach my $user ($self->schema->resultset('opr_user')->all()) {
+    for my $user ($self->schema->resultset('opr_user')->all()) {
     	my $user_id = $user->get_column('user_id');
-			push @possible_co_maintainers, {
-					USER_NAME => $user->get_column('user_name'),
-					USER_ID   => $user_id,
-				}
-				unless scalar
-					grep { $_->{'USER_ID'} == $user_id } ($maintainer, @co_maintainers);
-		}
-
-		#use Data::Dumper;
-		#print STDERR Dumper([$maintainer,\@co_maintainers]);
+        push @possible_co_maintainers, {
+            USER_NAME => $user->get_column('user_name'),
+            USER_ID   => $user_id,
+        } unless scalar grep { $_->{'USER_ID'} == $user_id } ($maintainer, @co_maintainers);
+    }
     
     my $is_main_author = ($maintainer->{'USER_ID'} == $self->user->user_id);
     

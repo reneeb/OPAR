@@ -8,18 +8,20 @@ TODO
  * author's area
    * admin comments about packages                                             1
    * add/remove comaintainer for package                                       1
+   * request new analysis of a package                                         3
  * guest's area
    * FAQ                                                                       1
    * comment and vote for packages                                             1 # done (TOM)
    * own feed for OTRS Package Manager                                         3
    * RSS feed for recent uploads                                               3 # done (TOM)
    * browser for authors                                                       1 # done (REB)
-   * feedback                                                                  1
+   * feedback                                                                  1 # done (REB)
    * author page                                                               1 # done (REB)
  * admin's area
    * admin comments about packages                                             2
    * user management                                                           2
    * delete packages (shorter time span until real deletion)                   2
+   * new analysis for packages                                                 3
  * Perl::Critic policies
    * 4 whitespaces instead of tabulators                                       4
    * using {} as delimiters in RegEx                                           4

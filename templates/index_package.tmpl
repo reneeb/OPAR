@@ -52,6 +52,12 @@
 			<section>
 				<p class="right"><a href="<%= __SCRIPT__ %>/package/comment/<%= NAME %>-<%= VERSION %>" class="button">Rate/comment this package</a></p>
 			</section>
+			
+			<%IF DOCUMENTATION %>
+			<section>
+				<div id="documentation"><%= DOCUMENTATION ESCAPE=0 %></div>
+			</section>
+			<%/IF %>
 
 			<%IF HAS_COMMENTS %>
 			<section>

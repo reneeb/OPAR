@@ -8,6 +8,7 @@ use Log::Log4perl;
 
 use OTRS::OPM::Analyzer;
 use OTRS::OPR::DB::Schema;
+use OTRS::OPR::Doc::Converter;
 
 sub new {
     my ( $class, %args ) = @_;
@@ -94,6 +95,9 @@ sub analyze_package {
     
     # save basic data of file
     $self->_save_basic_info( $package, $analyzer->opm );
+    
+    # convert documentation to html
+    $self->_save_documentation( $package, $analyzer->opm );
         
     # save analysis data in db
     # double check that there is no data about that package in the database
@@ -140,6 +144,33 @@ sub _save_basic_info {
         
         $logger->trace( 'added dependency ' . $dep->{name} . ' for package ' . $name );
     }
+    
+    return 1;
+}
+
+sub _save_documentation {
+    my ( $self, $package, $opm ) = @_;
+    
+    my $logger = Log::Log4perl->get_logger;
+    
+    # find documentation
+    my $docu = $opm->documentation( type => 'pod' ) || {};
+    
+    return if $docu->{filename} !~ m{\.pod \z }x;
+    
+    my $converter = OTRS::OPR::Doc::Converter->new(
+        raw => $docu->{content},
+    );
+    
+    my $html = $converter->convert;
+    $logger->trace( "HTML-Documentation: " . $html );
+    
+    return if !$html;
+    
+    $package->documentation( $html );
+    
+    # save the updates
+    $package->update;
     
     return 1;
 }

@@ -42,13 +42,17 @@ sub view{
     }
     
     $template .= '.tmpl' if $template !~ m{\.tmpl\z}xms;
+    
+    my $username = '';
+    $username = $self->user->user_name if $self->user;
 
     $tmpl->param(
-        BODY       => $tmpl_path . $template,
-        __SCRIPT__ => $self->base_url,
-        __INDEX__  => $self->script_url( 'index' ),
-        __AUTHOR__ => $self->script_url( 'author' ),
-        __ADMIN__  => $self->script_url( 'admin' ),
+        BODY         => $tmpl_path . $template,
+        __SCRIPT__   => $self->base_url,
+        __INDEX__    => $self->script_url( 'index' ),
+        __AUTHOR__   => $self->script_url( 'author' ),
+        __ADMIN__    => $self->script_url( 'admin' ),
+        __LOGGEDIN__ => $username,
         %{$self->stash},
         %notifications,
     );
