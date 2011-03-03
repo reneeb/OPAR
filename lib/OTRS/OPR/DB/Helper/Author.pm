@@ -11,24 +11,34 @@ sub list {
     my ($self,%params) = @_;
     
     my $like = '';
+    my ($short,$initial);
+    
+    use Data::Dumper;
+    print STDERR Dumper \%params;
     
     if ( $params{short} && $params{short} =~ m{\A [a-zA-Z]{2} \z }x ) {
-        $like = $params{short};
+        $like  = $params{short};
+        $short = 1;
     }
-    elsif ( $params{initial} && $params{inital} =~ m{\A [a-zA-Z] \z }x ) {
-        $like = $params{initial};
+    elsif ( $params{initial} && $params{initial} =~ m{\A [a-zA-Z] \z }x ) {
+        $like    = $params{initial};
+        $initial = 1;
     }
+    
+    $self->schema->storage->debug(1);
     
     my @list = $self->table( 'opr_user' )->search({
         user_name => { LIKE => "$like\%" },
     });
     
+    $self->schema->storage->debug(0);
+    
     my %authors;
     
-    if ( $params{short} ) {
+    if ( $short ) {
         %authors = map{ uc( $_->user_name ) => 1 }@list;
     }
-    elsif ( $params{initial} ) {
+    elsif ( $initial ) {
         %authors = map{ (uc substr $_->user_name, 0, 2) => 1 }@list
     }
     else {
