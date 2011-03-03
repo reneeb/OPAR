@@ -38,6 +38,14 @@ CGI::Application::Dispatch->dispatch(
         '/package/:run/:id' => {
             app => 'Guest::Package',
         },
+        '/authors/:initial?/:short?' => {
+            app => 'Guest',
+            rm  => 'authors',
+        },
+        '/rss/recent/packages' => {
+        		app => 'Guest::Package',
+        		rm  => 'recent_packages',
+        },
         ':run' => {
             app => 'Guest',
         },

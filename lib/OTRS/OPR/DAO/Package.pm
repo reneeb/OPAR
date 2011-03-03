@@ -78,10 +78,39 @@ sub author {
 }
 
 sub maintainer_list {
+	my ($self) = @_;
+	
+	# get id of package name
+	my $package_name = $self->_schema->resultset('opr_package_names')->find({ package_name => $self->package_name });	
+	my $name_id = $package_name->get_column("name_id");
+	
+	# get id of package
+	#my $package = $self->_schema->resultset('opr_package')->find({ name_id => $name_id });
+	
+	my $maintainer;
+	my @co_maintainers = ();
+	foreach my $author ($self->_schema->resultset('opr_package_author')->search({ name_id => $name_id })) {
+		# get user
+		my $user = $self->_schema->resultset('opr_user')->find({ user_id => $author->get_column('user_id') });
+		
+		if ($author->get_column('is_main_author')) {
+			$maintainer = { 
+				USER_NAME => $user->get_column('user_name'),
+				USER_ID   => $user->get_column('user_id'),
+			};
+		} else {
+			push @co_maintainers, { 
+				USER_NAME => $user->get_column('user_name'),
+				USER_ID   => $user->get_column('user_id'),
+			};
+		}
+	}
+	
+	return ($maintainer, @co_maintainers);
 }
 
 sub comments {
-	my ($self) = @_;
+	my ($self, %opts) = @_;
 		
 	my @comments = ();
 	foreach my $comment ($self->_schema->resultset('opr_comments')->search({ packagename => $self->package_name })) {
@@ -90,6 +119,8 @@ sub comments {
 			'DATE'    => time_to_date( $self, $comment->published ),
 			'SCORE'   => $comment->rating,
 			'COMMENT' => $comment->comments,
+			'COMMENT_ID' => $comment->comment_id,
+			'IS_PUBLISHED' => ($comment->published > 0),
 		};
 	}
 	
@@ -126,6 +157,12 @@ sub to_hash {
     );
     
     return %info;
+}
+
+sub save {
+    my ($self) = @_;
+    
+    $self->DEMOLISH;
 }
 
 sub BUILD {
@@ -201,6 +238,8 @@ sub DEMOLISH {
             uploaded_by => 0,
             name_id     => 0,
         });
+    
+        $self->add_object( package => $package );
     }
     
     #$self->_schema->storage->debug( 1 );
@@ -237,6 +276,7 @@ sub DEMOLISH {
     }
     
     $package->in_storage ? $package->update : $package->insert;
+    $self->package_id( $package->package_id );
 }
 
 no Moose;

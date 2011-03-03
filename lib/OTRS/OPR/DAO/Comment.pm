@@ -73,8 +73,7 @@ sub BUILD {
         $self->$attr( $comment->$attr() );
     }
     
-    # ???
-    #$self->add_object( comment => $comment );
+    $self->add_object( comment => $comment );
     
     $self->_after_init();
 }

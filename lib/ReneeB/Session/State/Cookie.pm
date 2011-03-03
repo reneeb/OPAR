@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use CGI::Cookie;
 
+no warnings 'redefine';
+
 my $cookiename = 'MyCookie';
 my $expiretime = 60;
 

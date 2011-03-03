@@ -16,7 +16,8 @@ defaults:
   static: imprint
 templates:
   base: opar.tmpl
-  author: opar.tmpl
+  author: author.tmpl
+  admin: admin.tmpl
 logging: logging.web.conf
 formid:
   expire: 300

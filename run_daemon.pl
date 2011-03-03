@@ -2,13 +2,19 @@
 
 use strict;
 use warnings;
-use lib qw(lib);
 use File::Basename;
 use Path::Class;
 
+my $dir;
+
+BEGIN {
+    $dir = dirname __FILE__;
+}
+
+use lib "$dir/lib";
+
 use OTRS::OPR::Daemon;
 
-my $dir      = dirname __FILE__;
 my $conf_dir = Path::Class::Dir->new( $dir, 'conf' );
 my $daemon   = OTRS::OPR::Daemon->new(
     config => $conf_dir,

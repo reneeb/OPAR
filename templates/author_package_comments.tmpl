@@ -1,0 +1,31 @@
+			<section>
+				<h1>Comments for <i><%= NAME %></i></h1>
+			</section>
+		
+			<%IF HAS_COMMENTS %>
+			<section id="comments">
+				<div>
+				<%LOOP COMMENTS %>
+					<div>
+						<h2>
+							<a href="<%= WEBSITE %>">Mr. Y</a>
+							<span><%IF DATE %>published on <%= DATE %><%/IF%></span>
+							<div>
+								<span class="score-<%= SCORE %>"></span>&nbsp;
+							</div>
+						</h2>
+						<p>
+							<%= COMMENT %>
+						</p>						
+						<p class="right">
+						<%IF IS_PUBLISHED %>
+								<a href="/bin/author.cgi/package/unpublish_comment/<%= COMMENT_ID %>" class="button">Un-Publish comment</a>
+							<%ELSE%>
+								<a href="/bin/author.cgi/package/publish_comment/<%= COMMENT_ID %>" class="button">Publish comment</a>
+							<%/IF%>
+						</p>
+					</div>
+				<%/LOOP %>
+				</div>
+			</section>
+			<%/IF %>
