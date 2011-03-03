@@ -153,37 +153,41 @@ sub send_comment {
 				#return $self->forgot_password( %uppercase );
 		}
 
-    # save data object to db
-    my $comment = OTRS::OPR::DAO::Comment->new(
-        _schema => $self->schema,
-    );
-    
-    $comment->username( '' );
-    $comment->packagename( '' );
-    $comment->packageversion( '' );
-    $comment->comments( $params{'comments'} || '' );
-    $comment->rating( $params{'rating'} || 0 );
-    $comment->deletion_flag( 0 );
-    $comment->headline( $params{'headline'} || '' );
-    $comment->published( 0 );
-
-    $notification_type = 'error' if keys %errors;
-    $self->notify({
-        type             => $notification_type,
-        include          => 'notifications/comment_' . $notification_type,
-        SUCCESS_HEADLINE => 'Your comment was saved',
-        SUCCESS_MESSAGE  => 'The comment was saved for review and will be published soon.',
-    });
-    
-    my %template_params;
-    for my $error_key ( keys %errors ) {
-        $template_params{ 'ERROR_' . uc $error_key } = $self->config->get( 'errors.' . $error_key );
-    }
-    
     $self->template( 'index_comment_sent' );
-    $self->stash(
-        %template_params,
-    );
+		if ($formid_ok && $success) {
+			# save data object to db
+			my $comment = OTRS::OPR::DAO::Comment->new(
+					_schema => $self->schema,
+			);
+			
+    	my ($package_name, $package_version) = split /\-/, $self->param( 'id' );
+			my $username = ($self->user ? $self->user->user_name : 'anonymous');
+
+			$comment->username( $username );
+			$comment->packagename( $package_name );
+			$comment->packageversion( $package_version );
+			$comment->comments( $params{'comments'} || '' );
+			$comment->rating( $params{'rating'} || 0 );
+			$comment->deletion_flag( 0 );
+			$comment->headline( $params{'headline'} || '' );
+			$comment->published( 0 );
+	
+			$notification_type = 'error' if keys %errors;
+			$self->notify({
+					type             => $notification_type,
+					include          => 'notifications/comment_' . $notification_type,
+					SUCCESS_HEADLINE => 'Your comment was saved',
+					SUCCESS_MESSAGE  => 'The comment was saved for review and will be published soon.',
+			});
+			
+			my %template_params;
+			for my $error_key ( keys %errors ) {
+					$template_params{ 'ERROR_' . uc $error_key } = $self->config->get( 'errors.' . $error_key );
+			}
+			$self->stash(
+					%template_params,
+			);
+		}		
 }
 
 sub dist {
@@ -223,7 +227,7 @@ sub dist {
         %version,
         _schema      => $self->schema,
     );
-    
+
     # if package can't be found show error message
     if ( $dao->not_in_db || !$dao->is_in_index ) {
         $self->notify({

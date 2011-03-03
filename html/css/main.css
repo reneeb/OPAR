@@ -118,6 +118,8 @@ header p {
 	font-size: 80%; 
 	background: #eeeeee; 
 	padding: 0.6em 0.8em; 
+	border-radius: 0 0 0.4em 0.4em; 
+	-webkit-border-radius: 0 0 0.4em 0.4em; 
 	-moz-border-radius: 0 0 0.4em 0.4em; 
 }
 header form { 
@@ -140,12 +142,18 @@ header form input[type="submit"] {
 	color: #ffffff; 
 	background: #666666; 
 	padding-left: 0.6em; 
+	border-radius: 0.4em 0 0 0.4em; 
+	-webkit-border-radius: 0.4em 0 0 0.4em; 
 	-moz-border-radius: 0.4em 0 0 0.4em; 
 	cursor: pointer; 
+	background: -webkit-linear-gradient(100% 100% 90deg, #222222, #777777); 
 	background: -moz-linear-gradient(100% 100% 90deg, #222222, #777777); 
 }
 header form input[type="submit"]:hover { 
+	background: -webkit-linear-gradient(100% 100% 90deg, #444444, #999999); 
 	background: -moz-linear-gradient(100% 100% 90deg, #444444, #999999); 
+	box-shadow: 0 0 6px #666666; 
+	-webkit-box-shadow: 0 0 6px #666666; 
 	-moz-box-shadow: 0 0 6px #666666; 
 }
 section > h1 { font-size: 160%; }
@@ -153,6 +161,8 @@ section > h2 { font-size: 140%; }
 section > div { 
 	display: block; 
 	margin: 0 0 1em 0; 
+	box-shadow: 0px 2px 10px 0px #666666; 
+	-webkit-box-shadow: 0px 2px 10px 0px #666666; 
 	-moz-box-shadow: 0px 2px 10px 0px #666666; 
 	border: solid 5px #eeeeee; 
 }
@@ -160,8 +170,12 @@ section > div > div { margin: 1em 1.1em; }
 section > p:first-child { margin-bottom: 0.4em; }
 section.pages span { padding-right: 0.6em; }
 section.message > div { 
+	border-radius: 1em; 
+	-webkit-border-radius: 1em; 
 	-moz-border-radius: 1em; 
 	border-width: 2px; 
+	box-shadow: 0px 2px 10px 0px #cccccc; 
+	-webkit-box-shadow: 0px 2px 10px 0px #cccccc; 
 	-moz-box-shadow: 0px 2px 10px 0px #cccccc; 
 }
 section.message.ok > div { 
@@ -197,6 +211,8 @@ section.menu ul li a {
 	color: #333333; 
 	border: solid 1px #333333; 
 	border-width: 1px 1px 1px 0; 
+	box-shadow: 0 0 6px #cccccc; 
+	-webkit-box-shadow: 0 0 6px #cccccc; 
 	-moz-box-shadow: 0 0 6px #cccccc; 
 	text-decoration: none; 
 	font-size: 90%; 
@@ -208,11 +224,24 @@ section.menu ul li a {
 }
 section.menu ul li:first-child a { 
 	border-left-width: 1px; 
+	border-radius: 0.6em 0 0 0.6em; 
+	-webkit-border-radius: 0.6em 0 0 0.6em; 
 	-moz-border-radius: 0.6em 0 0 0.6em; 
 }
-section.menu ul li:last-child a { -moz-border-radius: 0 0.6em 0.6em 0; }
-section.menu ul li:last-child:first-child a { -moz-border-radius: 0.6em; }
-section.menu ul li.current a, 			section.menu ul li a:hover { background: -moz-linear-gradient(100% 100% 90deg, #eeeeee, #ffffff); }
+section.menu ul li:last-child a { 
+	border-radius: 0 0.6em 0.6em 0; 
+	-webkit-border-radius: 0 0.6em 0.6em 0; 
+	-moz-border-radius: 0 0.6em 0.6em 0; 
+}
+section.menu ul li:last-child:first-child a { 
+	border-radius: 0.6em; 
+	-webkit-border-radius: 0.6em; 
+	-moz-border-radius: 0.6em; 
+}
+section.menu ul li.current a, 			section.menu ul li a:hover { 
+	background: -webkit-linear-gradient(100% 100% 90deg, #eeeeee, #ffffff); 
+	background: -moz-linear-gradient(100% 100% 90deg, #eeeeee, #ffffff); 
+}
 section.menu ul li.current a { 
 	font-weight: bold; 
 	text-shadow: -1px 1px #eeeeee; 
@@ -220,6 +249,8 @@ section.menu ul li.current a {
 #entries > div { 
 	display: block; 
 	margin: 0 0 1em 0; 
+	box-shadow: 0px 2px 10px 0px #666666; 
+	-webkit-box-shadow: 0px 2px 10px 0px #666666; 
 	-moz-box-shadow: 0px 2px 10px 0px #666666; 
 	border: solid 5px #eeeeee; 
 }
@@ -227,10 +258,15 @@ section.menu ul li.current a {
 #entries h2 { 
 	font-size: 120%; 
 	border: solid 1px #dddddd; 
+	background: -webkit-linear-gradient(0% 100% 0deg, #dddddd, #ffffff); 
 	background: -moz-linear-gradient(0% 100% 0deg, #dddddd, #ffffff); 
 	color: #666666; 
 	padding: 0.4em 0.8em; 
 	margin: 1em -0.7em 1em -0.7em; 
+	border-radius: 0.4em; 
+	0 0 0.4em: ; 
+	-webkit-border-radius: 0.4em; 
+	0 0 0.4em: ; 
 	-moz-border-radius: 0.4em; 
 	0 0 0.4em: ; 
 }
@@ -272,6 +308,8 @@ section#tabs {
 	display: inline-block; 
 	border: solid 1px #333333; 
 	border-width: 1px 1px 0 1px; 
+	border-radius: 0.4em 0.4em 0 0; 
+	-webkit-border-radius: 0.4em 0.4em 0 0; 
 	-moz-border-radius: 0.4em 0.4em 0 0; 
 	padding: 0.4em 0.8em; 
 	background: #ffffff; 
@@ -364,7 +402,11 @@ section form dl dd > div#recaptcha_widget_div {
 	top: 0; 
 }
 section ul { padding: 2pt 0 0 12pt; }
-section#comments > div { -moz-border-radius: 1em; }
+section#comments > div { 
+	border-radius: 1em; 
+	-webkit-border-radius: 1em; 
+	-moz-border-radius: 1em; 
+}
 section#comments h2 { 
 	font-size: 16pt; 
 	border-bottom: dotted 1px #333333; 
@@ -403,6 +445,8 @@ section form textarea {
 	border-top-color: #999999; 
 	border-right-color: #bbbbbb; 
 	border-bottom-color: #dddddd; 
+	box-shadow: -1px 1px 5px #dddddd inset; 
+	-webkit-box-shadow: -1px 1px 5px #dddddd inset; 
 	-moz-box-shadow: -1px 1px 5px #dddddd inset; 
 	vertical-align: top; 
 	height: 10em; 
@@ -410,23 +454,34 @@ section form textarea {
 }
 section form input[type="submit"], section form button { 
 	border: solid 2px #ffffff; 
+	background: -webkit-linear-gradient(100% 100% 90deg, #222222, #777777); 
 	background: -moz-linear-gradient(100% 100% 90deg, #222222, #777777); 
 	padding: 0.6em 1.2em; 
 	color: #ffffff; 
+	border-radius: 0.6em; 
+	-webkit-border-radius: 0.6em; 
 	-moz-border-radius: 0.6em; 
+	box-shadow: 0 0 6px #666666; 
+	-webkit-box-shadow: 0 0 6px #666666; 
 	-moz-box-shadow: 0 0 6px #666666; 
 	text-decoration: none; 
 	font-size: 90%; 
 }
 section form input[type="submit"]:hover, section form button:hover { 
+	background: -webkit-linear-gradient(100% 100% 90deg, #444444, #999999); 
 	background: -moz-linear-gradient(100% 100% 90deg, #444444, #999999); 
 	cursor: pointer; 
 }
 .button { 
+	background: -webkit-linear-gradient(100% 100% 90deg, #222222, #777777); 
 	background: -moz-linear-gradient(100% 100% 90deg, #222222, #777777); 
 	padding: 0.2em 0.5em 0.3em; 
 	color: #ffffff; 
+	border-radius: 0.6em; 
+	-webkit-border-radius: 0.6em; 
 	-moz-border-radius: 0.6em; 
+	box-shadow: 0 0 6px #cccccc; 
+	-webkit-box-shadow: 0 0 6px #cccccc; 
 	-moz-box-shadow: 0 0 6px #cccccc; 
 	text-decoration: none; 
 	font-size: 90%; 
@@ -439,10 +494,14 @@ section form input[type="submit"]:hover, section form button:hover {
 	border: solid 1px #333333; 
 }
 .button:hover { 
+	background: -webkit-linear-gradient(100% 100% 90deg, #444444, #999999); 
 	background: -moz-linear-gradient(100% 100% 90deg, #444444, #999999); 
 	cursor: pointer; 
 }
-.button.shallow:hover { background: -moz-linear-gradient(100% 100% 90deg, #cccccc, #ffffff); }
+.button.shallow:hover { 
+	background: -webkit-linear-gradient(100% 100% 90deg, #cccccc, #ffffff); 
+	background: -moz-linear-gradient(100% 100% 90deg, #cccccc, #ffffff); 
+}
 .clear { 
 	float: none; 
 	clear: both; 
