@@ -66,7 +66,7 @@ sub documentation {
             $found_file = $filename;
         }
         
-        my $lang = $params{lang};
+        my $lang = $params{lang} || '';
         next if $lang && $filename !~ m{ \A doc/$lang/ }x;
         
         if ( $lang && $found_file !~ m{ \A doc/$lang/ }x ) {
@@ -74,7 +74,7 @@ sub documentation {
             $found_file = $filename;
         }
         
-        my $type = $params{type};
+        my $type = $params{type} || '';
         next if $type && $filename !~ m{ \A doc/[^/]+/.*\.$type \z }x;
         
         if ( $type && $found_file !~ m{ \A doc/$lang/ }x ) {
