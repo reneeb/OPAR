@@ -15,11 +15,15 @@ __PACKAGE__->add_columns( qw/
     mail
     active
     registered
+    realname
 /);
 __PACKAGE__->set_primary_key( qw/ user_id / );
 
 
 __PACKAGE__->has_many( opr_package_author => 'OTRS::OPR::DB::Schema::Result::opr_package_author',
+             { 'foreign.user_id' => 'self.user_id' });
+
+__PACKAGE__->has_many( opr_temp_passwd => 'OTRS::OPR::DB::Schema::Result::opr_temp_passwd',
              { 'foreign.user_id' => 'self.user_id' });
 
 __PACKAGE__->has_many( opr_group_user => 'OTRS::OPR::DB::Schema::Result::opr_group_user',
