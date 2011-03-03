@@ -109,6 +109,8 @@ sub send {
     $user->mail( $params{email} );
     $user->registered( time );
     
+    $user->save;
+    
     # send mail to user with token to set password ({register => 1})
     my $mail_sent = $self->_send_mail_to_user( $user, {register => 1} );
     
