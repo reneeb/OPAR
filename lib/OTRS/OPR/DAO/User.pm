@@ -77,6 +77,8 @@ sub BUILD {
         $self->$attr( $user->$attr() );
     }
     
+    $self->user_id( $user->user_id );
+    
     my @group_user_objects = $user->opr_group_user;
     my @group_objects;
     
