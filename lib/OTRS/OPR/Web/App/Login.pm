@@ -50,8 +50,10 @@ sub do_login {
         
         # show login form and show error message
         $self->notify({
-            type    => 'error',
-            include => 'notifications/login_unsuccessful',
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => $self->config->get( 'errors.login_incorrect.headline' ),
+            ERROR_MESSAGE  => $self->config->get( 'errors.login_incorrect.message' ),
         });
         $self->login( $template );
     }

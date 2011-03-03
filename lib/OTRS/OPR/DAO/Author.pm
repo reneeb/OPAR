@@ -5,7 +5,7 @@ use OTRS::OPR::App::AttributeInformation;
 
 extends 'OTRS::OPR::DAO::Base';
 
-my @attributes = qw(user_name user_id website);
+my @attributes = qw(user_name user_id website active);
 for my $attribute ( @attributes ) {
     has $attribute => (
         metaclass    => 'OTRS::OPR::App::AttributeInformation',
