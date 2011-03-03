@@ -14,7 +14,7 @@ sub convert {
     return if !$self->raw;
     
     my $converter = OTRS::OPR::Doc::Pod2HTML->new(
-        pod => $self->raw;
+        pod => $self->raw,
     );
     
     $converter->convert;

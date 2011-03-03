@@ -8,6 +8,7 @@ use Log::Log4perl;
 
 use OTRS::OPM::Analyzer;
 use OTRS::OPR::DB::Schema;
+use OTRS::OPR::Doc::Converter;
 
 sub new {
     my ( $class, %args ) = @_;
@@ -158,14 +159,15 @@ sub _save_documentation {
     return if $docu->{filename} !~ m{\.pod \z }x;
     
     my $converter = OTRS::OPR::Doc::Converter->new(
-        pod => $docu->{content},
+        raw => $docu->{content},
     );
     
-    $converter->convert;
+    my $html = $converter->convert;
+    $logger->trace( "HTML-Documentation: " . $html );
     
-    return if !$converter->html;
+    return if !$html;
     
-    $package->documentation( $converter->html );
+    $package->documentation( $html );
     
     # save the updates
     $package->update;
