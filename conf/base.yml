@@ -3,15 +3,15 @@ db:
   type: mysql
   host: localhost
   name: opar
-  user: opar
-  pass: hot
+  user: root
+  pass: 
 paths:
-  base: /home/opar/opar_sources/
+  base: /Users/tk/Desktop/Renee/OPAR/opar-web/
   templates: templates/
-  conf: /home/opar/opar_sources/conf/
+  conf: /Users/tk/Desktop/Renee/OPAR/opar-web/conf/
   static: static/
   mails: mails/
-  uploads: /home/opar/uploads/
+  uploads: /Users/tk/Desktop/Renee/OPAR/opar-web/uploads/
 defaults:
   static: imprint
 templates:
@@ -38,7 +38,6 @@ mail:
     general: Mail from OPAR
     forgot_password: Forgot password
     registration: Account for OPAR requested
-    feedback: Feedback
   tag: [OPAR]
 password:
   salt: OPAR
@@ -76,3 +75,4 @@ help:
   registration:
     username: Username has to be longer than 3 characters (A-Z, a-z), no special characters
     email: Must be in valid email format
+
