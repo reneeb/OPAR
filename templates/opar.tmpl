@@ -53,12 +53,17 @@
 			</footer>
 	
 		</div>
+		<div id="help_messages"></div>
 		<script type="text/javascript" src="/js/OPAR.Config.js"></script>
+		<script type="text/javascript" src="/js/OPAR.Help.js"></script>
 		<script type="text/javascript" src="/js/OPAR.Package.js"></script>
 		<script type="text/javascript" src="/js/OPAR.User.js"></script>
 		<script type="text/javascript">
 		//<![CDATA[
 		    OPAR.Config.Set('BaseURL', '<%= __SCRIPT__ %>');
+		    <%LOOP JSHELP %>
+		    OPAR.Help.Set( '<%= NAME %>', '<%= VALUE %>' );
+		    <%/LOOP %>
 		//]]>
 		</script>
 	</body>
