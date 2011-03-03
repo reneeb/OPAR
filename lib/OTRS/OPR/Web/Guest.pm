@@ -9,7 +9,7 @@ use Data::Tabulate;
 use File::Spec;
 use OTRS::OPR::DB::Helper::Author  { list => 'author_list' };
 use OTRS::OPR::DB::Helper::Package qw(page);
-use OTRS::OPR::Web::App::Forms     qw(check_formid get_formid);
+use OTRS::OPR::Web::App::Forms     qw(:all);
 use OTRS::OPR::Web::Utils          qw(prepare_select page_list);
 
 sub setup {
@@ -66,44 +66,65 @@ sub authors {
 }
 
 sub feedback {
-    my ($self) = @_;
+    my ($self,%params) = @_;
+    
+    my $captcha = Captcha::reCAPTCHA->new;
+    
+    my $public_key = $self->config->get( 'recaptcha.public_key' );
+    my $html       = $captcha->get_html( $public_key );
     
     my $form_id = $self->get_formid;
     
     $self->template( 'index_feedback_form' );
     $self->stash(
-        FORMID => $form_id,
+        %params,
+        FORMID  => $form_id,
+        CAPTCHA => $html,
     );
 }
 
 sub send_feedback {
     my ($self) = @_;
     
-    my %params = $self->query->Vars();
-    my %errors;
-    my $notification_type = 'success';
+    my %params = $self->query->Vars;
     
-    # check if form has a valid id
-    $errors{formid} = 1 if !$self->check_formid( $params{formid} );
-    
-    $notification_type = 'error' if keys %errors;
-    $self->notify({
-        type    => $notification_type,
-        include => 'notifications/feedback_' . $notification_type,
-    });
-    
-    # TODO: check userinput
-    
-    # show errors in template
-    my %template_params;
-    for my $error_key ( keys %errors ) {
-        $template_params{ 'ERROR_' . uc $error_key } = $self->config->get( 'errors.' . $error_key );
+    # check formid
+    my $formid_ok = $self->validate_formid( \%params );
+    if ( !$formid_ok ) {
+        return $self->feedback( %params );
     }
     
-    $self->template( 'index_feedback_sent' );
-    $self->stash(
-        %template_params,
-    );
+    # check captcha
+    my $captcha_valid = $self->validate_captcha( \%params );
+    if ( !$captcha_valid ) {
+        return $self->feedback( %params );
+    }
+    
+    # check userinput
+    my %errors = $self->validate_fields( 'feedback.yml', \%params );
+    if ( %errors ) {
+        return $self->feedback( %params, %errors );
+    }
+    
+    my $success = $self->_send_feedbackmail( %params );
+    if ( $success ) {
+        $self->notify({
+            type             => 'success',
+            include          => 'notifications/generic_success',
+            SUCCESS_HEADLINE => 'Sent Mail!',
+            SUCCESS_MESSAGE  => 'Thanks for your feedback!',
+        });
+    }
+    else {
+        $self->notify({
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => 'Cannot send mail!',
+            ERROR_MESSAGE  => 'Some problems with our mailsystem occured. Please try later again.',
+        });
+    }
+    
+    $self->template( 'blank' );
 }
 
 sub static {
@@ -150,6 +171,31 @@ sub search {
         PAGES       => $pagelist,
         SEARCH_TERM => $search_term,
     );
+}
+
+sub _send_feedbackmail {
+    my ($self,%params) = @_;
+    
+    my $config = $self->config;
+    
+    # send mail to user
+    my $mailer = $self->mailer;
+    $mailer->prepare_mail(
+        'feedback',
+        %params
+    );
+    
+    my $subject = 
+        $config->get( 'mail.tag' ) . ' ' . 
+        $config->get( 'mail.subjects.feedback' ) . ' ' .
+        $params{subject};
+    
+    my $success = $mailer->send_mail(
+        to      => $config->get( 'mail.to' ),
+        subject => $subject,
+    );
+    
+    return $success;
 }
 
 1;

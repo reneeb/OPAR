@@ -53,3 +53,11 @@ fieldset.table_like > .field {
     visibility: visible;
     display: block;
 }
+
+.field_error input {
+    background: #ffeeee;
+}
+
+.field_error textarea {
+    background: #ffeeee;
+}

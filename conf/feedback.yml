@@ -1,0 +1,13 @@
+---
+step1:
+  name:
+    length: 3,
+    type: optional
+  email:
+    plugin: EMail
+    type: required
+  subject:
+    type: required
+  comments:
+    type: required
+    plugin: NoSpam
