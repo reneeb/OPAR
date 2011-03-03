@@ -162,6 +162,8 @@ sub do_upload : Permission( 'author' ) {
     $self->logger->trace( "Uploaded package: $package_name" );
     my $name_id      = $self->user_is_maintainer( $self->user, { name => $package_name, add => 1 } );
     if ( !$name_id ) {
+        $self->logger->debug( sprintf "UserID: %d -> Package: %s", $self->user->user_id, $package_name );
+        
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
