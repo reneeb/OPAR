@@ -5,7 +5,7 @@ use OTRS::OPR::App::AttributeInformation;
 
 extends 'OTRS::OPR::DAO::Base';
 
-my @attributes = qw(user_name user_id website active);
+my @attributes = qw(user_name user_id website active realname);
 for my $attribute ( @attributes ) {
     has $attribute => (
         metaclass    => 'OTRS::OPR::App::AttributeInformation',
@@ -60,8 +60,9 @@ sub to_hash {
     my ($self) = @_;
     
     my %info = (
-        USER    => $self->user_name || '',
-        WEBSITE => $self->website   || '',
+        USER     => $self->user_name || '',
+        WEBSITE  => $self->website   || '',
+        REALNAME => $self->realname  || '',
     );
 }
 
