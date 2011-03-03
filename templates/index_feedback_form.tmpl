@@ -1,0 +1,44 @@
+						
+			<section>
+				<h1>Send Feedback</h1>
+				<p>
+					We highly appreciate feedback as this helps us to improve OPAR!
+				</p>
+			</section>
+
+			<section>		
+				<div>
+					<form action="<%= __SCRIPT__ %>/send_feedback" method="post">
+						<input type="hidden" name="formid" value="<%= FORMID %>" />
+						<dl>
+							<dt>Name</dt>
+							<dd>
+								<input type="text" name="name" value="<%= name %>" />
+							</dd>
+							
+							<dt>Email</dt>
+							<dd class="<%= ERROR_EMAIL %>">
+								<input type="text" name="email" value="<%= email %>" />
+							</dd>
+
+							<dt>Subject</dt>
+							<dd class="<%= ERROR_SUBJECT %>">
+								<input type="text" name="subject" value="<%= subject %>" />
+							</dd>
+							
+							<dt>Comment</dt>
+							<dd class="<%= ERROR_COMMENTS %>">
+								<textarea name="comments"><%= comments %></textarea>
+							</dd>
+							
+							<dt class="empty">&nbsp;</dt>
+							<dd><%= CAPTCHA ESCAPE=0 %></dd>
+	
+							<dt class="empty">&nbsp;</dt>
+							<dd class="right">
+								<input type="submit" value="Send"/>
+							</dd>
+						</dl>
+					</form>
+				</div>
+			</section>

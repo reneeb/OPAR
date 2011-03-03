@@ -32,7 +32,7 @@ sub setup {
         
         # imported subroutines
         login       => sub{ shift->login( 'author_login' ) },
-        do_login    => sub{ shift->do_login( 'author.startpage' ) },
+        do_login    => sub{ shift->do_login( 'author.startpage', 'author_login' ) },
         logout      => \&logout,
     );
 }
