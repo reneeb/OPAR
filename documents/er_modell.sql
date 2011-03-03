@@ -28,7 +28,8 @@ CREATE TABLE `opr_package` (
   bugtracker VARCHAR(255) ,
   upload_time INTEGER ,
   virtual_path VARCHAR(255) ,
-  deletion_flag BIGINT,
+  deletion_flag BIGINT ,
+  documentation TEXT,
   PRIMARY KEY(package_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
