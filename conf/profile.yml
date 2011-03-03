@@ -1,0 +1,10 @@
+---
+step1:
+  realname:
+    type: optional
+  mail:
+    plugin: EMail
+    type: required
+  website:
+    plugin: URL
+    type: optional
