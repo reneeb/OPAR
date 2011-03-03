@@ -317,6 +317,17 @@ sub author {
         _schema => $self->schema,
     );
     
+    if ( $dao->not_in_db || !$dao->active ) {
+        $self->template( 'blank' );
+        $self->notify({
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => $self->config->get( 'errors.author_not_found.headline' ),
+            ERROR_MESSAGE  => $self->config->get( 'errors.author_not_found.message' ),
+        });
+        return;
+    }
+    
     my @packages = $dao->packages( is_in_index => 1 );
     my @for_tmpl = map{ $self->package_to_hash( $_ ) }@packages;
     
