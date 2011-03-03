@@ -25,13 +25,13 @@ sub list {
         $initial = 1;
     }
     
-    $self->schema->storage->debug(1);
-    
     my @list = $self->table( 'opr_user' )->search({
         user_name => { LIKE => "$like\%" },
     });
     
-    $self->schema->storage->debug(0);
+    if ( $params{active} ) {
+        @list = grep{ $_->active }@list;
+    }
     
     my %authors;
     

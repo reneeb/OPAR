@@ -49,7 +49,7 @@ sub authors {
     my $short   = $self->param( 'short' )   || undef;
     my $initial = $self->param( 'initial' ) || undef;
     
-    my @authors   = $self->author_list( initial => $initial, short => $short );
+    my @authors   = $self->author_list( initial => $initial, short => $short, active => 1 );
     my $tabulator = Data::Tabulate->new;
     
     $tabulator->max_columns( 6 );
