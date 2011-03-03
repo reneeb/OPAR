@@ -3,15 +3,15 @@ db:
   type: mysql
   host: localhost
   name: opar
-  user: root
-  pass: 
+  user: opar
+  pass: hot
 paths:
-  base: /Users/tk/Desktop/Renee/OPAR/opar-web/
+  base: /home/opar/opar_sources/
   templates: templates/
-  conf: /Users/tk/Desktop/Renee/OPAR/opar-web/conf/
+  conf: /home/opar/opar_sources/conf/
   static: static/
   mails: mails/
-  uploads: /Users/tk/Desktop/Renee/OPAR/opar-web/uploads/
+  uploads: /home/opar/uploads/
 defaults:
   static: imprint
 templates:

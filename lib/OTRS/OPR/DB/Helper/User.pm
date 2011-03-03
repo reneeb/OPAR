@@ -23,6 +23,7 @@ sub check_credentials {
     my ($user) = $self->table( 'opr_user' )->search({
         user_name     => $username,
         user_password => $password,
+        active        => 1,
     })->all;
     
     if ( !$user ) {

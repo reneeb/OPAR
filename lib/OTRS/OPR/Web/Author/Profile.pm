@@ -6,8 +6,8 @@ use warnings;
 use parent qw(OTRS::OPR::Web::App);
 
 use OTRS::OPR::DAO::User;
-use OTRS::OPR::Web::App::Forms     qw(check_formid get_formid);
-use OTRS::OPR::Web::App::Prerun    qw(cgiapp_prerun);
+use OTRS::OPR::Web::App::Forms  qw(:all);
+use OTRS::OPR::Web::App::Prerun qw(cgiapp_prerun);
 
 sub setup {
     my ($self) = @_;
@@ -42,7 +42,7 @@ sub show : Permission( 'author' ) {
 }
 
 sub edit : Permission( 'author' ) {
-    my ($self) = @_;
+    my ($self, %params) = @_;
     
     my $formid = $self->get_formid;
     
@@ -51,6 +51,7 @@ sub edit : Permission( 'author' ) {
     $self->template( 'author_profile_edit' );
     $self->stash(
         %info,
+        %params,
         FORMID => $formid,
     );
 }
@@ -61,7 +62,11 @@ sub save : Permission( 'author' ) {
     # get user input
     my %params = $self->query->Vars;
     
-    # TODO: form validation; on error -> show edit mask
+    # validate user input
+    my %errors = $self->validate_fields( 'profile.yml', \%params );
+    if ( %errors ) {
+        return $self->edit( %params, %errors );
+    }
     
     # save values - only a few fields can be changed
     my $dao = OTRS::OPR::DAO::User->new(
@@ -74,6 +79,7 @@ sub save : Permission( 'author' ) {
     $dao->user_password( $password ) if $password;
     $dao->website( $params{website} );
     $dao->mail( $params{mail} );
+    $dao->realname( $params{realname} );
     
     my %info = $self->_user_to_hash( $dao );
     
@@ -98,7 +104,7 @@ sub _user_to_hash {
     
     my %info;
     
-    for my $attr ( qw(user_name website mail) ) {
+    for my $attr ( qw(user_name website mail realname) ) {
         $info{$attr} = $dao->$attr();
     }
     
