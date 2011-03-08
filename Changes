@@ -5,9 +5,13 @@ Changes file for OPAR
 
      [Authors]
      * Be more flexible with package names: Do not require a version number with major.minor.patch scheme.
+     
+     [Guests]
+     * Allow dashes in package names (e.g. /dist/Name-With-Dashes)
 
      [Misc]
      * Show a button on index page to get to the real portal
+     * Added stub for FAQ
 
 0.5  8 March 2011
 
