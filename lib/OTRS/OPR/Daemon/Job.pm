@@ -322,7 +322,7 @@ sub _init_db {
 sub _teardown {
     my ($self) = @_;
     
-    $self->{__schema__}->disconnect;
+    $self->{__schema__}->storage->disconnect;
 }
 
 1;

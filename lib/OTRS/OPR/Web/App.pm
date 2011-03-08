@@ -281,7 +281,7 @@ sub table {
 sub _teardown {
     my ($self) = @_;
     
-    $self->schema->disconnect;
+    $self->schema->storage->disconnect;
 }
 
 1;
