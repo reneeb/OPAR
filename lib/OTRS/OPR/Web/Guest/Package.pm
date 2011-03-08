@@ -179,11 +179,14 @@ sub dist {
     my $package = $self->param( 'package' );
     my ($name,$version) = $package =~ m{
         \A              # string begin
-        (\w+)           # package name
+        ([\w-]+)           # package name
         
         (?:                 # do not save match
             -               # dash
-            (\d+\.\d+\.\d+) # version number
+            (
+                (?:[0-9]+)         # major number
+                (?:\.[0-9]+){0,2}  # minor and patch number
+            )               # version number
         )?                  # this is optional
         
         \z              # string end
