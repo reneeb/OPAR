@@ -68,7 +68,7 @@ sub _dbh {
     my ($self,$schema) = @_;
     
     if ( !$self->{_schema} && $schema ) {
-        $self->{_schema} = $schema->dbh;
+        $self->{_schema} = $schema->storage->dbh;
     }
 
     $self->{_schema};
