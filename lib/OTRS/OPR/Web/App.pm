@@ -86,6 +86,7 @@ sub session {
             config => $self->config,
             expire => $expire,
             app    => $self,
+            schema => $self->schema,
         );
     }
 
@@ -193,6 +194,8 @@ sub cgiapp_postrun{
         my $string = $self->view;
         $$outref   = $string;
     }
+    
+    $self->_teardown;
 }
 
 sub config{
@@ -273,6 +276,12 @@ sub table {
     
     return if !$name;
     return $self->schema->resultset($name);
+}
+
+sub _teardown {
+    my ($self) = @_;
+    
+    $self->schema->storage->disconnect;
 }
 
 1;

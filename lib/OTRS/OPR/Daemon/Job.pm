@@ -69,6 +69,8 @@ sub run {
         $job->delete;
         $logger->info( 'deleted job ' . $job->job_id );
     }
+    
+    $self->_teardown;
 }
 
 sub analyze_package {
@@ -286,6 +288,20 @@ sub table {
     return $self->{__schema__}->resultset( $name );
 }
 
+sub job_id {
+    my ( $self, $id ) = @_;
+    
+    $self->{__job_id__} = $id if @_ == 2;
+    return $self->{__job_id__};
+}
+
+sub old_state {
+    my ( $self, $state ) = @_;
+    
+    $self->{__old_state__} = $state if @_ == 2;
+    return $self->{__old_state__};
+}
+
 sub _init_db {
     my ( $self ) = @_;
     
@@ -303,18 +319,10 @@ sub _init_db {
     );
 }
 
-sub job_id {
-    my ( $self, $id ) = @_;
+sub _teardown {
+    my ($self) = @_;
     
-    $self->{__job_id__} = $id if @_ == 2;
-    return $self->{__job_id__};
-}
-
-sub old_state {
-    my ( $self, $state ) = @_;
-    
-    $self->{__old_state__} = $state if @_ == 2;
-    return $self->{__old_state__};
+    $self->{__schema__}->storage->disconnect;
 }
 
 1;
