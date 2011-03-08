@@ -78,53 +78,66 @@ sub author {
 }
 
 sub maintainer_list {
-	my ($self) = @_;
-	
-	# get id of package name
-	my $package_name = $self->_schema->resultset('opr_package_names')->find({ package_name => $self->package_name });	
-	my $name_id = $package_name->get_column("name_id");
-	
-	# get id of package
-	#my $package = $self->_schema->resultset('opr_package')->find({ name_id => $name_id });
-	
-	my $maintainer;
-	my @co_maintainers = ();
-	foreach my $author ($self->_schema->resultset('opr_package_author')->search({ name_id => $name_id })) {
-		# get user
-		my $user = $self->_schema->resultset('opr_user')->find({ user_id => $author->get_column('user_id') });
-		
-		if ($author->get_column('is_main_author')) {
-			$maintainer = { 
-				USER_NAME => $user->get_column('user_name'),
-				USER_ID   => $user->get_column('user_id'),
-			};
-		} else {
-			push @co_maintainers, { 
-				USER_NAME => $user->get_column('user_name'),
-				USER_ID   => $user->get_column('user_id'),
-			};
-		}
-	}
-	
-	return ($maintainer, @co_maintainers);
+    my ($self) = @_;
+    
+    return if $self->not_in_db;
+    
+    my $package_object = $self->get_object( 'package' );
+    return if !$package_object;
+    
+    # get id of package name
+    my ($package_name_object) = $package_object->opr_package_names;
+    return if !$package_name_object;
+        
+    my $maintainer;
+    my @co_maintainers;
+    
+    my @authors = $package_name_object->opr_package_author;
+    
+    AUTHOR:
+    for my $author ( @authors ) {
+        
+        # get user
+        my ($user) = $author->opr_user;
+        next AUTHOR if !$user;
+        
+        if ( $author->is_main_author ) {
+            $maintainer = { 
+                USER_NAME => $user->user_name,
+                USER_ID   => $user->user_id,
+            };
+        } else {
+            push @co_maintainers, { 
+                USER_NAME => $user->user_name,
+                USER_ID   => $user->user_id,
+            };
+        }
+    }
+    
+    return ($maintainer, @co_maintainers);
 }
 
 sub comments {
-	my ($self, %opts) = @_;
-		
-	my @comments = ();
-	foreach my $comment ($self->_schema->resultset('opr_comments')->search({ packagename => $self->package_name })) {
-		push @comments, {
-			#'WEBSITE' => $comment->website,
-			'DATE'    => time_to_date( $self, $comment->published ),
-			'SCORE'   => $comment->rating,
-			'COMMENT' => $comment->comments,
-			'COMMENT_ID' => $comment->comment_id,
-			'IS_PUBLISHED' => ($comment->published > 0),
-		};
-	}
-	
-	return @comments;
+    my ($self, %opts) = @_;
+        
+    my @comments;
+    
+    my @comments_found = $self->ask_table('opr_comments')->search({
+        packagename => $self->package_name,
+    });
+    
+    for my $comment ( @comments_found ) {
+        push @comments, {
+            #'WEBSITE' => $comment->website,
+            'DATE'         => time_to_date( $self, $comment->published ),
+            'SCORE'        => $comment->rating,
+            'COMMENT'      => $comment->comments,
+            'COMMENT_ID'   => $comment->comment_id,
+            'IS_PUBLISHED' => ($comment->published > 0),
+        };
+    }
+    
+    return @comments;
 }
 
 sub to_hash {
