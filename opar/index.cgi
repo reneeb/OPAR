@@ -46,6 +46,9 @@ CGI::Application::Dispatch->dispatch(
             app => 'Guest::Package',
             rm  => 'recent_packages',
         },
+        '/feed/:id?/:run?/:package?' => {
+            app => 'Guest::Feed',
+        },
         ':run' => {
             app => 'Guest',
         },
