@@ -1,6 +1,14 @@
 Changes file for OPAR
 =====================
 
+0.6  ?? March 2011
+
+     [Authors]
+     * Be more flexible with package names: Do not require a version number with major.minor.patch scheme.
+
+     [Misc]
+     * Show a button on index page to get to the real portal
+
 0.5  8 March 2011
 
      Initial release to the wild.
