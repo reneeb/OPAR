@@ -86,6 +86,7 @@ sub session {
             config => $self->config,
             expire => $expire,
             app    => $self,
+            schema => $self->schema,
         );
     }
 
