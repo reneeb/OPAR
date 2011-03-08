@@ -17,6 +17,7 @@ sub new{
     $self->expire( $args{expire} );
 
     $self->app( $args{app} );
+    $self->_dbh( $args{schema} );
 
     {
         no warnings 'redefine';
@@ -64,18 +65,10 @@ sub session{
 }
 
 sub _dbh {
-    my ($self) = @_;
+    my ($self,$schema) = @_;
     
-    unless( $self->{_schema} ){
-        my $config = $self->_config;
-        my $db   = $config->get( 'db.name' );
-        my $host = $config->get( 'db.host' );
-        my $type = $config->get( 'db.type' );
-        $self->{_schema} = DBI->connect( 
-            "DBI:$type:$db:$host", 
-            $config->get( 'db.user' ),
-            $config->get( 'db.pass' ),
-        );
+    if ( !$self->{_schema} && $schema ) {
+        $self->{_schema} = $schema->dbh;
     }
 
     $self->{_schema};

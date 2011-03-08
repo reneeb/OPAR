@@ -193,6 +193,8 @@ sub cgiapp_postrun{
         my $string = $self->view;
         $$outref   = $string;
     }
+    
+    $self->_teardown;
 }
 
 sub config{
@@ -273,6 +275,12 @@ sub table {
     
     return if !$name;
     return $self->schema->resultset($name);
+}
+
+sub _teardown {
+    my ($self) = @_;
+    
+    $self->schema->disconnect;
 }
 
 1;
