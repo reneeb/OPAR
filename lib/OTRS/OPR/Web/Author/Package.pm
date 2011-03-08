@@ -456,7 +456,7 @@ sub _get_package_name {
             }
         }
         
-        ($package_name) = $content =~ m{ <Name.*?> \s* (\w+) \s* </Name> }xms;
+        ($package_name) = $content =~ m{ <Name.*?> \s* ([\w-]+) \s* </Name> }xms;
     }
     
     return $package_name || '';
@@ -477,7 +477,13 @@ sub _upload_file {
     
     my ($file,$version,$suffix) = $name =~ m{
         ([^\\\/]+)       # filename
-        -(\d+\.\d+\.\d+) # version
+        (?:              # begin version
+          -(                # dash
+            \d+             # major number of version
+            (?:\.\d+)?      # optional minor number of version
+            (?:\.\d+)?      # optional patch number of version
+           )             # version
+        )?               # version is optional
         (\.opm)          # file suffix
         \z               # string end
     }xms;
@@ -493,9 +499,11 @@ sub _upload_file {
         $user_name,
     );
     
+    my $v_string = $version ? '-' . $version : '';
+    
     my $file_path = Path::Class::File->new(
         $path,
-        $file . '-' . $version . '.opm',
+        $$ . '-' . $file . $version . '.opm',
     );
     
     $self->logger->debug( "Target file: $file_path" );
