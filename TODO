@@ -3,31 +3,30 @@ TODO
 
    Title                                                                    Prio
    -----                                                                    ----
- * Send email to author when analysis is done                                  2
+ * Send email to author when analysis is done                               -> 1 # (REB)
  * Finish XML schema for OPM files and enable schema test                      2
  * author's area
-   * admin comments about packages                                             1
-   * add/remove comaintainer for package                                       1
-   * request new analysis of a package                                         3
+   * request new analysis of a package                                         2
  * guest's area
-   * FAQ                                                                       1
-   * comment and vote for packages                                             1 # done (TOM)
-   * own feed for OTRS Package Manager                                         3
-   * RSS feed for recent uploads                                               3 # done (TOM)
-   * browser for authors                                                       1 # done (REB)
-   * feedback                                                                  1 # done (REB)
-   * author page                                                               1 # done (REB)
+   * FAQ                                                                    -> 1 # (REB)
+   * own feed for OTRS Package Manager                                      -> 1 # (REB)
+   * show OK results                                                           2
+   * Show only the newest version of a package on authors' page                2
  * admin's area
-   * admin comments about packages                                             2
-   * user management                                                           2
-   * delete packages (shorter time span until real deletion)                   2
-   * new analysis for packages                                                 3
+   * admin comments about packages                                             1 # (TOM)
+   * user management                                                           1 # (TOM)
+   * delete packages (shorter time span until real deletion)                   1 # (TOM)
+   * new analysis for packages                                                 2 # (TOM)
  * Perl::Critic policies
    * 4 whitespaces instead of tabulators                                       4
    * using {} as delimiters in RegEx                                           4
+   * Version format: 0.0.0
  * other
    * Twitter updates for recent uploads                                        4
    * LDAP auth against OTRS Community LDAP                                     5
-   * documentation                                                             2
-   * more help on website (forms)                                              2
-   * convert package documentation to HTML                                     1
+   * documentation                                                             1
+   * more help on website (forms)                                              1
+   * convert package documentation to HTML
+      * Docbook                                                                2
+      * HTML                                                                   3
+      * PDF                                                                    4

@@ -11,11 +11,15 @@ use XML::LibXML;
 # define types
 subtype 'VersionString' =>
   as 'Str' =>
-  where { $_ =~ m{ \A (?:[0-9]+\.){2}(?:[0-9]+|x) \z }xms };
+  where { $_ =~ m{ \A (?:[0-9]+) (?:\.[0-9]+){0,2} \z }xms };
+
+subtype 'FrameworkVersionString' =>
+  as 'Str' =>
+  where { $_ =~ m{ \A (?:[0-9]+\.){2} (?:[0-9]+|x) \z }xms };
 
 # declare attributes
 has name         => ( is  => 'rw', isa => 'Str', );
-has framework    => ( is  => 'rw', isa => 'VersionString', );
+has framework    => ( is  => 'rw', isa => 'FrameworkVersionString', );
 has version      => ( is  => 'rw', isa => 'VersionString', );
 has vendor       => ( is  => 'rw', isa => 'Str', );
 has url          => ( is  => 'rw', isa => 'Str', );
