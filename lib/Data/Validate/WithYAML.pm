@@ -121,7 +121,7 @@ config file), a hash with fieldnames and its values
 
     my %fields = (
         username => $cgi->param('user'),
-        passwort => $password,
+        password => $password,
     );
     $foo->validate( 'step1', %fields );
 
