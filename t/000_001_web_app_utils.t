@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use File::Basename;
 use File::Spec;
-use Test::More tests => 22;
+use Test::More tests => 31;
 
 my $dir;
 my $lib;
@@ -315,5 +315,34 @@ SKIP: {
         
         my $select_options_3 = OTRS::OPR::Web::Utils->prepare_select({data => { hallo => 'test', key2 => 'test2' }, selected => 'test' });
         is_deeply $select_options_3, \@options_3, 'prepare_select test 2';
+    }
+    
+    {
+        # check validate_opm_name
+        
+        my @valid = qw(
+            DashboardMOTDPlus-0.1.1.opm
+            Out-of-Office-0.1.opm
+            TicketTemplate-1.opm
+            Test.opm
+            /Dashboard2.opm
+            /test/TicketTest-0.1.1.opm
+        );
+        
+        for my $name ( @valid ) {
+            my $success = OTRS::OPR::Web::Utils->validate_opm_name( $name );
+            ok $success, "$name is valid";
+        }
+        
+        my @invalid = qw(
+            Test$.opm
+            1^z-0.1.1.opm
+            /Test$.opm
+        );
+        
+        for my $name ( @invalid ) {
+            my $success = OTRS::OPR::Web::Utils->validate_opm_name( $name );
+            ok !$success, "$name is invalid";
+        }
     }
 }

@@ -12,6 +12,7 @@ our @EXPORT_OK = qw(
     prepare_select
     page_list
     time_to_date
+    validate_opm_name
 );
 
 sub prepare_select {
@@ -128,6 +129,29 @@ sub time_to_date {
     }
     
     return join ' ', @parts;
+}
+
+sub validate_opm_name {
+    my ($class,$file) = @_;
+    
+    my ($basename) = $file =~ m{ \A .*? ([^\\\/]+) \z }xms;
+    
+    my $success = $basename =~ m{
+        \A
+        ([\w-]+)       # filename
+        (?:              # begin version
+          -(                # dash
+            \d+             # major number of version
+            (?:\.\d+)?      # optional minor number of version
+            (?:\.\d+)?      # optional patch number of version
+           )             # version
+        )?               # version is optional
+        (\.opm)          # file suffix
+        \z               # string end
+    }xms;
+    
+    return if !$success;
+    return ($1,$2,$3);
 }
 
 1;
