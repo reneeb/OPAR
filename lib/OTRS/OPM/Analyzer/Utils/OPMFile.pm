@@ -106,14 +106,14 @@ sub parse {
     my $tree   = $parser->parse_file( $self->opm_file );
     
     # check if the opm file is valid.
-    #try {
-    #    my $xsd = do{ local $/; <DATA> };
-    #    XML::LibXML::Schema->new( string => $xsd )
-    #}
-    #catch {
-    #    $self->error_string( 'Could not validate against XML schema: ' . $_ );
-    #    return;
-    #};
+    try {
+        my $xsd = do{ local $/; <DATA> };
+        XML::LibXML::Schema->new( string => $xsd )
+    }
+    catch {
+        $self->error_string( 'Could not validate against XML schema: ' . $_ );
+        #return;
+    };
     
     my $root = $tree->getDocumentElement;
     
