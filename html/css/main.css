@@ -9,7 +9,7 @@
 */
 
 
-body, h1, h2, h3, input, select,  textarea, a, div, p, span, form,  header, section, footer { 
+body, h1, h2, h3, h4, h5, input, select,  textarea, a, div, p, span, form,  header, section, footer { 
 	font-weight: 300; 
 	color: #333333; 
 	font-size: 12pt; 
@@ -76,12 +76,25 @@ a.home:hover {
 	padding: 2px 30px 4px 0; 
 }
 a.back:before { content: "← "; }
+h1, h2, h3, h4, h5 { margin: 10pt 0 5pt; }
 h1 { font-size: 200%; }
 h1 span { 
 	font-size: 50%; 
 	display: block; 
 }
 h1 emph { font-weight: bold; }
+h2 { font-size: 160%; }
+h3 { font-size: 140%; }
+h4 { font-size: 120%; }
+.faq h4 { 
+	border-top: solid 1px #cccccc; 
+	padding-top: 7pt; 
+}
+h4 a { border: none; }
+h5 { 
+	font-size: 100%; 
+	font-weight: bold; 
+}
 table { 
 	margin: 14px 0; 
 	border: solid 3px #bbddee; 
