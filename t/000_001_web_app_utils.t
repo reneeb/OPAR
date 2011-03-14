@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use File::Basename;
 use File::Spec;
-use Test::More tests => 31;
+use Test::More tests => 49;
 
 my $dir;
 my $lib;
@@ -320,18 +320,47 @@ SKIP: {
     {
         # check validate_opm_name
         
-        my @valid = qw(
-            DashboardMOTDPlus-0.1.1.opm
-            Out-of-Office-0.1.opm
-            TicketTemplate-1.opm
-            Test.opm
-            /Dashboard2.opm
-            /test/TicketTest-0.1.1.opm
+        my %valid = (
+            'DashboardMOTDPlus-0.1.1.opm' => {
+                package => 'DashboardMOTDPlus',
+                version => '0.1.1',
+                suffix  => '.opm',
+            },
+            'Out-of-Office-0.1.opm' => {
+                package => 'Out-of-Office',
+                version => '0.1',
+                suffix  => '.opm',
+            },
+            'TicketTemplate-1.opm' => {
+                package => 'TicketTemplate',
+                version => '1',
+                suffix  => '.opm',
+            },
+            'Test.opm' => {
+                package => 'Test',
+                version => undef,
+                suffix  => '.opm',
+            },
+            '/Dashboard2.opm' => {
+                package => 'Dashboard2',
+                version => undef,
+                suffix  => '.opm',
+            },
+            '/test/TicketTest-0.1.1.opm' => {
+                package => 'TicketTest',
+                version => '0.1.1',
+                suffix  => '.opm',
+            },
         );
         
-        for my $name ( @valid ) {
-            my $success = OTRS::OPR::Web::Utils->validate_opm_name( $name );
-            ok $success, "$name is valid";
+        for my $name ( keys %valid ) {
+            my @info = OTRS::OPR::Web::Utils->validate_opm_name( $name );
+            ok scalar @info, "$name is valid";
+            
+            my $check = $valid{$name};
+            is $info[0], $check->{package}, 'package name correctly parsed - ' . $check->{package};
+            is $info[1], $check->{version}, 'version correctly parsed - ' . ( defined $check->{version} ? $check->{version} : '<undef>' );
+            is $info[2], $check->{suffix}, 'suffix correctly parsed - ' . $check->{suffix};
         }
         
         my @invalid = qw(

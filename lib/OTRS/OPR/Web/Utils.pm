@@ -138,7 +138,7 @@ sub validate_opm_name {
     
     my $success = $basename =~ m{
         \A
-        ([\w-]+)       # filename
+        ([\w-]+?)       # filename
         (?:              # begin version
           -(                # dash
             \d+             # major number of version
