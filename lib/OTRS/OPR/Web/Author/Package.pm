@@ -456,7 +456,8 @@ sub _get_package_name {
             }
         }
         
-        ($package_name) = $content =~ m{ <Name.*?> \s* ([\w-]+) \s* </Name> }xms;
+        ($package_name) = $content =~ m{ <Name.*?> \s* ([\w-\s]+) \s* </Name> }xms;
+        $package_name =~ s{\s+$}{};
     }
     
     return $package_name || '';
@@ -475,22 +476,11 @@ sub _upload_file {
     
     my $name = $self->query->param( $field_name );
     
-    my ($file,$version,$suffix) = $name =~ m{
-        ([^\\\/]+)       # filename
-        (?:              # begin version
-          -(                # dash
-            \d+             # major number of version
-            (?:\.\d+)?      # optional minor number of version
-            (?:\.\d+)?      # optional patch number of version
-           )             # version
-        )?               # version is optional
-        (\.opm)          # file suffix
-        \z               # string end
-    }xms;
+    my ($file,$version,$suffix) = OTRS::OPR::Web::Utils->validate_opm_name( $name );
     
     $file =~ s{[^A-Za-z0-9.-]}{}g;
     
-    return (0, 'No .opm suffix' ) if !$file;
+    return (0, 'No valid filename' ) if !$file;
     
     my $user_name = $self->user->user_name;
     
