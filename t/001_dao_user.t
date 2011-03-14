@@ -72,6 +72,7 @@ ok $schema, 'schema was created';
     ok !$new_user->_has_changed, 'new user has not been changed yet';
 
     $new_user->user_name( 'toms' );
+    $new_user->mail( 'hallo@test.example' );
     is $new_user->user_name, 'toms', 'user name for new user has been set';
     ok $new_user->_has_changed, 'now the user has been changed';
 }

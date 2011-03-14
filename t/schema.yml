@@ -9,6 +9,7 @@ schema:
     session_id: VARCHAR(255)
     active: TINYINT
     registered: INTEGER
+    realname: VARCHAR(255)
   opr_group:
     group_id: INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT
     group_name: VARCHAR(255) NOT NULL
@@ -32,6 +33,7 @@ schema:
     upload_time: VARCHAR(255)
     virtual_path: VARCHAR(255)
     deletion_flag: VARCHAR(255)
+    documentation: VARCHAR(255)
   opr_package_dependency:
     dependency_id: INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT
     package_id: INTEGER NOT NULL
