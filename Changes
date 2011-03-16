@@ -5,6 +5,7 @@ Changes file for OPAR
 
      [Authors]
      * Be more flexible with package names: Do not require a version number with major.minor.patch scheme.
+     * Allow spaces and dashes in package names
      
      [Guests]
      * Allow dashes in package names (e.g. /dist/Name-With-Dashes)
