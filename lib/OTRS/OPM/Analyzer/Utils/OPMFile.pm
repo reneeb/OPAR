@@ -11,7 +11,7 @@ use XML::LibXML;
 # define types
 subtype 'VersionString' =>
   as 'Str' =>
-  where { $_ =~ m{ \A (?:[0-9]+) (?:\.[0-9]+){0,2} \z }xms };
+  where { $_ =~ m{ \A (?:[0-9]+) (?:\.[0-9]+){1,2} \z }xms };
 
 subtype 'FrameworkVersionString' =>
   as 'Str' =>
