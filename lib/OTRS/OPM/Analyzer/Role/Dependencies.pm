@@ -62,7 +62,7 @@ sub _get_file_dependencies {
     my @uses;
     
     # get all 'use' and 'require' statements that include a module
-    my $includes = $ppi->find( 'PPI::Statement::Include' );
+    my $includes = $ppi->find( 'PPI::Statement::Include' ) || [];
     for my $include ( @{$includes} ) {
         
         # we don't care for "deactivation"
