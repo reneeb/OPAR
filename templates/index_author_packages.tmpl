@@ -1,37 +1,45 @@
 <section>
-    <h1><%= USER %>s' Packages</h1>
+    <h1><%= USER %></h1>
 </section>
 
 <section class="entry">
-    <dl>
-        <dt>Realname</dt>
-        <dd><%= REALNAME %></dd>
-        
-        <dt>Username</dt>
-        <dd><%= USER %></dd>
-        
-        <dt>Website</dt>
-        <dd><%= WEBSITE %></dd>
-    </dl>
+	<div>
+		<div>
+			<dl>
+					<dt>Realname</dt>
+					<dd><%= REALNAME %>&nbsp;</dd>
+					
+					<dt>Username</dt>
+					<dd><%= USER %>&nbsp;</dd>
+					
+					<dt>Website</dt>
+					<dd><%= WEBSITE %>&nbsp;</dd>
+			</dl>
+		</div>
+	</div>
 </section>
 
 <section>
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Version</th>
-            <th>Date</th>
-        </tr>
-    </thead>
-    <tbody>
-<%LOOP PACKAGES %>
-        <tr>
-            <td><a href="<%= __SCRIPT__ %>/package/<%= VIRTUAL_PATH %>"><%= NAME %></a></td>
-            <td><%= VERSION %></td>
-            <td><%= DATE %></td>
-        </tr>
-<%/LOOP %>
-    </tbody>
-</table>
+	<h2>Packages of <%= USER %></h2>
+</section>
+
+<section>
+	<table>
+			<thead>
+					<tr>
+							<th>Name</th>
+							<th>Version</th>
+							<th>Date</th>
+					</tr>
+			</thead>
+			<tbody>
+	<%LOOP PACKAGES %>
+					<tr>
+							<td><a href="<%= __SCRIPT__ %>/package/<%= VIRTUAL_PATH %>"><%= NAME %></a></td>
+							<td><%= VERSION %></td>
+							<td><%= DATE %></td>
+					</tr>
+	<%/LOOP %>
+			</tbody>
+	</table>
 </section>
