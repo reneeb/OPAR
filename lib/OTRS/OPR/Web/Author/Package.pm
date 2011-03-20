@@ -456,7 +456,7 @@ sub _get_package_name {
             }
         }
         
-        ($package_name) = $content =~ m{ <Name.*?> \s* ([\w-\s]+) \s* </Name> }xms;
+        ($package_name) = $content =~ m{ <Name.*?> \s* ([\w\s-]+) \s* </Name> }xms;
         $package_name =~ s{\s+$}{};
     }
     
