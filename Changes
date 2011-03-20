@@ -1,7 +1,22 @@
 Changes file for OPAR
 =====================
 
-0.6  ?? March 2011
+0.7  23 March 2011
+
+     [Authors]
+     * authors can set maintainers for packages that contains dashes in its name
+     * sort possible co-maintainers by username
+     * validate OPM file with XML schema
+     * under some circumstances the code analyzer produced false negatives in the dependencies checks. this is fixed now.
+     
+     [Guests]
+     * Fix links to the pages in search result
+     
+     [Misc]
+     * CSS fixes for Webkit (thanks to Martin Balzarek from c.a.p.e IT)
+     * Code cleanup to remove Database stuff in web modules
+
+0.6  16 March 2011
 
      [Authors]
      * Be more flexible with package names: Do not require a version number with major.minor.patch scheme.
