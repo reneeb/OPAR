@@ -155,7 +155,7 @@ sub search {
     my ($self) = @_;
     
     my %params      = $self->query->Vars;
-    my $search_term = $params{search_term};
+    my $search_term = $params{search_term} || $self->param( 'term' ) || '*';
     my $page        = $self->param( 'page' ) || 1;
     
     if ( $page =~ m{\D}x or $page <= 0 ) {
@@ -163,7 +163,9 @@ sub search {
     }
     
     my ($packages,$pages) = $self->page( $page, { search => $search_term } );
-    my $pagelist          = $self->page_list( $pages, $page );
+    my $pagelist          = $self->page_list( $pages, $page ) || [];
+    
+    $_->{SEARCH_TERM} = $search_term for @{$pagelist};
     
     $self->template( 'index_search_result' );
     $self->stash(

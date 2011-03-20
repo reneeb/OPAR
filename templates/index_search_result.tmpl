@@ -2,7 +2,7 @@
 				<h1>Search results for <i><%= SEARCH_TERM %></i>:</h1>
 				<%LOOP PAGES %>
 						<%IF PAGE %>
-								<a href="<%= __SCRIPT__ %>/package/list/<%= PAGE %>"><%= PAGE %></a>
+								<a href="<%= __SCRIPT__ %>/search/<%= SEARCH_TERM ESCAPE=URL %>/<%= PAGE %>"><%= PAGE %></a>
 						<%ELSE %>
 								...
 						<%/IF %>
