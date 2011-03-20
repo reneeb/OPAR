@@ -13,9 +13,6 @@ sub list {
     my $like = '';
     my ($short,$initial);
     
-    use Data::Dumper;
-    print STDERR Dumper \%params;
-    
     if ( $params{short} && $params{short} =~ m{\A [a-zA-Z]{2} \z }x ) {
         $like  = $params{short};
         $short = 1;
