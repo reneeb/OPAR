@@ -5,7 +5,33 @@ use base 'OTRS::OPR::Exporter::Aliased';
 our @EXPORT_OK = qw(
     list
     id_by_uppercase
+    active_authors
 );
+
+sub active_authors {
+    my ($self,%params) = @_;
+    
+    my %additional_options;
+    
+    if ( $params{sort_by} ) {
+        my $sort_order = 'ASC';
+        
+        if ( $params{order} and $params{order} =~ m{ \A (?:DE|A)SC \z }xims ) {
+            $sort_order = uc $params{order};
+        }
+        
+        $additional_options{order_by} = "$params{sort_by} $sort_order";
+    }
+    
+    my @list = $self->table( 'opr_user' )->search(
+        {
+            active => 1,
+        },
+        \%additional_options,
+    );
+    
+    return @list;
+}
 
 sub list {
     my ($self,%params) = @_;

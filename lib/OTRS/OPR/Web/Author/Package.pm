@@ -13,6 +13,7 @@ use OTRS::OPR::DAO::Author;
 use OTRS::OPR::DAO::Comment;
 use OTRS::OPR::DAO::Maintainer;
 use OTRS::OPR::DAO::Package;
+use OTRS::OPR::DB::Helper::Author  qw(active_authors);
 use OTRS::OPR::DB::Helper::Job     qw(create_job find_job);
 use OTRS::OPR::DB::Helper::Package (qw(page user_is_maintainer package_exists package_name_object),
                                     { version_list => 'versions' } );
@@ -363,7 +364,8 @@ sub maintainer : Permission( 'author' ) {
     my $maintainer = shift @co_maintainers;
     
     # get possible co maintainers
-    my @possible_co_maintainers = ();
+    my @possible_co_maintainers;
+    my @user = $self->active_authors( sort_by => 'user_name' );
     for my $user ( $self->schema->resultset('opr_user')->all ) {
     	my $user_id = $user->user_id;
         push @possible_co_maintainers, {
