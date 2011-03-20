@@ -14,7 +14,8 @@ use OTRS::OPR::DAO::Comment;
 use OTRS::OPR::DAO::Maintainer;
 use OTRS::OPR::DAO::Package;
 use OTRS::OPR::DB::Helper::Job     qw(create_job find_job);
-use OTRS::OPR::DB::Helper::Package (qw(page user_is_maintainer package_exists), { version_list => 'versions' } );
+use OTRS::OPR::DB::Helper::Package (qw(page user_is_maintainer package_exists package_name_object),
+                                    { version_list => 'versions' } );
 use OTRS::OPR::Web::App::Forms     qw(:all);
 use OTRS::OPR::Web::App::Prerun    qw(cgiapp_prerun);
 use OTRS::OPR::Web::Utils          qw(prepare_select page_list time_to_date);
@@ -33,16 +34,16 @@ sub setup {
     $self->start_mode( $startmode );
     $self->mode_param( 'rm' );
     $self->run_modes(
-        AUTOLOAD     => \&list,
-        list         => \&list,
-        upload       => \&upload,
-        do_upload    => \&do_upload,
-        delete       => \&delete_package,
-        undelete     => \&undelete_package,
-        maintainer   => \&maintainer,
-        edit_maintainer => \&edit_maintainer,
-        versions     => \&version_list,
-        show         => \&show,
+        AUTOLOAD          => \&list,
+        list              => \&list,
+        upload            => \&upload,
+        do_upload         => \&do_upload,
+        delete            => \&delete_package,
+        undelete          => \&undelete_package,
+        maintainer        => \&maintainer,
+        edit_maintainer   => \&edit_maintainer,
+        versions          => \&version_list,
+        show              => \&show,
         comments          => \&comments,
         publish_comment   => \&publish_comment,
         unpublish_comment => \&unpublish_comment,
@@ -227,26 +228,30 @@ sub edit_maintainer : Permission( 'author' ) {
     my $id = $self->param( 'id' );
     my ($parsed_name, $package_version) = OTRS::OPR::Web::Utils->validate_opm_name( $id, 1 );
     
-    my $package_name = $self->schema->resultset('opr_package_names')->find({ package_name => $parsed_name });	
-    my $name_id = $package_name->get_column("name_id");
+    my $package_name = $self->package_name_object( $parsed_name );
+    
+    return $self->maintainer if !$package_name;
+    
+    my $name_id      = $package_name->name_id;
 
-    if ($params{'add'}) {
+    if ( $params{add} ) {
         my $maintainer = OTRS::OPR::DAO::Maintainer->new(
             _schema => $self->schema,
         );
         
-        $maintainer->user_id( $params{'add'} );
+        $maintainer->user_id( $params{add} );
         $maintainer->name_id( $package_name->get_column('name_id') );
         $maintainer->is_main_author( 0 );
     }
 
-    if ($params{'remove'}) {
-        my $maintainer = $self->schema->resultset('opr_package_author')->find({ 
-            user_id => $params{'remove'},
-            name_id => $package_name->name_id
-        });	
-		
-        $maintainer->delete() if $maintainer;
+    if ( $params{remove} ) {
+        my $maintainer = OTRS::OPR::DAO::Maintainer->new(
+            _schema => $self->schema,
+            user_id => $params{remove},
+            name_id => $package_name->name_id,
+        );
+        
+        $maintainer->delete if $maintainer;
     }
 
     $self->maintainer;
@@ -256,12 +261,15 @@ sub goto_comments : Permission( 'author' ) {
     my ($self) = @_;
 	
     my $comment_id = $self->param( 'id' );
+    
     my $comment = $self->schema->resultset('opr_comments')->find({ comment_id => $comment_id });
-    my $package_name = $self->schema->resultset('opr_package_names')->find({ package_name => $comment->packagename });
-    my $package = $self->schema->resultset('opr_package')->find({ name_id => $package_name->name_id });
+    
+    return $self->comments if !$comment;
+    
+    my $package_name = $self->package_name_object( $comment->packagename );
   
     $self->param('id', $package_name->package_name);
-    $self->comments();
+    $self->comments;
 }
 
 sub publish_comment : Permission( 'author' ) {
@@ -279,7 +287,7 @@ sub publish_comment : Permission( 'author' ) {
 }
 
 sub unpublish_comment : Permission( 'author' ) {
-	my ($self) = @_;
+    my ($self) = @_;
 
     my $comment_id = $self->param( 'id' );
     my $comment    = OTRS::OPR::DAO::Comment->new(
@@ -310,15 +318,18 @@ sub comments : Permission( 'author' ) {
         push @packages, $package_dao;
     }
     else {
-        for my $author ($self->table('opr_package_author')->find({ user_id => $self->user->user_id })) {
-            for my $package ($self->table('opr_package')->search({ name_id => $author->name_id })) {
-                my $package_dao = OTRS::OPR::DAO::Package->new(
-                    package_id => $package->package_id,
-                    _schema      => $self->schema,
-                );
+        my $author = OTRS::OPR::DAO::Author->new(
+            _schema => $self->schema,
+            user_id => $self->user->user_id,
+        );
+        
+        for my $package ( $author->packages ) {
+            my $package_dao = OTRS::OPR::DAO::Package->new(
+                package_id => $package->package_id,
+                _schema      => $self->schema,
+            );
 
-                push @packages, $package_dao;
-            }
+            push @packages, $package_dao;
         }
     }
     
@@ -329,10 +340,10 @@ sub comments : Permission( 'author' ) {
     my $formid = $self->get_formid;
     $self->template( 'author_package_comments' );
     $self->stash(
-        FORMID => $formid,
-        NAME => $package_name,
+        FORMID       => $formid,
+        NAME         => $package_name,
         HAS_COMMENTS => (scalar @comments > 0),
-        COMMENTS => \@comments,
+        COMMENTS     => \@comments,
     );
 }
 
@@ -366,14 +377,14 @@ sub maintainer : Permission( 'author' ) {
     my $formid = $self->get_formid;
     $self->template( 'author_package_maintainer' );
     $self->stash(
-        FORMID => $formid,
-        MAINTAINER => $maintainer,
-        IS_MAIN_AUTHOR => $is_main_author,
-        HAS_CO_MAINTAINERS => (scalar @co_maintainers > 0),
-        CO_MAINTAINERS => \@co_maintainers,
-        POSSIBLE_CO_MAINTAINERS => \@possible_co_maintainers,
+        FORMID                      => $formid,
+        MAINTAINER                  => $maintainer,
+        IS_MAIN_AUTHOR              => $is_main_author,
+        HAS_CO_MAINTAINERS          => (scalar @co_maintainers > 0),
+        CO_MAINTAINERS              => \@co_maintainers,
+        POSSIBLE_CO_MAINTAINERS     => \@possible_co_maintainers,
         HAS_POSSIBLE_CO_MAINTAINERS => (scalar @possible_co_maintainers > 0),
-        PACKAGE_NAME => $package_name,
+        PACKAGE_NAME                => $package_name,
     );
 }
 

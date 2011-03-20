@@ -136,6 +136,8 @@ sub validate_opm_name {
     
     my ($basename) = $file =~ m{ \A .*? ([^\\\/]+) \z }xms;
     
+    $basename = '' if !defined $basename;
+    
     my $suffix = '(\.opm)';
     
     if ( $without_suffix ) {

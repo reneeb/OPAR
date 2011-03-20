@@ -13,7 +13,20 @@ our @EXPORT_OK = qw(
     package_exists
     version_list
     package_to_hash
+    package_name_object
 );
+
+sub package_name_object {
+    my ( $self, $name ) = @_;
+    
+    return if !$name;
+    
+    my ($object) = $self->table( 'opr_package_names' )->search({
+        package_name => $name,
+    });
+    
+    return $object;
+}
 
 sub package_exists {
     my ( $self, $name, $params ) = @_;

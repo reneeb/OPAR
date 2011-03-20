@@ -37,16 +37,25 @@ sub to_hash {
     return ();
 }
 
+sub delete {
+    my ($self) = @_;
+    
+    my $object = $self->get_object( 'maintainer' );
+    return if !$object;
+    
+    $object->delete;
+    return 1;
+}
+
 sub BUILD {
     my ($self) = @_;
     
     my $maintainer;
     if ( $self->user_id && $self->name_id ) {
-        ($maintainer) = 
-        	$self->ask_table( 'opr_package_author' )->find({ 
-        		'user_id' => $self->user_id,
-        		'name_id' => $self->name_id,
-        	});
+        ($maintainer) = $self->ask_table( 'opr_package_author' )->search({ 
+            user_id => $self->user_id,
+            name_id => $self->name_id,
+        });
     }
         
     return if !$maintainer;
@@ -59,7 +68,7 @@ sub BUILD {
     
     $self->add_object( maintainer => $maintainer );
     
-    $self->_after_init();
+    $self->_after_init;
 }
 
 sub DEMOLISH {
@@ -71,8 +80,8 @@ sub DEMOLISH {
     
     if ( !$maintainer ) {
         $maintainer = $self->ask_table( 'opr_package_author' )->create({
-            user_id => $self->user_id(),
-            name_id => $self->name_id(),
+            user_id => $self->user_id,
+            name_id => $self->name_id,
             is_main_author => 0,
         });
     }
