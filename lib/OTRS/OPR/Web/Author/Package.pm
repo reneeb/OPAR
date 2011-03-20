@@ -359,20 +359,20 @@ sub maintainer : Permission( 'author' ) {
         _schema      => $self->schema,
     );
     
-    my @co_maintainers = $package->maintainer_list();
+    my @co_maintainers = $package->maintainer_list;
     my $maintainer = shift @co_maintainers;
     
     # get possible co maintainers
     my @possible_co_maintainers = ();
-    for my $user ($self->schema->resultset('opr_user')->all()) {
-    	my $user_id = $user->get_column('user_id');
+    for my $user ( $self->schema->resultset('opr_user')->all ) {
+    	my $user_id = $user->user_id;
         push @possible_co_maintainers, {
-            USER_NAME => $user->get_column('user_name'),
+            USER_NAME => $user->user_name,
             USER_ID   => $user_id,
-        } unless scalar grep { $_->{'USER_ID'} == $user_id } ($maintainer, @co_maintainers);
+        } unless scalar grep { $_->{USER_ID} == $user_id } ($maintainer, @co_maintainers);
     }
     
-    my $is_main_author = ($maintainer->{'USER_ID'} == $self->user->user_id);
+    my $is_main_author = ( $maintainer->{USER_ID} == $self->user->user_id );
     
     my $formid = $self->get_formid;
     $self->template( 'author_package_maintainer' );
