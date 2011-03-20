@@ -223,8 +223,11 @@ sub edit_maintainer : Permission( 'author' ) {
         #return $self->forgot_password( %uppercase );
     }
 
-    my ($package_name, $package_version) = split /\-/, $self->param( 'id' );    
-    $package_name = $self->schema->resultset('opr_package_names')->find({ package_name => $package_name });	
+
+    my $id = $self->param( 'id' );
+    my ($parsed_name, $package_version) = OTRS::OPR::Web::Utils->validate_opm_name( $id, 1 );
+    
+    my $package_name = $self->schema->resultset('opr_package_names')->find({ package_name => $parsed_name });	
     my $name_id = $package_name->get_column("name_id");
 
     if ($params{'add'}) {
@@ -292,7 +295,8 @@ sub unpublish_comment : Permission( 'author' ) {
 sub comments : Permission( 'author' ) {
     my ($self) = @_;
 
-    my ($package_name, $package_version) = split /\-/, $self->param( 'id' );    
+    my $id = $self->param( 'id' );
+    my ($package_name, $package_version) = OTRS::OPR::Web::Utils->validate_opm_name( $id, 1 );
 
     my @packages = (); # all packages of author OR the single one requested
     my @comments = ();
@@ -335,7 +339,9 @@ sub comments : Permission( 'author' ) {
 sub maintainer : Permission( 'author' ) {
     my ($self) = @_;
     
-    my ($package_name, $package_version) = split /\-/, $self->param( 'id' );        
+    my $id = $self->param( 'id' );
+    my ($package_name, $package_version) = OTRS::OPR::Web::Utils->validate_opm_name( $id, 1 );
+        
     my $package = OTRS::OPR::DAO::Package->new(
     	package_name => $package_name,
     	version      => $package_version,

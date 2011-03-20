@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use File::Basename;
 use File::Spec;
-use Test::More tests => 49;
+use Test::More tests => 67;
 
 my $dir;
 my $lib;
@@ -372,6 +372,46 @@ SKIP: {
         for my $name ( @invalid ) {
             my $success = OTRS::OPR::Web::Utils->validate_opm_name( $name );
             ok !$success, "$name is invalid";
+        }
+        
+        
+        
+        my %valid_without_suffix = (
+            'DashboardMOTDPlus-0.1.1' => {
+                package => 'DashboardMOTDPlus',
+                version => '0.1.1',
+            },
+            'Out-of-Office-0.1' => {
+                package => 'Out-of-Office',
+                version => '0.1',
+            },
+            'TicketTemplate-1' => {
+                package => 'TicketTemplate',
+                version => '1',
+            },
+            'Test' => {
+                package => 'Test',
+                version => undef,
+            },
+            '/Dashboard2' => {
+                package => 'Dashboard2',
+                version => undef,
+            },
+            '/test/TicketTest-0.1.1' => {
+                package => 'TicketTest',
+                version => '0.1.1',
+            },
+        );
+        
+        
+        
+        for my $name ( keys %valid_without_suffix ) {
+            my @info = OTRS::OPR::Web::Utils->validate_opm_name( $name, 1 );
+            ok scalar( @info ), "$name is valid";
+            
+            my $check = $valid_without_suffix{$name};
+            is $info[0], $check->{package}, 'package name correctly parsed - ' . $check->{package} . ' - without suffix';
+            is $info[1], $check->{version}, 'version correctly parsed - ' . ( defined $check->{version} ? $check->{version} : '<undef>' )  . ' - without suffix';
         }
     }
 }

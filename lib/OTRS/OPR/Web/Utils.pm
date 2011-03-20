@@ -132,13 +132,19 @@ sub time_to_date {
 }
 
 sub validate_opm_name {
-    my ($class,$file) = @_;
+    my ($class,$file,$without_suffix) = @_;
     
     my ($basename) = $file =~ m{ \A .*? ([^\\\/]+) \z }xms;
     
+    my $suffix = '(\.opm)';
+    
+    if ( $without_suffix ) {
+        $suffix = '';
+    }
+    
     my $success = $basename =~ m{
         \A
-        ([\w-]+?)       # filename
+        ([\w\s-]+?)      # filename
         (?:              # begin version
           -(                # dash
             \d+             # major number of version
@@ -146,7 +152,7 @@ sub validate_opm_name {
             (?:\.\d+)?      # optional patch number of version
            )             # version
         )?               # version is optional
-        (\.opm)          # file suffix
+        $suffix
         \z               # string end
     }xms;
     
