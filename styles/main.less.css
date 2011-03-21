@@ -26,12 +26,13 @@ body {
 	padding: 0 40px 40px;
 	text-align: center;
 }
-	body > div {
-		max-width: 700px;
-		min-width: 560px;
-		margin: 2em auto 4em;
-		text-align: left;
-	}
+
+.outer {
+	max-width: 700px;
+	min-width: 560px;
+	margin: 2em auto 4em;
+	text-align: left;
+}
 
 a {
 	text-decoration: none;
@@ -215,15 +216,10 @@ header {
 			-moz-border-radius: 0.4em 0 0 0.4em;
 			-khtml-border-radius: 0.4em 0 0 0.4em;
 			cursor: pointer;
-
-			background: none #444444;
-			background: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#222222), to(#777777));
-			background: -moz-linear-gradient(100% 100% 90deg, #222, #777);
+			background: #444444 url(../img/bn_222777.gif) center center repeat-x;
 		}
 		header form input[type="submit"]:hover {
-			background: none #666666;
-			background: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#444444), to(#777777));
-			background: -moz-linear-gradient(100% 100% 90deg, #444, #999);
+			background: #666666 url(../img/bn_444999.gif) center center repeat-x;
 			box-shadow: 0 0 6px #666;
 			-webkit-box-shadow: 0 0 6px #666;
 			-moz-box-shadow: 0 0 6px #666;
@@ -356,9 +352,7 @@ section.menu {
 			}
 			section.menu ul li.current a,
 			section.menu ul li a:hover {
-				background: none #eeeeee;
-				background: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#eeeeee), to(#ffffff));
-				background: -moz-linear-gradient(100% 100% 90deg, #eee, #fff);
+				background: #eeeeee url(../img/bn_dddfff.gif) center center repeat-x;
 			}
 			section.menu ul li.current a {
 				font-weight: bold;
@@ -382,9 +376,7 @@ section#entries {
 			#entries h2 {
 				font-size: 120%;
 				border: solid 1px #ddd;
-				background: none #eeeeee;
-				background: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#dddddd), to(#ffffff));
-				background: -moz-linear-gradient(0% 100% 0deg, #ddd, #fff);
+				background: #eeeeee url(../img/bn_dddfff.gif) center center repeat-x;
 				color: #666;
 				padding: 0.4em 0.8em;
 				margin: 1em -0.7em 1em -0.7em;
@@ -658,7 +650,7 @@ section form select {
 	font-size: inherit;
 }
 section form select {
-	font-size: 90%
+	font-size: 90%;
 	padding: 0.2em 0.3em;
 }
 section form textarea {
@@ -677,9 +669,7 @@ section form textarea {
 section form input[type="submit"],
 section form button {
 	border: solid 2px #fff;
-	background: none #444444;
-	background: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#222222), to(#777777));
-	background: -moz-linear-gradient(100% 100% 90deg, #222, #777);
+	background: #444444 url(../img/bn_222777.gif) center center repeat-x;
 	padding: 0.6em 1.2em;
 	color: #fff;
 	border-radius: 0.6em;
@@ -691,19 +681,15 @@ section form button {
 	-moz-box-shadow: 0 0 6px #666;
 	text-decoration: none;
 	font-size: 90%;
+	cursor: pointer;
 }
 section form input[type="submit"]:hover,
 section form button:hover {
-	background: none #666666;
-	background: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#444444), to(#999999));
-	background: -moz-linear-gradient(100% 100% 90deg, #444, #999);
-	cursor: pointer;
+	background: #666666 url(../img/bn_444999.gif) center center repeat-x;
 }
 
 .button {
-	background: none #444444;
-	background: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#222222), to(#777777));
-	background: -moz-linear-gradient(100% 100% 90deg, #222, #777);
+	background: #444444 url(../img/bn_222777.gif) center center repeat-x;
 	padding: 0.2em 0.5em 0.3em;
 	color: #fff;
 	border-radius: 0.6em;
@@ -717,6 +703,7 @@ section form button:hover {
 	font-size: 90%;
 	text-decoration: none;
 	border: none;
+	cursor: pointer;
 }
 .button.shallow {
 	background: transparent;
@@ -724,15 +711,10 @@ section form button:hover {
 	border: solid 1px #333;
 }
 .button:hover {
-	background: none #666666;
-	background: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#444444), to(#999999));
-	background: -moz-linear-gradient(100% 100% 90deg, #444, #999);
-	cursor: pointer;
+	background: #666666 url(../img/bn_444999.gif) center center repeat-x;
 }
 .button.shallow:hover {
-	background: none #dddddd;
-	background: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#cccccc), to(#ffffff));
-	background: -moz-linear-gradient(100% 100% 90deg, #ccc, #fff);
+	background: #dddddd url(../img/bn_cccfff.gif) center center repeat-x;
 }
 
 .clear {
