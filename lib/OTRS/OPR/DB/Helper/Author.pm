@@ -14,13 +14,13 @@ sub active_authors {
     my %additional_options;
     
     if ( $params{sort_by} ) {
-        my $sort_order = 'ASC';
+        my $sort_order = 'asc';
         
         if ( $params{order} and $params{order} =~ m{ \A (?:DE|A)SC \z }xims ) {
-            $sort_order = uc $params{order};
+            $sort_order = lc $params{order};
         }
         
-        $additional_options{order_by} = "$params{sort_by} $sort_order";
+        $additional_options{order_by} = { '-' . $sort_order => $params{sort_by} };
     }
     
     my @list = $self->table( 'opr_user' )->search(
