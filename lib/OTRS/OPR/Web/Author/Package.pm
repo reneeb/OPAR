@@ -366,7 +366,7 @@ sub maintainer : Permission( 'author' ) {
     # get possible co maintainers
     my @possible_co_maintainers;
     my @user = $self->active_authors( sort_by => 'user_name' );
-    for my $user ( $self->schema->resultset('opr_user')->all ) {
+    for my $user ( @user ) {
     	my $user_id = $user->user_id;
         push @possible_co_maintainers, {
             USER_NAME => $user->user_name,
