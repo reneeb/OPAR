@@ -330,6 +330,7 @@ section.menu {
 				font-size: 100%;
 				color: #689;
 				text-align: center;
+				cursor: pointer;
 			}
 			section.menu ul li:first-child a {
 				border-left-width: 1px;
@@ -554,6 +555,8 @@ section#register {
 			left: 25%;
 			top: -1.2em;
 			width: 70%;
+			height: auto;
+			min-height: 24px;
 			margin-bottom: -0.5em;
 		}
 		section dl dd:last-child {
