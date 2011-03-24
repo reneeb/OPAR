@@ -4,7 +4,7 @@ TODO
    Title                                                                    Prio
    -----                                                                    ----
  * Send email to author when analysis is done                               -> 1 # (REB)
- * Finish XML schema for OPM files and enable schema test                      2
+ * Finish XML schema for OPM files and enable schema test                      2 # done (REB)
  * author's area
    * request new analysis of a package                                         2
  * guest's area
@@ -30,3 +30,9 @@ TODO
       * Docbook                                                                2
       * HTML                                                                   3
       * PDF                                                                    4
+   * support multiple framework tags
+   * Preview images for Skins
+   * License for documentation
+   * drop for search with framework versions
+   * "Skin" Checkbox for module upload and a new action in package list
+   * News page that shows recent updates
