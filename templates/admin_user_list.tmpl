@@ -1,0 +1,39 @@
+<section>
+	<h1>Users</h1>
+</section>
+
+<section class="pages">
+	<span>Page</span>
+	<%LOOP PAGES %>
+    <%IF PAGE %>
+        <a href="<%= __SCRIPT__ %>/packages/list/<%= PAGE %>" class="button shallow"><%= PAGE %></a>
+    <%ELSE %>
+        ...
+    <%/IF %>
+	<%/LOOP %>
+</section>
+
+<table id="package_list">
+  <tr>
+    <th>Username</th>
+    <th>Name</th>
+    <th>Active</th>
+    <th>Email</th>
+    <th>Action</th>
+  </tr>
+	<%LOOP USERS %>
+  <tr>
+    <td><%= NAME %></td>
+    <td><%= REALNAME %></td>
+    <td>
+    	<%IF ACTIVE %>Yes<%ELSE%>No<%/IF%>
+    	<%IF REGISTERED %>(registered <%= REGISTERED %>)<%/IF%>
+    </td>
+    <td><a href="mailto:<%= MAIL %>"><%= MAIL %></a></td>
+    <td>
+      <a href="/bin/admin.cgi/user/edit_user/<%= NAME %>" class="button">Edit</a>
+    </td>
+  </tr>
+  <%/LOOP %>
+</table>
+

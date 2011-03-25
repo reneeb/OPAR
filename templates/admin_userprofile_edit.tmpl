@@ -1,0 +1,37 @@
+<section>
+	<h1>Edit user <emph><%= USER.NAME %></emph></h1>
+</section>
+
+<section>		
+	<div>
+		<form action="<%= __SCRIPT__ %>/user/save_user/<%= USER.NAME %>" method="post">
+			<dl>
+				<dt><label for="realname">Realname</label></dt>
+				<dd class="<%= ERROR_REALNAME %>">
+					<input type="text" id="realname" name="realname" value="<%= USER.REALNAME %>">
+				</dd>
+					
+				<dt><label for="mail">E-mail</label></dt>
+				<dd class="<%= ERROR_MAIL %>">
+					<input type="text" name="mail" id="mail" value="<%= USER.MAIL %>" />
+				</dd>
+	
+				<dt><label for="website">Website</label></dt>
+				<dd class="<%= ERROR_WEBSITE %>">
+					<input type="text" name="website" id="website" value="<%= USER.WEBSITE %>" />
+				</dd>
+	
+				<dt><label for="active">Active</label></dt>
+				<dd class="<%= ERROR_ACTIVE %>">
+					<input type="radio" name="active" value="1" <%IF USER.ACTIVE %>checked="checked"<%/IF%>/> Yes
+					<input type="radio" name="active" value="0" <%UNLESS USER.ACTIVE %>checked="checked"<%/IF%>/> No
+				</dd>
+					
+				<dt class="empty">&nbsp;</dt>
+				<dd class="right">
+					<button type="submit" value="Save profile">Save profile</button>
+				</dd>
+			</dl>
+		</form>
+	</div>
+</section>

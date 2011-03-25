@@ -1,10 +1,15 @@
 package OTRS::OPR::DB::Helper::User;
 
-use base 'OTRS::OPR::Exporter::Aliased';
+use strict;
+use warnings;
+
+use parent 'OTRS::OPR::Exporter::Aliased';
+use OTRS::OPR::Web::Utils qw(time_to_date looks_empty looks_like_number);
 
 our @EXPORT_OK = qw(
     check_credentials
-    list
+    page
+    user_to_hash
 );
 
 sub check_credentials {
@@ -45,7 +50,64 @@ sub check_credentials {
     return 1;
 }
 
-sub list {
+sub page {
+    my ($self, $page, $params) = @_;
+
+    my $rows = $params->{rows} || $self->config->get( 'rows.search' );
+    
+    my %search_clauses;
+    if ( exists $params->{search} ) {
+        my $term = $params->{search} || '';
+        $term    =~ tr/*/%/;
+        my @ors;
+        for my $field ( 'opr_user.user_name', 'opr_user.realname' ) {
+            next unless $term;
+            push @ors, { $field => { LIKE => '%' . $term . '%' } };
+            $search_clauses{'-or'} = \@ors;
+        }
+    }
+    
+    #if ( !$params->{all} ) {
+    #    $search_clauses{is_in_index} = 1;
+    #}
+    
+    my $resultset = $self->table( 'opr_user' )->search(
+        {
+            %search_clauses,
+        },
+        {
+            page      => $page,
+            rows      => $rows,
+            order_by  => 'user_id',
+        },
+    );
+
+    my @users = $resultset->all;    
+    my $pages = $resultset->pager->last_page || 1;
+        
+    my @users_for_template;
+    for my $user ( @users ) {        
+        push @users_for_template, user_to_hash( $self, $user, $params );
+    }
+    
+    return ( \@users_for_template, $pages );
+}
+
+sub user_to_hash {
+    my ($self, $user, $params) = @_;
+        
+    # create the infos for the template
+    my $info = {
+    		USER_ID			 => $user->user_id,
+        NAME         => $user->user_name,
+        WEBSITE      => $user->website,
+        MAIL         => $user->mail,
+        ACTIVE       => $user->active,
+        REGISTERED   => time_to_date( $self, $user->registered ),
+        REALNAME     => $user->realname,
+    };
+    
+    return $info;
 }
 
 1;

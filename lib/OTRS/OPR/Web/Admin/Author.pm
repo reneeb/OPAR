@@ -7,15 +7,15 @@ use base qw(OTRS::OPR::Web::App);
 use CGI::Application::Plugin::Redirect;
 
 use OTRS::OPR::DAO::User;
-use OTRS::OPR::DB::Helper::User    {list => 'user_list', delete => 'user_delete', page => 'page'};
+use OTRS::OPR::DB::Helper::User    qw(page user_to_hash);
 use OTRS::OPR::Web::App::Prerun    qw(cgiapp_prerun);
 use OTRS::OPR::Web::App::Session;
-use OTRS::OPR::Web::Utils          qw(prepare_select page_list);
+use OTRS::OPR::Web::Utils          qw(prepare_select page_list looks_like_number);
 
 sub setup{
     my ($self) = @_;
 
-    $self->main_tmpl( $self->_config->get('templates.admin') );
+    $self->main_tmpl( $self->config->get('templates.admin') );
     
     my $startmode = 'list';
     my $param     = $self->param( 'run' );
@@ -33,6 +33,8 @@ sub setup{
         set_password      => \&set_password,
         send_message      => \&send_message,
         user_info         => \&user_info,
+        edit_user					=> \&edit_user,
+        save_user					=> \&save_user,
     );
 }
 
@@ -44,19 +46,57 @@ sub list_users : Permission('admin') {
     my %params      = $self->query->Vars;
     my $search_term = $params{search_term};
     my $page        = $params{page} || 1;
-    
+
     if ( !looks_like_number($page) or $page <= 0 ) {
         $page = 1;
     }
     
-    my ($users,$pages) = $self->page( $page, $search_term );
-    my $pagelist       = $self->page_list( $pages, $page );
-    
+		my ($users, $pages) = page($self,
+				$page,
+				{
+						search   => $search_term,
+						all      => 1,
+				}
+		);
+		my $pagelist = page_list( $self, $pages, $page );
+
     $self->template( 'admin_user_list' );
     $self->stash(
-        PACKAGES => $packages,
-        PAGES    => $pagelist,
+        USERS	=> $users,
+        PAGES => $pagelist,
     );
+}
+
+sub edit_user : Permission( 'admin' ) {
+    my ($self) = @_;
+    
+    my $user_name = $self->param( 'id' );
+    my @users = $self->schema->resultset( 'opr_user' )->find({'user_name' => $user_name});
+    my $user = shift @users;
+
+    $self->template( 'admin_userprofile_edit' );
+    $self->stash(
+        USER => user_to_hash( $self, $user ),
+    );    
+}
+
+sub save_user : Permission( 'admin' ) {
+    my ($self) = @_;
+    my %params = $self->query->Vars;
+
+    my $user_name = $self->param( 'id' );
+    my @users = $self->schema->resultset( 'opr_user' )->find({'user_name' => $user_name});
+    my $user = shift @users;
+    
+    # set new values
+    $user->active($params{'active'});
+    $user->realname($params{'realname'});
+    $user->mail($params{'mail'});
+    $user->website($params{'website'});
+
+    $user->update();
+
+		return $self->list_users();
 }
 
 # get more info about a user, e.g. name

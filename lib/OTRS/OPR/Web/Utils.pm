@@ -13,6 +13,8 @@ our @EXPORT_OK = qw(
     page_list
     time_to_date
     validate_opm_name
+    looks_like_number
+    looks_empty
 );
 
 sub prepare_select {
@@ -160,6 +162,17 @@ sub validate_opm_name {
     
     return if !$success;
     return ($1,$2,$3);
+}
+
+sub looks_like_number {
+	my ($s) = @_;
+	#return /^\d+(\.\d*)?(e\^\d*)?$/;
+	return ($s =~ /^\d+$/);
+}
+
+sub looks_empty {
+	my ($s) = @_;
+	return ($s =~ /^[\s\t\n\r]*$/);
 }
 
 1;
