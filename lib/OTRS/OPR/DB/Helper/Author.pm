@@ -1,5 +1,7 @@
 package OTRS::OPR::DB::Helper::Author;
 
+use strict;
+use warnings;
 use base 'OTRS::OPR::Exporter::Aliased';
 
 our @EXPORT_OK = qw(
