@@ -1,6 +1,11 @@
 Changes file for OPAR
 =====================
 
+0.71 25 March 2011
+
+     [Guests]
+     * Search found only the oldest version of a package, now it finds the newest version
+
 0.7  21 March 2011
 
      [Authors]
