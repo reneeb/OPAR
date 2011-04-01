@@ -8,13 +8,14 @@ use CGI::Application::Plugin::Redirect;
 use Scalar::Util qw(looks_like_number);
 
 use OTRS::OPR::DAO::Package;
+use OTRS::OPR::DAO::Comment;
 use OTRS::OPR::DB::Helper::Comment {page => 'cpage'};
 use OTRS::OPR::DB::Helper::Job     qw(create_job find_job);
 use OTRS::OPR::DB::Helper::Package qw(page);
 use OTRS::OPR::DB::Helper::User    {list => 'user_list'};
 use OTRS::OPR::Web::App::Prerun    qw(cgiapp_prerun);
 use OTRS::OPR::Web::App::Session;
-use OTRS::OPR::Web::Utils          qw(prepare_select page_list);
+use OTRS::OPR::Web::Utils          qw(prepare_select page_list time_to_date);
 
 sub setup{
     my ($self) = @_;
@@ -37,8 +38,8 @@ sub setup{
         co_maint          => \&set_comaintainer,
         save_co_maint     => \&save_comaintainer,
         comments          => \&comments,
-        delete_comment    => \&delete_comment,
-        undelete_comment  => \&undelete_comment,
+        publish_comment   => \&publish_comment,
+        unpublish_comment => \&unpublish_comment,
     );
 }
 
@@ -55,7 +56,7 @@ sub list_packages : Permission('admin') {
         $page = 1;
     }
     
-    my ($packages,$pages) = $self->page( $page, { search => $search_term } );
+    my ($packages,$pages) = $self->page( $page, { search => $search_term, all => 1 } );
     my $pagelist          = $self->page_list( $pages, $page );
     
     $self->template( 'admin_package_list' );
@@ -192,45 +193,81 @@ sub comments : Permission( 'admin' ) {
     # get the package name
     my $package_name = $self->param( 'id' );
     
-    # check if a valid package name was given
-    my $valid_package_name =~ m{
+   # check if a valid package name was given
+    my ($valid_package_name) = ($package_name =~ m{
         \A
             (?:[A-Za-z0-9]+)   # first word
             (?:-[A-Za-z0-9]+)* # following words
         \z
-    }xms;
+    }xms);
     
     # show error if no valid package name was given
     if ( !$valid_package_name ) {
-        $self->template( 'error' );
-        $self->params(
+        $self->template( 'notifications/generic_error' );
+        $self->stash(
             ERROR => 'Invalid Package Name',
         );
         return;
     }
     
-    my %params      = $self->query->Vars;
-    my $page        = $params{page} || 1;
-    my $search_term = $params{search_term};
+    my %params = $self->query->Vars;
+    my $page   = $params{page} || 1;
     
     if ( !looks_like_number($page) or $page <= 0 ) {
         $page = 1;
     }
     
-    my ($comments,$pages) = $self->cpage( $page, $search_term, { short => 1 } );
+    my ($comments,$pages) = $self->cpage( $page, { package_name => $package_name, all => 1 } );
     my $pagelist          = $self->page_list( $pages, $page );
     
-    $self->template( 'admin_comments_list' );
+    $self->template( 'admin_package_comments' );
     $self->stash(
-        COMMENTS => $comments,
-        PAGES    => $pagelist,
+    		NAME         => $package_name,
+    		HAS_COMMENTS => scalar(@{$comments}),
+        COMMENTS     => $comments,
+        PAGES        => $pagelist,
     );
 }
 
-sub delete_comment : Permission( 'admin' ) : Json {
+sub goto_comments : Permission( 'admin' ) {
+    my ($self) = @_;
+	
+    my $comment_id = $self->param( 'id' );
+    
+    my $comment = $self->schema->resultset('opr_comments')->find({ comment_id => $comment_id });
+    
+    return $self->comments if !$comment;
+      
+    $self->param('id', $comment->packagename);
+    $self->comments;
 }
 
-sub undelete_comment : Permission( 'admin' ) : Json {
+sub publish_comment : Permission( 'admin' ) {
+    my ($self) = @_;
+
+    my $comment_id = $self->param( 'id' );
+    my $comment = OTRS::OPR::DAO::Comment->new(
+        comment_id => $comment_id,
+        _schema      => $self->schema,
+    );
+    $comment->published( time );
+    $comment = undef;
+
+    $self->goto_comments;
+}
+
+sub unpublish_comment : Permission( 'admin' ) {
+    my ($self) = @_;
+
+    my $comment_id = $self->param( 'id' );
+    my $comment    = OTRS::OPR::DAO::Comment->new(
+        comment_id => $comment_id,
+        _schema    => $self->schema,
+    );
+    $comment->published( 0 );
+    $comment = undef;
+
+    $self->goto_comments;
 }
 
 1;
