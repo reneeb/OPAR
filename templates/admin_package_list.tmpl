@@ -30,9 +30,13 @@
     <td><%= STATE %></td>
     <td><%= MYROLE %></td>
     <td>
-      <a href="<%= __SCRIPT__ %>/package/comments/<%= NAME %>" class="button">Comments</a>
+    	<%IF DELETION %>
+	      <a href="<%= __SCRIPT__ %>/package/undelete_package/<%= PACKAGE_ID %>" class="button">Undelete</a>  		
+  		<%ELSE%>
+	      <a href="<%= __SCRIPT__ %>/package/delete_package/<%= PACKAGE_ID %>" class="button">Delete</a>
+  		<%/IF%>
+  		<a href="<%= __SCRIPT__ %>/package/comments/<%= NAME %>" class="button">Comments</a>
       <!--
-      <a href="<%= __SCRIPT__ %>/package/versions/<%= NAME %>" class="button">Versions</a>
       <a href="<%= __SCRIPT__ %>/package/maintainer/<%= NAME %>-<%= VERSION %>" class="button">Co-Maintainer</a>
 			-->
     </td>

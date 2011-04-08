@@ -66,57 +66,61 @@ sub list_packages : Permission('admin') {
     );
 }
 
-sub delete_package : Permission( 'admin' ) : Json {
+sub delete_package : Permission( 'admin' ) {
     my ($self) = @_;
     
     # the package is not deleted, it's just marked to be deleted and
     # a new job is created
     my $config  = $self->config;
-    my $package = $self->param( 'package' );
+    my $package = $self->param( 'id' ) || '';
     
     if ( $package =~ m{\D}x or $package <= 0 ) {
-        return { error => 'invalid package' };
+        #return { error => 'invalid package' };
     }
-    
-    my $package_dao = OTRS::OPR::DAO::Package->new(
-        package_id => $package,
-        _schema    => $self->schema,
-    );
-    
-    my $delete_until = time + $config->get( 'time.deletion' );
-    $package_dao->deletion_flag( $delete_until );
-    
-    my $job_id = $self->create_job({
-        id   => $package,
-        type => 'delete',
-    });
-    
-    return { delete_until => $delete_until };
+    else {    
+			my $package_dao = OTRS::OPR::DAO::Package->new(
+					package_id => $package,
+					_schema    => $self->schema,
+			);
+			
+			my $delete_until = time + $config->get( 'time.deletion_admin' );
+			$package_dao->deletion_flag( $delete_until );
+			
+			my $job_id = $self->create_job({
+					id => $package,
+					type => 'delete',
+			});
+			
+			#return { delete_until => $delete_until };
+		}
+		$self->list_packages();
 }
 
-sub undelete_package : Permission( 'admin' ) : Json {
+sub undelete_package : Permission( 'admin' ) {
     my ($self) = @_;
     
-    my $package = $self->param( 'package' );
+    my $package = $self->param( 'id' ) || '';
     
     if ( $package =~ m{\D}x or $package <= 0 ) {
-        return { error => 'invalid package' };
+        #return { error => 'invalid package' };
     }
-    
-    my $job = $self->find_job(
-        id   => $package,
-        type => 'delete',
-    );
-    
-    $job->delete;
-    
-    my ($package_obj) = $self->table( 'opr_package' )->find( $package );
-    if ( $package_obj ) {
-        $package_obj->deletion_flag( undef );
-        $package_obj->update;
-    }
-    
-    return { success => 1 };
+    else {
+			my $job = $self->find_job({
+					id => $package,
+					type => 'delete',
+			});
+			
+			$job->delete;
+			
+			my ($package_obj) = $self->table( 'opr_package' )->find( $package );
+			if ( $package_obj ) {
+					$package_obj->deletion_flag( undef );
+					$package_obj->update;
+			}
+			
+			#return { success => 1 };
+		}
+		$self->list_packages();
 }
 
 =head2 set_comaintainer
