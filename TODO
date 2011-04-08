@@ -13,9 +13,9 @@ TODO
    * show OK results                                                           2
    * Show only the newest version of a package on authors' page                2
  * admin's area
-   * admin comments about packages                                             1 # (TOM)
-   * user management                                                           1 # (TOM)
-   * delete packages (shorter time span until real deletion)                   1 # (TOM)
+   * admin comments about packages                                             1 # done (TOM)
+   * user management                                                           1 # done (TOM)
+   * delete packages (shorter time span until real deletion)                   1 # done (TOM)
    * new analysis for packages                                                 2 # (TOM)
  * Perl::Critic policies
    * 4 whitespaces instead of tabulators                                       4
