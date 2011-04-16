@@ -4,7 +4,6 @@ TODO
    Title                                                                    Prio
    -----                                                                    ----
  * Send email to author when analysis is done                               -> 1 # (REB)
- * Finish XML schema for OPM files and enable schema test                      2 # done (REB)
  * author's area
    * request new analysis of a package                                         2
  * guest's area
@@ -13,9 +12,6 @@ TODO
    * show OK results                                                           2
    * Show only the newest version of a package on authors' page                2
  * admin's area
-   * admin comments about packages                                             1 # done (TOM)
-   * user management                                                           1 # done (TOM)
-   * delete packages (shorter time span until real deletion)                   1 # done (TOM)
    * new analysis for packages                                                 2 # (TOM)
  * Perl::Critic policies
    * 4 whitespaces instead of tabulators                                       4
