@@ -13,7 +13,7 @@ __PACKAGE__->add_columns( qw/
 __PACKAGE__->set_primary_key( qw/ tag_id / );
 
 
-__PACKAGE__->has_many( package_tags => 'OTRS::OPR::DB::Schema::Result::package_tags',
+__PACKAGE__->has_many( opr_package_tags => 'OTRS::OPR::DB::Schema::Result::opr_package_tags',
              { 'foreign.tag_id' => 'self.tag_id' });
 
 

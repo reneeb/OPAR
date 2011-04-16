@@ -177,9 +177,9 @@ CREATE TABLE `opr_tags` (
   PRIMARY KEY(tag_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `package_tags`;
+DROP TABLE IF EXISTS `opr_package_tags`;
 
-CREATE TABLE `package_tags` (
+CREATE TABLE `opr_package_tags` (
   name_id INTEGER NOT NULL,
   tag_id INTEGER NOT NULL,
   PRIMARY KEY(name_id,tag_id)
