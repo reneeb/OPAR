@@ -78,22 +78,22 @@ sub delete_package : Permission( 'admin' ) {
         #return { error => 'invalid package' };
     }
     else {    
-			my $package_dao = OTRS::OPR::DAO::Package->new(
-					package_id => $package,
-					_schema    => $self->schema,
-			);
-			
-			my $delete_until = time + $config->get( 'time.deletion_admin' );
-			$package_dao->deletion_flag( $delete_until );
-			
-			my $job_id = $self->create_job({
-					id => $package,
-					type => 'delete',
-			});
-			
-			#return { delete_until => $delete_until };
-		}
-		$self->list_packages();
+        my $package_dao = OTRS::OPR::DAO::Package->new(
+            package_id => $package,
+            _schema    => $self->schema,
+        );
+
+        my $delete_until = time + $config->get( 'time.deletion_admin' );
+        $package_dao->deletion_flag( $delete_until );
+                        
+        my $job_id = $self->create_job({
+            id => $package,
+            type => 'delete',
+        });
+                        
+        #return { delete_until => $delete_until };
+    }
+    $self->list_packages;
 }
 
 sub undelete_package : Permission( 'admin' ) {
@@ -105,22 +105,22 @@ sub undelete_package : Permission( 'admin' ) {
         #return { error => 'invalid package' };
     }
     else {
-			my $job = $self->find_job({
-					id => $package,
-					type => 'delete',
-			});
-			
-			$job->delete;
-			
-			my ($package_obj) = $self->table( 'opr_package' )->find( $package );
-			if ( $package_obj ) {
-					$package_obj->deletion_flag( undef );
-					$package_obj->update;
-			}
-			
-			#return { success => 1 };
-		}
-		$self->list_packages();
+        my $job = $self->find_job({
+            id   => $package,
+            type => 'delete',
+        });
+                        
+        $job->delete;
+                        
+        my ($package_obj) = $self->table( 'opr_package' )->find( $package );
+        if ( $package_obj ) {
+            $package_obj->deletion_flag( undef );
+            $package_obj->update;
+        }
+                        
+        #return { success => 1 };
+    }
+    $self->list_packages;
 }
 
 =head2 set_comaintainer
@@ -147,7 +147,7 @@ sub set_comaintainer : Permission( 'admin' ) {
     );
     
     # create hash that can be used in template
-    my %package_info = $package_dao->for_template();
+    my %package_info = $package_dao->for_template;
     
     # get all users of the system
     my @users = $self->user_list;
@@ -226,8 +226,8 @@ sub comments : Permission( 'admin' ) {
     
     $self->template( 'admin_package_comments' );
     $self->stash(
-    		NAME         => $package_name,
-    		HAS_COMMENTS => scalar(@{$comments}),
+        NAME         => $package_name,
+        HAS_COMMENTS => scalar(@{$comments}),
         COMMENTS     => $comments,
         PAGES        => $pagelist,
     );
@@ -235,7 +235,7 @@ sub comments : Permission( 'admin' ) {
 
 sub goto_comments : Permission( 'admin' ) {
     my ($self) = @_;
-	
+        
     my $comment_id = $self->param( 'id' );
     
     my $comment = $self->schema->resultset('opr_comments')->find({ comment_id => $comment_id });
