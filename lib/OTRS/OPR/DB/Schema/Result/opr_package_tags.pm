@@ -1,11 +1,11 @@
-package OTRS::OPR::DB::Schema::Result::package_tags;
+package OTRS::OPR::DB::Schema::Result::opr_package_tags;
     
 use strict;
 use warnings;
 use base qw(DBIx::Class);
 
 __PACKAGE__->load_components( qw/PK::Auto Core/ );
-__PACKAGE__->table( 'package_tags' );
+__PACKAGE__->table( 'opr_package_tags' );
 __PACKAGE__->add_columns( qw/
     name_id
     tag_id
