@@ -66,6 +66,30 @@ OPAR.Package = (function (TargetNS) {
             }
         );
     };
+    
+    TargetNS.TagsGet = function (Path) {
+        var URL = OPAR.Config.Get('BaseURL');
+        
+        URL += '/package/tags?path=' + Path;
+        
+        new Ajax.Request( 
+            URL,
+            {
+                method: 'get',
+                onSuccess: function(transport) {
+                    var data = transport.responseText.evalJSON(true);
+                    
+                    if ( data.tags ) {
+                        $("tags").setValue( data.tags );
+                    }
+                    if ( data.package ) {
+                        $("span_tags").className = 'visible';
+                        $("package_name").update( data.package );
+                    }
+                }
+            }
+        );
+    };
 
     return TargetNS;
 }(OPAR.Package || {}));
