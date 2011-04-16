@@ -38,7 +38,7 @@ sub view{
     $notifications{NOTIFICATIONS} = $registered_notifications || [];
     
     for my $notification ( @{ $notifications{NOTIFICATIONS} } ) {
-        $notification->{include} = $tmpl_path . $notification->{include};
+        $notification->{include} = $tmpl_path . $notification->{include} . '.tmpl';
     }
     
     $template .= '.tmpl' if $template !~ m{\.tmpl\z}xms;
