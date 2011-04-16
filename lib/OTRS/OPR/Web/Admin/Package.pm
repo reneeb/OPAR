@@ -40,6 +40,7 @@ sub setup{
         comments          => \&comments,
         publish_comment   => \&publish_comment,
         unpublish_comment => \&unpublish_comment,
+        reanalyze					=> \&reanalyze,
     );
 }
 
@@ -272,6 +273,37 @@ sub unpublish_comment : Permission( 'admin' ) {
     $comment = undef;
 
     $self->goto_comments;
+}
+
+sub reanalyze : Permission( 'admin' ) {
+	my ($self) = @_;
+	
+	my ($package_id) = $self->param('id');
+
+	# check if an analyzation job for that package is already scheduled
+  my $job = $self->find_job({
+			id   => $package_id,
+			type => 'analyze',
+	});
+	if ($job) {
+		return $self->list_packages();
+	}
+
+	# create an entry in job queue that the package
+	# should be analyzed    
+	my $job_id = $self->create_job({
+			id   => $package_id,
+			type => 'analyze',
+	});
+	
+	$self->notify({
+			type             => 'success',
+			include          => 'notifications/generic_success',
+			SUCCESS_HEADLINE => 'OPM reanalyzation has been scheduled',
+			SUCCESS_MESSAGE  => 'OPM will be reanalyzed during the next analyzation run',
+	});
+	
+	return $self->list_packages();
 }
 
 1;

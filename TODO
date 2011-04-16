@@ -12,7 +12,6 @@ TODO
    * show OK results                                                           2
    * Show only the newest version of a package on authors' page                2
  * admin's area
-   * new analysis for packages                                                 2 # (TOM)
  * Perl::Critic policies
    * 4 whitespaces instead of tabulators                                       4
    * using {} as delimiters in RegEx                                           4
