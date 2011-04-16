@@ -24,22 +24,20 @@ formid:
   passwd_expire: 86400
 time:
   deletion: 259200
-  deletion_admin: 86400
 recaptcha:
-  public_key: 6LcMqsESAAAAAD0ioZiFwRNDe3OcftdzwL_XIV81
-  private_key: 6LcMqsESAAAAADEX18C3wWHJT7vGXWyE7OCWWnTm
+  public_key: public
+  private_key: private
 mail:
   smtp:
-    host: mail.perl-services.de
-    user: opar@perl-services.de
-    pass: 391TWgb!
-  from: opar@perl-services.de
-  to: reb@perl-services.de
+    host: your_smtp.example
+    user: smtp_user
+    pass: smtp_password
+  from: opar@fqdn.example
+  to: you@fqdn.example
   subjects:
     general: Mail from OPAR
     forgot_password: Forgot password
     registration: Account for OPAR requested
-    feedback: Feedback
   tag: [OPAR]
 password:
   salt: OPAR
@@ -62,7 +60,7 @@ errors:
     headline: User already exists!
     message: The username you have chosen is already in use.
 utils:
-  config: /Users/tk/Desktop/Renee/OPAR/opar-web/conf
+  config: /home/opar/opar_sources/conf
   perltidy:
     config: perltidyrc
   perlcritic:
@@ -77,3 +75,4 @@ help:
   registration:
     username: Username has to be longer than 3 characters (A-Z, a-z), no special characters
     email: Must be in valid email format
+
