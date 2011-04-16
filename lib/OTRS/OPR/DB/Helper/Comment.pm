@@ -16,7 +16,7 @@ sub page {
     
     my $resultset = $self->table( 'opr_comments' )->search(
         {
-        	'packagename' => ($params->{package_name} || ''),
+            packagename => ($params->{package_name} || ''),
         },
         {
             page     => $page,
@@ -41,14 +41,14 @@ sub page {
         
         # create the infos for the template
         push @comments_for_template, {
-            TEXT    => $text,
-            ID      => $comment->comment_id,
-            HEAD    => $head,
-            RATING  => $comment->rating,
-            USER    => $comment->username,
-            DATE    => $self->time_to_date( $comment->published ),
-            PACKAGE => $comment->packagename,
-            VERSION => $comment->packageversion,
+            TEXT         => $text,
+            ID           => $comment->comment_id,
+            HEAD         => $head,
+            RATING       => $comment->rating,
+            USER         => $comment->username,
+            DATE         => $self->time_to_date( $comment->published ),
+            PACKAGE      => $comment->packagename,
+            VERSION      => $comment->packageversion,
             IS_PUBLISHED => ($comment->published ? 1 : 0),
         };
     }
