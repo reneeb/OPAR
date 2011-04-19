@@ -31,6 +31,20 @@ has package_name => (
     trigger      => sub{ shift->_dirty_flag( 'package_name' ) },
 );
 
+has tags => (
+    metaclass    => 'OTRS::OPR::App::AttributeInformation',
+    is_trackable => 1,
+    traits       => [ 'Array' ],
+    is           => 'rw',
+    isa          => 'ArrayRef[Str]',
+    default      => sub{ [] },
+    handles      => {
+        add_tag => 'push',
+    },
+    auto_deref   => 1,
+    trigger      => sub{ shift->_dirty_flag( 'package_name' ) },
+);
+
 has package_id => (
     is  => 'rw',
 );
@@ -233,6 +247,12 @@ sub BUILD {
         if ( $package_name_obj ) {
             $self->add_object( package_name => $package_name_obj );
             $self->package_name( $package_name_obj->package_name );
+            
+            # get tags
+            my @tags_objects = $package_name_obj->opr_package_tags;
+            for my $tag ( @tags_objects ) {
+                $self->add_tag( $tag->opr_tags->tag_name );
+            }
         }
     }
     
@@ -283,6 +303,34 @@ sub DEMOLISH {
             
             $self->name_id( $package_name_obj->name_id );
             $package->name_id( $package_name_obj->name_id );
+            
+            next ATTRELEMENT;
+        }
+        
+        if ( $attr eq 'tags' ) {
+            
+            # delete tags from package
+            my ($package_name_obj) = $self->get_object( 'package_name' );
+            $package_name_obj->opr_package_tags->delete;
+            
+            # add tags and create tag if it doesn't exist yet
+            for my $tag ( $self->tags ) {
+                my ($tag_obj) = $self->ask_table( 'opr_tags' )->search({
+                    tag_name => $tag,
+                });
+                
+                if ( !$tag_obj ) {
+                    ($tag_obj) = $self->ask_table( 'opr_tags' )->create({
+                        tag_name => $tag,
+                    });
+                    $tag_obj->update;
+                }
+                
+                $self->ask_table( 'opr_package_tags' )->create({
+                    tag_id  => $tag_obj->tag_id,
+                    name_id => $package_name_obj->name_id,
+                });
+            }
             
             next ATTRELEMENT;
         }

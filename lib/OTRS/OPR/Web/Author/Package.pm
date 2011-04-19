@@ -48,6 +48,7 @@ sub setup {
         comments          => \&comments,
         publish_comment   => \&publish_comment,
         unpublish_comment => \&unpublish_comment,
+        tags              => \&get_tags,
     );
 }
 
@@ -112,11 +113,12 @@ sub undelete_package : Permission( 'author' ) : Json {
 }
 
 sub upload : Permission( 'author' ) {
-    my ($self) = @_;
+    my ($self,%params) = @_;
     
     my $formid = $self->get_formid;
     $self->template( 'author_upload' );
     $self->stash(
+        %params,
         FORMID => $formid,
     );
 }
@@ -140,7 +142,7 @@ sub do_upload : Permission( 'author' ) {
             ERROR_MESSAGE  => 'The form ID was invalid',
         });
         
-        return;
+        return $self->upload( %params );
     }
     
     # upload file. This file is needed anyways.
@@ -154,7 +156,7 @@ sub do_upload : Permission( 'author' ) {
             ERROR_MESSAGE  => $file,
         });
         
-        return;
+        return $self->upload( %params );
     }
     
     # quickcheck for package name:
@@ -175,7 +177,7 @@ sub do_upload : Permission( 'author' ) {
         
         unlink $file;
         
-        return;
+        return $self->upload( %params );
     }
     
     # create new object and save basic information (uploaded_by, name_id, path and virtual path)
@@ -195,6 +197,11 @@ sub do_upload : Permission( 'author' ) {
     $package->virtual_path( $virtual_path );
     $package->name_id( $name_id );
     $package->upload_time( time );
+    $package->description( $params{description} );
+    
+    for my $tag ( split /\s*,\s*/, $params{tags} ) {
+        $package->add_tag( $tag );
+    }
     
     $package->save;
     
@@ -213,6 +220,34 @@ sub do_upload : Permission( 'author' ) {
         SUCCESS_HEADLINE => 'OPM upload successful',
         SUCCESS_MESSAGE  => 'OPM file uploaded and ready for analysis',
     });
+}
+
+
+
+sub get_tags : Permission( 'author' ) : Json {
+    my ($self) = @_;
+    
+    my %params = $self->query->Vars;
+    my %errors;
+    
+    $self->template( 'blank' );
+    
+    # get package name
+    my ($file,$version,$suffix) = OTRS::OPR::Web::Utils->validate_opm_name( $params{path} );
+    
+    if ( !$file ) {
+        return { tags => '' };
+    }
+    
+    # create new object and save basic information (uploaded_by, name_id, path and virtual path)
+    my $package = OTRS::OPR::DAO::Package->new(
+        _schema      => $self->schema,
+        package_name => $file,
+    );
+    
+    my $tags_string = join ', ', $package->tags;
+    #my $tags_string = join ', ', qw(hallo test);
+    return { tags => $tags_string, package => $file };
 }
 
 sub edit_maintainer : Permission( 'author' ) {
