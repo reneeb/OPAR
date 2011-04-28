@@ -5,7 +5,7 @@ TODO
    -----                                                                    ----
  * Send email to author when analysis is done                               -> 1 # (REB)
  * author's area
-   * request new analysis of a package                                         2
+   * request new analysis of a package                                         2 # (TOM)
  * guest's area
    * FAQ                                                                    -> 1 # (REB)
    * own feed for OTRS Package Manager                                      -> 1 # (REB)
