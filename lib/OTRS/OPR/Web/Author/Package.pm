@@ -49,6 +49,7 @@ sub setup {
         publish_comment   => \&publish_comment,
         unpublish_comment => \&unpublish_comment,
         tags              => \&get_tags,
+        reanalyze					=> \&reanalyze,
     );
 }
 
@@ -584,6 +585,42 @@ sub _upload_file {
     }
     
     return 1, $file_path->stringify;
+}
+
+sub reanalyze : Permission( 'author' ) {
+	my ($self) = @_;
+	
+	my ($package_id) = $self->param('id');
+
+	# check if author is a maintainer of this package
+	if (!$self->user_is_maintainer( $self->user, { id => $package_id } )) {
+		return $self->list();	
+	}
+
+	# check if an analyzation job for that package is already scheduled
+  my $job = $self->find_job({
+			id   => $package_id,
+			type => 'analyze',
+	});
+	if ($job) {
+		return $self->list();
+	}
+
+	# create an entry in job queue that the package
+	# should be analyzed    
+	my $job_id = $self->create_job({
+			id   => $package_id,
+			type => 'analyze',
+	});
+	
+	$self->notify({
+			type             => 'success',
+			include          => 'notifications/generic_success',
+			SUCCESS_HEADLINE => 'OPM reanalyzation has been scheduled',
+			SUCCESS_MESSAGE  => 'OPM will be reanalyzed during the next analyzation run',
+	});
+	
+	return $self->list();
 }
 
 1;
