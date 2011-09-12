@@ -126,7 +126,12 @@ header {
 	margin: 0 0 2em; 
 	background: url(img/logo.png) left 2px no-repeat; 
 }
-header h1 { padding: 0 0 10px 2px; }
+header h1 { 
+	width: 143px; 
+	height: 60px; 
+	background: url(img/OPAR-Logo.png) left top no-repeat; 
+}
+header h1 * { display: none; }
 header p { 
 	border-top: solid 1px #333333; 
 	font-size: 80%; 
