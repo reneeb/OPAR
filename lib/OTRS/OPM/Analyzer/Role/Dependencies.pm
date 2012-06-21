@@ -13,7 +13,7 @@ sub analyze_dependencies {
     
     # get all dependencies declared in opm file
     my %named_dependencies = map{ my $name = $_->{name}; $name => 1; }$opm->dependencies;
-    my $otrs_version       = $opm->framework;
+    my @otrs_versions      = $opm->framework;
     my $perl_version       = $self->config->get( 'general.perl_version' );
     
     my %uses;
@@ -36,10 +36,12 @@ sub analyze_dependencies {
         next DEPENDENCY if $named_dependencies{$dependency};
         
         # check if it is a standard otrs module
-        next DEPENDENCY if Module::OTRS::CoreList->shipped(
-            $otrs_version,
-            $dependency,
-        );
+        for my $otrs_version ( @otrs_versions ) {
+            next DEPENDENCY if Module::OTRS::CoreList->shipped(
+                $otrs_version,
+                $dependency,
+            );
+        }
         
         # check if it is a standard perl module
         my $first_release = Module::CoreList->first_release( $dependency );

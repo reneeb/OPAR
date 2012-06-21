@@ -17,15 +17,23 @@ subtype 'FrameworkVersionString' =>
   as 'Str' =>
   where { $_ =~ m{ \A (?:[0-9]+\.){2} (?:[0-9]+|x) \z }xms };
 
+subtype 'XMLTree' =>
+  as 'Object' =>
+  where { $_->isa( 'XML::LibXML::Document' ) };
+
 # declare attributes
 has name         => ( is  => 'rw', isa => 'Str', );
-has framework    => ( is  => 'rw', isa => 'FrameworkVersionString', );
 has version      => ( is  => 'rw', isa => 'VersionString', );
 has vendor       => ( is  => 'rw', isa => 'Str', );
 has url          => ( is  => 'rw', isa => 'Str', );
 has license      => ( is  => 'rw', isa => 'Str', );
 has description  => ( is  => 'rw', isa => 'Str', );
 has error_string => ( is  => 'rw', isa => 'Str', );
+
+has tree => (
+    is       => 'rw',
+    isa      => 'XMLTree',
+);
 
 has opm_file => (
     is       => 'ro',
@@ -41,6 +49,17 @@ has files => (
     default    => sub{ [] },
     handles    => {
         add_file => 'push',
+    },
+);
+
+has framework  => (
+    traits     => ['Array'],
+    is         => 'rw',
+    isa        => 'ArrayRef[FrameworkVersionString]',
+    auto_deref => 1,
+    default    => sub { [] },
+    handles    => {
+        add_framework => 'push',
     },
 );
 
@@ -104,6 +123,8 @@ sub parse {
     
     my $parser = XML::LibXML->new;
     my $tree   = $parser->parse_file( $self->opm_file );
+
+    $self->tree( $tree );
     
     # check if the opm file is valid.
     try {
@@ -121,10 +142,20 @@ sub parse {
     $self->vendor(    $root->findvalue( 'Vendor' ) );
     $self->name(      $root->findvalue( 'Name' ) );
     $self->license(   $root->findvalue( 'License' ) );
-    $self->framework( $root->findvalue( 'Framework' ) );
     $self->version(   $root->findvalue( 'Version' ) );
     $self->url(       $root->findvalue( 'URL' ) );
     
+    # retrieve framework information
+    my @frameworks = $root->findnodes( 'Framework' );
+    
+    FILE:
+    for my $framework ( @frameworks ) {
+        my $framework_version = $framework->textContent;
+        
+        # push framework info to attribute
+        $self->add_framework( $framework_version );
+    }
+
     # retrieve file information
     my @files = $root->findnodes( 'Filelist/File' );
     
@@ -183,6 +214,29 @@ sub parse {
     }
     
     return 1;
+}
+
+sub as_sopm {
+    my ($self) = @_;
+
+    my $tree = $self->tree->cloneNode(1);
+    my $root = $tree->getDocumentElement;
+    
+    my ($build_host) = $root->findnodes( 'BuildHost' );
+    my ($build_date) = $root->findnodes( 'BuildDate' );
+    
+    $root->removeChild( $build_host);
+    $root->removeChild( $build_date );
+    
+    my @files = $root->findnodes( 'Filelist/File' );
+    for my $file ( @files ) {
+        my ($encode) = $file->findnodes( '@Encode' );
+        $encode->unbindNode() if $encode;
+    
+        $file->removeChildNodes();
+    }
+    
+    return $tree->toString;
 }
 
 no Moose;
