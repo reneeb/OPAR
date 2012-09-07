@@ -308,6 +308,8 @@ sub DEMOLISH {
         }
         
         if ( $attr eq 'tags' ) {
+
+            next ATTRELEMENT;
             
             # delete tags from package
             my ($package_name_obj) = $self->get_object( 'package_name' );
