@@ -13,51 +13,34 @@
 	<%/LOOP %>
 </section>
 
-<section id="packages">		
-	<%LOOP PACKAGES %>
-	<div>
-		<div>
-			<h2>
-				<span>42</span>
-				<a href="#"><%= NAME %></a>
-				&nbsp;
-				<a href="#" class="web">Website</a>
-				<a href="#" class="bugs">Bugtracker</a>
-			</h2>
-			<p>
-				Version <b><%= VERSION %></b> 
-				by <b><%= AUTHOR %></b> 
-				on <b><%= DATE %></b> // 
-				Framework: <b>GTK</b>
-			</p>
-			<p>
-				Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet...
-				<a href="#">mehr</a>
-			</p>
-		</div>
-	</div>
-	<%/LOOP %>
-</section>
-
-<!--
 <table id="package_list">
   <tr>
-    <th>PackageName</th>
+    <th>Package Name</th>
     <th>Version</th>
-    <th>Datum</th>
-    <th>Maintainer</th>
-    <th>Co-Maintainer</th>
-    <th>Aktion</th>
+    <th>Date</th>
+    <th>State</th>
+    <th>My Role</th>
+    <th>Action</th>
   </tr>
   <%LOOP PACKAGES %>
   <tr>
     <td><%= NAME %></td>
-    <td><%= DATE %></td>
     <td><%= VERSION %></td>
-    <td><%= AUTHOR %></td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
+    <td><%= DATE %></td>
+    <td><%= STATE %></td>
+    <td><%= MYROLE %></td>
+    <td>
+    	<%IF DELETION %>
+	      <a href="<%= __SCRIPT__ %>/package/undelete_package/<%= PACKAGE_ID %>" class="button">Undelete</a>  		
+  		<%ELSE%>
+	      <a href="<%= __SCRIPT__ %>/package/delete_package/<%= PACKAGE_ID %>" class="button">Delete</a>
+  		<%/IF%>
+  		<a href="<%= __SCRIPT__ %>/package/comments/<%= NAME %>" class="button">Comments</a>
+      <a href="<%= __SCRIPT__ %>/package/reanalyze/<%= PACKAGE_ID %>" class="button">Reanalyze</a>
+      <!--
+      <a href="<%= __SCRIPT__ %>/package/maintainer/<%= NAME %>-<%= VERSION %>" class="button">Co-Maintainer</a>
+			-->
+    </td>
   </tr>
   <%/LOOP %>
 </table>
--->

@@ -8,13 +8,14 @@ use CGI::Application::Plugin::Redirect;
 use Scalar::Util qw(looks_like_number);
 
 use OTRS::OPR::DAO::Package;
+use OTRS::OPR::DAO::Comment;
 use OTRS::OPR::DB::Helper::Comment {page => 'cpage'};
 use OTRS::OPR::DB::Helper::Job     qw(create_job find_job);
 use OTRS::OPR::DB::Helper::Package qw(page);
 use OTRS::OPR::DB::Helper::User    {list => 'user_list'};
 use OTRS::OPR::Web::App::Prerun    qw(cgiapp_prerun);
 use OTRS::OPR::Web::App::Session;
-use OTRS::OPR::Web::Utils          qw(prepare_select page_list);
+use OTRS::OPR::Web::Utils          qw(prepare_select page_list time_to_date);
 
 sub setup{
     my ($self) = @_;
@@ -37,8 +38,9 @@ sub setup{
         co_maint          => \&set_comaintainer,
         save_co_maint     => \&save_comaintainer,
         comments          => \&comments,
-        delete_comment    => \&delete_comment,
-        undelete_comment  => \&undelete_comment,
+        publish_comment   => \&publish_comment,
+        unpublish_comment => \&unpublish_comment,
+        reanalyze					=> \&reanalyze,
     );
 }
 
@@ -55,7 +57,7 @@ sub list_packages : Permission('admin') {
         $page = 1;
     }
     
-    my ($packages,$pages) = $self->page( $page, { search => $search_term } );
+    my ($packages,$pages) = $self->page( $page, { search => $search_term, all => 1 } );
     my $pagelist          = $self->page_list( $pages, $page );
     
     $self->template( 'admin_package_list' );
@@ -65,57 +67,61 @@ sub list_packages : Permission('admin') {
     );
 }
 
-sub delete_package : Permission( 'admin' ) : Json {
+sub delete_package : Permission( 'admin' ) {
     my ($self) = @_;
     
     # the package is not deleted, it's just marked to be deleted and
     # a new job is created
     my $config  = $self->config;
-    my $package = $self->param( 'package' );
+    my $package = $self->param( 'id' ) || '';
     
     if ( $package =~ m{\D}x or $package <= 0 ) {
-        return { error => 'invalid package' };
+        #return { error => 'invalid package' };
     }
-    
-    my $package_dao = OTRS::OPR::DAO::Package->new(
-        package_id => $package,
-        _schema    => $self->schema,
-    );
-    
-    my $delete_until = time + $config->get( 'time.deletion' );
-    $package_dao->deletion_flag( $delete_until );
-    
-    my $job_id = $self->create_job({
-        id   => $package,
-        type => 'delete',
-    });
-    
-    return { delete_until => $delete_until };
+    else {    
+        my $package_dao = OTRS::OPR::DAO::Package->new(
+            package_id => $package,
+            _schema    => $self->schema,
+        );
+
+        my $delete_until = time + $config->get( 'time.deletion_admin' );
+        $package_dao->deletion_flag( $delete_until );
+                        
+        my $job_id = $self->create_job({
+            id => $package,
+            type => 'delete',
+        });
+                        
+        #return { delete_until => $delete_until };
+    }
+    $self->list_packages;
 }
 
-sub undelete_package : Permission( 'admin' ) : Json {
+sub undelete_package : Permission( 'admin' ) {
     my ($self) = @_;
     
-    my $package = $self->param( 'package' );
+    my $package = $self->param( 'id' ) || '';
     
     if ( $package =~ m{\D}x or $package <= 0 ) {
-        return { error => 'invalid package' };
+        #return { error => 'invalid package' };
     }
-    
-    my $job = $self->find_job(
-        id   => $package,
-        type => 'delete',
-    );
-    
-    $job->delete;
-    
-    my ($package_obj) = $self->table( 'opr_package' )->find( $package );
-    if ( $package_obj ) {
-        $package_obj->deletion_flag( undef );
-        $package_obj->update;
+    else {
+        my $job = $self->find_job({
+            id   => $package,
+            type => 'delete',
+        });
+                        
+        $job->delete;
+                        
+        my ($package_obj) = $self->table( 'opr_package' )->find( $package );
+        if ( $package_obj ) {
+            $package_obj->deletion_flag( undef );
+            $package_obj->update;
+        }
+                        
+        #return { success => 1 };
     }
-    
-    return { success => 1 };
+    $self->list_packages;
 }
 
 =head2 set_comaintainer
@@ -142,7 +148,7 @@ sub set_comaintainer : Permission( 'admin' ) {
     );
     
     # create hash that can be used in template
-    my %package_info = $package_dao->for_template();
+    my %package_info = $package_dao->for_template;
     
     # get all users of the system
     my @users = $self->user_list;
@@ -192,45 +198,112 @@ sub comments : Permission( 'admin' ) {
     # get the package name
     my $package_name = $self->param( 'id' );
     
-    # check if a valid package name was given
-    my $valid_package_name =~ m{
+   # check if a valid package name was given
+    my ($valid_package_name) = ($package_name =~ m{
         \A
             (?:[A-Za-z0-9]+)   # first word
             (?:-[A-Za-z0-9]+)* # following words
         \z
-    }xms;
+    }xms);
     
     # show error if no valid package name was given
     if ( !$valid_package_name ) {
-        $self->template( 'error' );
-        $self->params(
+        $self->template( 'notifications/generic_error' );
+        $self->stash(
             ERROR => 'Invalid Package Name',
         );
         return;
     }
     
-    my %params      = $self->query->Vars;
-    my $page        = $params{page} || 1;
-    my $search_term = $params{search_term};
+    my %params = $self->query->Vars;
+    my $page   = $params{page} || 1;
     
     if ( !looks_like_number($page) or $page <= 0 ) {
         $page = 1;
     }
     
-    my ($comments,$pages) = $self->cpage( $page, $search_term, { short => 1 } );
+    my ($comments,$pages) = $self->cpage( $page, { package_name => $package_name, all => 1 } );
     my $pagelist          = $self->page_list( $pages, $page );
     
-    $self->template( 'admin_comments_list' );
+    $self->template( 'admin_package_comments' );
     $self->stash(
-        COMMENTS => $comments,
-        PAGES    => $pagelist,
+        NAME         => $package_name,
+        HAS_COMMENTS => scalar(@{$comments}),
+        COMMENTS     => $comments,
+        PAGES        => $pagelist,
     );
 }
 
-sub delete_comment : Permission( 'admin' ) : Json {
+sub goto_comments : Permission( 'admin' ) {
+    my ($self) = @_;
+        
+    my $comment_id = $self->param( 'id' );
+    
+    my $comment = $self->schema->resultset('opr_comments')->find({ comment_id => $comment_id });
+    
+    return $self->comments if !$comment;
+      
+    $self->param('id', $comment->packagename);
+    $self->comments;
 }
 
-sub undelete_comment : Permission( 'admin' ) : Json {
+sub publish_comment : Permission( 'admin' ) {
+    my ($self) = @_;
+
+    my $comment_id = $self->param( 'id' );
+    my $comment = OTRS::OPR::DAO::Comment->new(
+        comment_id => $comment_id,
+        _schema      => $self->schema,
+    );
+    $comment->published( time );
+    $comment = undef;
+
+    $self->goto_comments;
+}
+
+sub unpublish_comment : Permission( 'admin' ) {
+    my ($self) = @_;
+
+    my $comment_id = $self->param( 'id' );
+    my $comment    = OTRS::OPR::DAO::Comment->new(
+        comment_id => $comment_id,
+        _schema    => $self->schema,
+    );
+    $comment->published( 0 );
+    $comment = undef;
+
+    $self->goto_comments;
+}
+
+sub reanalyze : Permission( 'admin' ) {
+	my ($self) = @_;
+	
+	my ($package_id) = $self->param('id');
+
+	# check if an analyzation job for that package is already scheduled
+  my $job = $self->find_job({
+			id   => $package_id,
+			type => 'analyze',
+	});
+	if ($job) {
+		return $self->list_packages();
+	}
+
+	# create an entry in job queue that the package
+	# should be analyzed    
+	my $job_id = $self->create_job({
+			id   => $package_id,
+			type => 'analyze',
+	});
+	
+	$self->notify({
+			type             => 'success',
+			include          => 'notifications/generic_success',
+			SUCCESS_HEADLINE => 'OPM reanalyzation has been scheduled',
+			SUCCESS_MESSAGE  => 'OPM will be reanalyzed during the next analyzation run',
+	});
+	
+	return $self->list_packages();
 }
 
 1;

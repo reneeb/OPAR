@@ -19,10 +19,10 @@ CGI::Application::Dispatch->dispatch(
             app => 'Admin::Package',
             rm  => 'list',
         },
-        'packages/:run/:package/:id?' => {
+        'package/:run?/:id?' => {
             app => 'Admin::Package',
         },
-        'packages/:run?/:id?' => {
+        'package/:run/:package/:id?' => {
             app => 'Admin::Package',
         },
         'system/:run?/:id?' => {

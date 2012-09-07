@@ -9,7 +9,17 @@
   		<input type="hidden" name="formid" value="<%= FORMID %>" />
 			<dl>
 				<dt>File</dt>
-				<dd><input type="file" name="opm_file" id="opm_file" class="px290" /></dd>
+				<dd><input type="file" name="opm_file" id="opm_file" class="px290" onchange="OPAR.Package.TagsGet(this.value);" /></dd>
+				
+				<dt>Description</dt>
+				<dd><textarea name="description" id="description" class="px290"><%= description %></textarea></dd>
+				
+				<dt>Tags</dt>
+				<dd><span id="span_tags" class="hidden">
+				        Tags already used for <span id="package_name"></span>
+				    </span>
+				    <input type="text" name="tags" id="tags" class="px290" value="<%= tags %>" /><br />
+				    separated with ','</dd>
 		
 				<dt class="empty">&nbsp;</dt>
 				<dd class="right"><button type="submit" name="submit" value="Upload">Upload</button></dd>

@@ -9,19 +9,22 @@ our @EXPORT_OK = qw(
 );
 
 sub page {
-    my ($self,$page,$search_term,$params) = @_;
+    my ($self,$page,$params) = @_;
+    return ([], 0) if !exists $params->{package_name} || !length $params->{package_name};
     
     my $rows = $self->config->get( 'rows.search' );
     
     my $resultset = $self->table( 'opr_comments' )->search(
-        {},
+        {
+            packagename => ($params->{package_name} || ''),
+        },
         {
             page     => $page,
             rows     => $rows,
             order_by => 'comment_id',
         },
     );
-    
+
     my @comments = $resultset->all;    
     my $pages    = $resultset->pager->last_page || 1;
     
@@ -38,14 +41,15 @@ sub page {
         
         # create the infos for the template
         push @comments_for_template, {
-            TEXT    => $text,
-            ID      => $comment->comment_id,
-            HEAD    => $head,
-            RATING  => $comment->rating,
-            USER    => $comment->username,
-            DATE    => $self->time_to_date( $comment->published ),
-            PACKAGE => $comment->packagename,
-            VERSION => $comment->packageversion,
+            TEXT         => $text,
+            ID           => $comment->comment_id,
+            HEAD         => $head,
+            RATING       => $comment->rating,
+            USER         => $comment->username,
+            DATE         => $self->time_to_date( $comment->published ),
+            PACKAGE      => $comment->packagename,
+            VERSION      => $comment->packageversion,
+            IS_PUBLISHED => ($comment->published ? 1 : 0),
         };
     }
     

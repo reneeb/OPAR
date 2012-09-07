@@ -48,7 +48,7 @@ CREATE TABLE `opr_package_dependencies` (
   dependency_id INTEGER NOT NULL AUTO_INCREMENT,
   package_id INTEGER NOT NULL,
   dependency VARCHAR(255) NOT NULL,
-  dependency_type ENUM('otrs','cpan') NOT NULL,
+  dependency_type ENUM(\aotrs\a,\acpan\a) NOT NULL,
   dependency_version VARCHAR(255),
   PRIMARY KEY(dependency_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -159,5 +159,29 @@ CREATE TABLE `opr_temp_passwd` (
   token VARCHAR(255) ,
   created INTEGER,
   PRIMARY KEY(id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `opr_feeds`;
+
+CREATE TABLE `opr_feeds` (
+  feed_id VARCHAR(255) NOT NULL,
+  feed_config TEXT NOT NULL,
+  PRIMARY KEY(feed_id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `opr_tags`;
+
+CREATE TABLE `opr_tags` (
+  tag_id INTEGER NOT NULL AUTO_INCREMENT,
+  tag_name VARCHAR(255),
+  PRIMARY KEY(tag_id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `opr_package_tags`;
+
+CREATE TABLE `opr_package_tags` (
+  name_id INTEGER NOT NULL,
+  tag_id INTEGER NOT NULL,
+  PRIMARY KEY(name_id,tag_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

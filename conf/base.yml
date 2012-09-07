@@ -3,15 +3,15 @@ db:
   type: mysql
   host: localhost
   name: opar
-  user: opar
-  pass: hot
+  user: root
+  pass: 
 paths:
-  base: /home/opar/opar_sources/
+  base: /Users/tk/Desktop/Renee/OPAR/opar-web/
   templates: templates/
-  conf: /home/opar/opar_sources/conf/
+  conf: /Users/tk/Desktop/Renee/OPAR/opar-web/conf/
   static: static/
   mails: mails/
-  uploads: /home/opar/uploads/
+  uploads: /Users/tk/Desktop/Renee/OPAR/opar-web/uploads/
 defaults:
   static: imprint
 templates:
@@ -24,6 +24,7 @@ formid:
   passwd_expire: 86400
 time:
   deletion: 259200
+  deletion_admin: 86400
 recaptcha:
   public_key: 6LcMqsESAAAAAD0ioZiFwRNDe3OcftdzwL_XIV81
   private_key: 6LcMqsESAAAAADEX18C3wWHJT7vGXWyE7OCWWnTm
@@ -61,7 +62,7 @@ errors:
     headline: User already exists!
     message: The username you have chosen is already in use.
 utils:
-  config: /home/opar/opar_sources/conf
+  config: /Users/tk/Desktop/Renee/OPAR/opar-web/conf
   perltidy:
     config: perltidyrc
   perlcritic:
