@@ -246,8 +246,12 @@ sub get_tags : Permission( 'author' ) : Json {
         package_name => $file,
     );
     
-    my $tags_string = join ', ', $package->tags;
-    #my $tags_string = join ', ', qw(hallo test);
+    my $tags_string = '';
+
+    if ( !$package->not_in_db ) {
+        $tags_string = join ', ', $package->tags;
+    }
+
     return { tags => $tags_string, package => $file };
 }
 
@@ -624,3 +628,4 @@ sub reanalyze : Permission( 'author' ) {
 }
 
 1;
+
