@@ -247,7 +247,7 @@ sub get_tags : Permission( 'author' ) : Json {
     
     my $tags_string = '';
 
-    if ( $package ) {
+    if ( !$package->not_in_db ) {
         $tags_string = join ', ', $package->tags;
     }
 
