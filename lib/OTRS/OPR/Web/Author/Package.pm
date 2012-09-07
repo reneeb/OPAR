@@ -231,6 +231,8 @@ sub get_tags : Permission( 'author' ) : Json {
     my %errors;
     
     $self->template( 'blank' );
+
+    return { tags => '', package => '' };
     
     # get package name
     my ($file,$version,$suffix) = OTRS::OPR::Web::Utils->validate_opm_name( $params{path} );
