@@ -162,26 +162,48 @@ sub user_is_maintainer {
             package_name => $package_params->{name},
         });
         
+        my $package_name_id;
         if ( !$package_name_exists ) {
-             if ( $package_params->{add} ) {
-                 my ($package_name) = $self->table( 'opr_package_names' )->create({
-                     package_name => $package_params->{name},
-                 });
+            if ( $package_params->{add} ) {
+                my ($package_name) = $self->table( 'opr_package_names' )->create({
+                    package_name => $package_params->{name},
+                });
                  
-                 $package_name->update;
-                 
-                 my ($package_author) = $self->table( 'opr_package_author' )->create({
-                     user_id        => $user_dao->user_id,
-                     name_id        => $package_name->name_id,
-                     is_main_author => 1,
-                 });
+                $package_name->update;
+                $package_name_id = $package_name->name_id;
 
-                 $package_author->update;
+                my ($package_author) = $self->table( 'opr_package_author' )->create({
+                    user_id        => $user_dao->user_id,
+                    name_id        => $package_name_id,
+                    is_main_author => 1,
+                });
+
+                $package_author->update;
                  
-                 return $package_name->name_id;
-             }
+                return $package_name->name_id;
+            }
+        }
+        else {
+            my ($package_author_exists) = $self->table( 'opr_package_author' )->search({
+                name_id => $package_name_exists->name_id,
+            });
+
+            $package_name_id = $package_name_exists->name_id;
+
+            if ( !$package_author_exists and $package_params->{add} ) {
+                 
+                my ($package_author) = $self->table( 'opr_package_author' )->create({
+                    user_id        => $user_dao->user_id,
+                    name_id        => $package_name_id,
+                    is_main_author => 1,
+                });
+
+                $package_author->update;
+                 
+                return $package_name->name_id;
+            }
              
-             return 0;
+            return 0;
         }
         
         
