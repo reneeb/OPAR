@@ -73,7 +73,7 @@ sub recent_packages {
     );
 
     my ($package_ref) = $self->page( 1, { rows => 30 } );
-    my @packages      = sort{ $a->{UPLOAD} <=> $b->{UPLOAD} }@{$package_ref};
+    my @packages      = sort{ $b->{UPLOAD} <=> $a->{UPLOAD} }@{$package_ref};
 
     for my $package (@packages) {
         $rss->add_item(
