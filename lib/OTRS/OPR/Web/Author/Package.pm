@@ -165,6 +165,9 @@ sub do_upload : Permission( 'author' ) {
     my $package_name = $self->_get_package_name( $file );
     $self->logger->trace( "Uploaded package: $package_name" );
     my $name_id      = $self->user_is_maintainer( $self->user, { name => $package_name, add => 1 } );
+
+    $self->logger->debug( "PackageName ID: " . (defined $name_id ? $name_id : '<undef>') );
+
     if ( !$name_id ) {
         $self->logger->debug( sprintf "UserID: %d -> Package: %s", $self->user->user_id, $package_name );
         
