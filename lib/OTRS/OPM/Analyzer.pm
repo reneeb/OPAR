@@ -90,7 +90,7 @@ sub analyze {
             
             $analysis_data{$role}->{$filename} = $result;
         }
-        last if $counter++ == 4;
+        #last if $counter++ == 4;
     }
     
     # do the opm check - some checks have to be performed on the opm itself

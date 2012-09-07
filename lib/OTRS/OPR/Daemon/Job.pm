@@ -115,12 +115,15 @@ sub _save_basic_info {
     
     my $name = $opm->name;
     
-    for my $attr ( qw/description framework version/ ) {
+    for my $attr ( qw/description version/ ) {
         if ( $package->can( $attr ) && $opm->can( $attr ) ) {
             $package->$attr( $opm->$attr() );
             $logger->trace( "set $attr for $name" );
         }
     }
+
+    $package->framework( join ', ', $opm->framework );
+    $logger->trace( "set framework for $name" );
     
     $package->website( $opm->url );
     $logger->trace( "set website for $name" );
