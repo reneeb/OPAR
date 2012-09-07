@@ -243,7 +243,7 @@ sub BUILD {
     }
     
     if ( $self->name_id ) {
-        my ($package_name_obj) = $self->ask_table( 'opr_package_names' )->find( $self->name_id );
+        my ($package_name_obj) = $self->ask_table( 'opr_package_names' )->search({ name_id => $self->name_id });
         if ( $package_name_obj ) {
             $self->add_object( package_name => $package_name_obj );
             $self->package_name( $package_name_obj->package_name );

@@ -195,7 +195,8 @@ sub do_upload : Permission( 'author' ) {
         substr( $user_name, 0, 2 ) . '/' .
         $user_name . '/';
     $virtual_path .= $package_name;
-    
+   
+    $package->package_name( $package_name ); 
     $package->uploaded_by( $self->user->user_id );
     $package->path( $file );
     $package->virtual_path( $virtual_path );
