@@ -183,29 +183,6 @@ sub user_is_maintainer {
                 return $package_name->name_id;
             }
         }
-        else {
-            my ($package_author_exists) = $self->table( 'opr_package_author' )->search({
-                name_id => $package_name_exists->name_id,
-            });
-
-            $package_name_id = $package_name_exists->name_id;
-
-            if ( !$package_author_exists and $package_params->{add} ) {
-                 
-                my ($package_author) = $self->table( 'opr_package_author' )->create({
-                    user_id        => $user_dao->user_id,
-                    name_id        => $package_name_id,
-                    is_main_author => 1,
-                });
-
-                $package_author->update;
-                 
-                return $package_name->name_id;
-            }
-             
-            return 0;
-        }
-        
         
         my ($exists) = $self->table( 'opr_package_author' )->search(
             {
