@@ -314,7 +314,11 @@ sub DEMOLISH {
             $package_name_obj->opr_package_tags->delete;
             
             # add tags and create tag if it doesn't exist yet
+            TAG:
             for my $tag ( $self->tags ) {
+
+                next TAG if !$tag;
+
                 my ($tag_obj) = $self->ask_table( 'opr_tags' )->search({
                     tag_name => $tag,
                 });
