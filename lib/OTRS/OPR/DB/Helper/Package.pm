@@ -182,6 +182,8 @@ sub user_is_maintainer {
                  
                 return $package_name->name_id;
             }
+
+            return 0;
         }
         
         my ($exists) = $self->table( 'opr_package_author' )->search(
