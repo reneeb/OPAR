@@ -175,6 +175,8 @@ sub user_is_maintainer {
                      name_id        => $package_name->name_id,
                      is_main_author => 1,
                  });
+
+                 $package_author->update;
                  
                  return $package_name->name_id;
              }
