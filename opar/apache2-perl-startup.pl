@@ -28,18 +28,6 @@ use CGI::Carp ();
 #Apache::DBI->connect_on_init('DBI:mysql:otrs', 'otrs', 'some-pass');
 use DBI ();
 
-# enable this if you use mysql
-#use DBD::mysql ();
-#use Kernel::System::DB::mysql;
-
-# enable this if you use postgresql
-#use DBD::Pg ();
-#use Kernel::System::DB::postgresql;
-
-# enable this if you use oracle
-#use DBD::Oracle ();
-#use Kernel::System::DB::oracle;
-
 # core modules
 use Moose;
 use DBIx::Class;
