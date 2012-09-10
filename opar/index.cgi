@@ -24,7 +24,7 @@ CGI::Application::Dispatch->dispatch(
             app => 'Guest::Package',
             rm  => 'dist',
         },
-        'search/:term?/:page?' => {
+        'search/:page?' => {
             app => 'Guest',
             rm  => 'search',
         },
