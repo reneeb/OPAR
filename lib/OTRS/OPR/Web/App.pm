@@ -266,6 +266,11 @@ sub schema {
             $config->get( 'db.pass' ),
             $schema,
         );
+
+	#$self->{_schema}->storage->debug(1);
+	$self->{_schema}->storage->debugcb( sub {
+            $self->logger->debug( "@_" );
+        });
     }
 
     $self->{_schema};

@@ -86,7 +86,7 @@ sub page {
             order_by  => 'upload_time DESC',
             group_by  => [ 'opr_package_names.package_name' ],
             join      => 'opr_package_names',
-            '+select' => [ 'opr_package_names.package_name' ],
+            '+select' => [ 'opr_package_names.package_name', { max => 'version', '-as' => 'max_version' }],
         },
     );
     
@@ -241,6 +241,8 @@ sub package_to_hash {
     $desc    = substr( $desc, 0, 57 ) . '...' if $params->{short} and 60 < length $desc;
         
     my ($author) = $package->opr_user;
+
+    my $max_version = $package->get_column( 'max_version' ) || '';
         
     # create the infos for the template
     my $info = {
@@ -257,6 +259,7 @@ sub package_to_hash {
         BUGTRACKER   => $package->bugtracker,
         FRAMEWORK    => $package->framework,
         UPLOAD       => $package->upload_time,
+	MAX_VERSION  => $max_version,
     };
     
     return $info;
