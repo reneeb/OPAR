@@ -111,6 +111,9 @@ sub version_list {
     my %search_clauses = (
         'opr_package_names.package_name' => $name,
     );
+
+    my %other_options;
+    my @selects = qw(opr_package_names.package_name);
         
     if ( exists $params->{uploader} ) {
         $search_clauses{uploaded_by} = $params->{uploader};
@@ -118,6 +121,12 @@ sub version_list {
     
     if ( !$params->{all} ) {
         $search_clauses{is_in_index} = 1;
+    }
+
+    if ( $params->{not_framework} ) {
+        $search_clauses{framework} = { '!=' => $params->{not_framework} };
+        push @selects, { max => 'version', '-as' => 'max_version' };
+        $other_options{group_by} = [ 'framework' ];
     }
     
     my $resultset = $self->table( 'opr_package' )->search(
@@ -127,7 +136,8 @@ sub version_list {
         {
             order_by  => 'package_id',
             join      => 'opr_package_names',
-            '+select' => [ 'opr_package_names.package_name' ],
+            '+select' => [ @selects ],
+            %other_options,
         },
     );
     
@@ -242,7 +252,8 @@ sub package_to_hash {
         
     my ($author) = $package->opr_user;
 
-    my $max_version = $package->get_column( 'max_version' ) || '';
+    my $max_version = '';
+    eval { $max_version = $package->get_column( 'max_version' ); };
         
     # create the infos for the template
     my $info = {

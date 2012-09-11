@@ -8,6 +8,15 @@
 						<dt>Version</dt>
 						<dd><%= VERSION %></dd>
 
+						<%IF HAS_OTHER_VERSIONS %>
+	        					<dt>Other Versions</dt>
+							<dd>
+								<%LOOP OTHER_VERSIONS %>
+        							<a href="<%= __SCRIPT__ %>/dist/<%= NAME ESCAPE=URL %>-<%= MAX_VERSION ESCAPE=URL %>"><%= MAX_VERSION %></a>,
+								<%/LOOP %>
+							</dd>
+                                                <%/IF %>
+
 						<dt>Uploaded by/on</dt>
 						<dd><%= AUTHOR %> on <b><%= DATE %></b></dd>
 

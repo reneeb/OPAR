@@ -228,11 +228,15 @@ sub dist {
     }
     
     my %stash = $dao->to_hash;
+
+    my $versions = $self->version_list( $name, { not_framework => $dao->framework } );
     
     $self->template( 'index_package' );
     $self->stash(
         %stash,
-        OK_GRADE => 'red',
+        OK_GRADE           => 'red',
+        OTHER_VERSIONS     => $versions,
+        HAS_OTHER_VERSIONS => scalar( @{$versions} ),
     );
 }
 
