@@ -52,9 +52,41 @@ sub packages {
     if ( $params{is_in_index} ) {
         @packages = grep{ $_->is_in_index }@packages;
     }
+
+    if ( $params{latest} ) {
+        my %latest;
+
+        for my $package ( @packages ) {
+            my $name_id = $package->name_id;
+            my $version = $package->version;
+            my $name    = $package->opr_package_names->package_name;
+
+            if ( !exists $latest{$name_id} || _is_version_greater( $version, $latest{$name_id}->{version} ) ) {
+                $latest{$name_id} = {
+                    version  => $version,
+                    package  => $package,
+                    name     => $name,
+                };
+            }
+        }
+
+        @packages = map{ $_->{package} } sort { $a->{name} cmp $b->{name} }values %latest;
+    }
     
     return @packages;
 };
+
+sub _is_version_greater {
+    my ($new,$old) = @_;
+
+    my ($new_major, $new_minor, $new_patch) = split /\./, $new;
+    my ($old_major, $old_minor, $old_patch) = split /\./, $old;
+
+    return 1 if $new_major > $old_major;
+    return 1 if $new_major == $old_major and $new_minor > $old_minor;
+    return 1 if $new_major == $old_major and $new_minor == $old_minor and $new_patch > $old_patch;
+    return 0;
+}
 
 sub to_hash {
     my ($self) = @_;

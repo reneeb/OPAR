@@ -322,7 +322,7 @@ sub author {
         return;
     }
     
-    my @packages = $dao->packages( is_in_index => 1 );
+    my @packages = $dao->packages( is_in_index => 1, latest => 1 );
     my @for_tmpl = map{ $self->package_to_hash( $_ ) }@packages;
     
     my %info = $dao->to_hash;
