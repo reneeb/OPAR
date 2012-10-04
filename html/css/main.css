@@ -124,12 +124,12 @@ header, section, footer {
 }
 header { 
 	margin: 0 0 2em; 
-	background: url(img/logo.png) left 2px no-repeat; 
+	background: url(../img/logo.png) left 2px no-repeat; 
 }
 header h1 { 
 	width: 143px; 
 	height: 60px; 
-	background: url(img/OPAR-Logo.png) left top no-repeat; 
+	background: url(../img/OPAR-Logo.png) left top no-repeat; 
 }
 header h1 * { display: none; }
 header p { 
