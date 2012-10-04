@@ -12,9 +12,29 @@ CGI::Application::Dispatch->dispatch(
             app => 'Guest',
             rm  => 'start',
         },
-        'recent/:page?' => {
-            app => 'Guest',
+        'repo/add_form' => {
+            app => 'Guest::Repo',
+            rm  => 'add_form',
+        },
+        'repo/add' => {
+            app => 'Guest::Repo',
+            rm  => 'add',
+        },
+        'repo/:id/manage' => {
+            app => 'Guest::Repo',
+            rm  => 'manage',
+        },
+        'repo/:id/save' => {
+            app => 'Guest::Repo',
+            rm  => 'manage',
+        },
+        'repo/:id/recent' => {
+            app => 'Guest::Repo',
             rm  => 'recent',
+        },
+        'repo/:id/:file' => {
+            app => 'Guest::Repo',
+            rm  => 'file',
         },
         'static/:page' => {
             app => 'Guest',
