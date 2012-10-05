@@ -75,11 +75,13 @@
 
 			<section id="comments">
 				<%LOOP COMMENTS %>
+                                <%IF IS_PUBLISHED %>
 				<div>
 					<div>
 						<h2>
-							<a href="<%= WEBSITE %>">Mr. Y</a>
+							<a href="<%= WEBSITE %>"><%= USERNAME %></a>
 							<span>on <%= DATE %></span>
+							<span>about version <%= VERSION %></span>
 							<div><span class="score-<%= SCORE %>"></span></div>
 						</h2>
 						<p>
@@ -87,6 +89,7 @@
 						</p>						
 					</div>
 				</div>
+				<%/IF %>
 				<%/LOOP %>
 			</section>
 			<%/IF %>

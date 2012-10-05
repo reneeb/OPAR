@@ -144,6 +144,8 @@ sub comments {
         push @comments, {
             #'WEBSITE' => $comment->website,
             'DATE'         => time_to_date( $self, $comment->published ),
+            'USERNAME'     => $comment->username,
+            'VERSION'      => $comment->packageversion,
             'SCORE'        => $comment->rating,
             'COMMENT'      => $comment->comments,
             'COMMENT_ID'   => $comment->comment_id,
