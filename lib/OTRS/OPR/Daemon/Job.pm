@@ -242,9 +242,9 @@ sub delete_package {
     my ( $self, $job ) = @_;
     
     # get package that belongs to the job
-    my ($package) = $self->table( 'opr_package' )->search(
+    my ($package) = $self->table( 'opr_package' )->search({
         package_id => $job->package_id,
-    );
+    });
     
     my $logger  = Log::Log4perl->get_logger;
     my $message = sprintf "delete all information about package %s version %s",
