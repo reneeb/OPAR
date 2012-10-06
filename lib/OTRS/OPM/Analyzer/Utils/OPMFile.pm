@@ -15,7 +15,7 @@ subtype 'VersionString' =>
 
 subtype 'FrameworkVersionString' =>
   as 'Str' =>
-  where { $_ =~ m{ \A (?:[0-9]+\.){2} [0-9]* x? \z }xms };
+  where { $_ =~ m{ \A (?: (?:x|[0-9]+x?) \. ){2} (?: x | [0-9]+x? ) \z }xms };
 
 subtype 'XMLTree' =>
   as 'Object' =>
