@@ -248,7 +248,7 @@ sub delete_package {
     
     my $logger  = Log::Log4perl->get_logger;
     my $message = sprintf "delete all information about package %s version %s",
-        $package->package_name, $package->version;
+        $package->opr_package_names->package_name, $package->version;
 
     $logger->info( $message );
     
