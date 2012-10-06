@@ -211,7 +211,8 @@ sub dist {
     my $dao = OTRS::OPR::DAO::Package->new(
         package_name => $name,
         %version,
-        _schema      => $self->schema,
+        _schema         => $self->schema,
+        _last_published => 1,
     );
 
     # if package can't be found show error message

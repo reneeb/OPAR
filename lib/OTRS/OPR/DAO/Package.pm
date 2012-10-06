@@ -76,6 +76,11 @@ has _author => (
     isa => 'Object',
 );
 
+has _last_published => (
+    is  => 'ro',
+    isa => 'Str',
+);
+
 sub author {
     my ($self) = @_;
     
@@ -215,9 +220,16 @@ sub BUILD {
         );
     }
     elsif ( $self->package_name ) {
+        my %options;
+
+        if ( $self->_last_published ) {
+            $options{'opr_package.is_in_index'} = 1;
+        }
+
         ($package) = $self->ask_table( 'opr_package' )->search(
             {
                 'opr_package_names.package_name' => $self->package_name,
+                %options,
             },
             {
                 'join'   => 'opr_package_names',
