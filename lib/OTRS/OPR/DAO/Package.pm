@@ -223,7 +223,7 @@ sub BUILD {
         my %options;
 
         if ( $self->_last_published ) {
-            $options{'opr_package.is_in_index'} = 1;
+            $options{'me.is_in_index'} = 1;
         }
 
         ($package) = $self->ask_table( 'opr_package' )->search(
