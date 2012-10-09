@@ -77,7 +77,7 @@ sub recent_packages {
 
     for my $package (@packages) {
         $rss->add_item(
-            title       => $package->{NAME},
+            title       => $package->{NAME} . ' (' . $package->{MAX_VERSION} . ')',
             link        => $self->script_url( 'index' ) . '/dist/' . $package->{NAME},
             description => $package->{DESCRIPTION},
             dc => {
