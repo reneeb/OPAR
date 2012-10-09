@@ -83,7 +83,7 @@ sub page {
         {
             page      => $page,
             rows      => $rows,
-            order_by  => 'upload_time DESC',
+            order_by  => 'max(upload_time) DESC',
             group_by  => [ 'opr_package_names.package_name' ],
             join      => 'opr_package_names',
             '+select' => [ 'opr_package_names.package_name', { max => 'version', '-as' => 'max_version' }],
