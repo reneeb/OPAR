@@ -86,7 +86,11 @@ sub page {
             order_by  => 'max(upload_time) DESC',
             group_by  => [ 'opr_package_names.package_name' ],
             join      => 'opr_package_names',
-            '+select' => [ 'opr_package_names.package_name', { max => 'version', '-as' => 'max_version' }],
+            '+select' => [
+                'opr_package_names.package_name', 
+                { max => 'version', '-as' => 'max_version' },
+                { max => 'upload_time', '-as' => 'latest_time' },
+            ],
         },
     );
     
@@ -126,6 +130,7 @@ sub version_list {
     if ( $params->{not_framework} ) {
         $search_clauses{framework} = { '!=' => $params->{not_framework} };
         push @selects, { max => 'version', '-as' => 'max_version' };
+        push @selects, { max => 'upload_time', '-as' => 'latest_time' };
         $other_options{group_by} = [ 'framework' ];
     }
     
@@ -255,6 +260,11 @@ sub package_to_hash {
     my $max_version = '';
     eval { $max_version = $package->get_column( 'max_version' ); };
         
+    my $latest = '';
+    eval { $latest = $package->get_column( 'latest_time' ); };
+
+    $latest = time_to_date( $self, $latest ) if $latest;
+        
     # create the infos for the template
     my $info = {
         NAME         => $text,
@@ -271,6 +281,7 @@ sub package_to_hash {
         FRAMEWORK    => $package->framework,
         UPLOAD       => $package->upload_time,
 	MAX_VERSION  => $max_version,
+        LATEST       => $latest,
     };
     
     return $info;
