@@ -67,6 +67,10 @@ sub page {
             $search_clauses{'-or'} = \@ors;
         }
     }
+
+    if ( $params->{framework} ) {
+        $search_clauses{framework} = { LIKE => '%' . $framework . '.%' };
+    }
     
     if ( exists $params->{uploader} ) {
         $search_clauses{uploaded_by} = $params->{uploader};

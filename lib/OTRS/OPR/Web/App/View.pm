@@ -46,6 +46,12 @@ sub view{
     my $username = '';
     $username = $self->user->user_name if $self->user;
 
+    my @frameworks = map{ VERSION => $_->framework }$self->table( 'opr_framework_versions' )->search(
+        {},
+        { order_by => 'framework', }
+    );
+
+
     $tmpl->param(
         BODY         => $tmpl_path . $template,
         __SCRIPT__   => $self->base_url,
@@ -53,6 +59,7 @@ sub view{
         __AUTHOR__   => $self->script_url( 'author' ),
         __ADMIN__    => $self->script_url( 'admin' ),
         __LOGGEDIN__ => $username,
+        frameworks   => \@frameworks,
         %{$self->stash},
         %notifications,
     );

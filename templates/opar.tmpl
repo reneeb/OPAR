@@ -23,7 +23,12 @@
 				</p>
 				<form action="<%= __SCRIPT__ %>/search" method="post">
 					<input type="text" id="query" name="search_term" title="Enter your search criteria - e.g. package name or description"/>
-					<input type="submit" value="Search" title="Start search within OPAR"/>
+					<input type="submit" value="Search" title="Start search within OPAR"/><br />
+                                        <select name="framework">
+                                            <%LOOP name="frameworks" %>
+                                                <option value="<%= VERSION %>"><%= VERSION %></option>
+                                            <%/LOOP %>
+                                        </select>
 				</form>
 			</header>
 			

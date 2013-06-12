@@ -185,3 +185,9 @@ CREATE TABLE `opr_package_tags` (
   PRIMARY KEY(name_id,tag_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `opr_framework_versions`;
+
+CREATE TABLE `opr_framework_versions` (
+  framework VARCHAR(8) NOT NULL PRIMARY KEY,
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

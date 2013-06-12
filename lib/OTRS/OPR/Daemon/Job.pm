@@ -122,6 +122,13 @@ sub _save_basic_info {
         }
     }
 
+    # ---
+    # save framework version in extra table for dropdown
+    for my $version ( $opm->framework ) {
+        $self->table( 'opr_framework_versions' )->find_or_create( { framework => $version } );
+    }
+    # ---
+
     $package->framework( join ', ', $opm->framework );
     $logger->trace( "set framework for $name" );
     

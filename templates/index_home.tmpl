@@ -7,6 +7,15 @@
 					<input type="text" id="query" name="search_term" />
 				</dd>
 	
+				<dt>OTRS Framework</dt>
+				<dd>
+					<select name="framework">
+                                            <%LOOP name="frameworks" %>
+                                                <option value="<%= VERSION %>"><%= VERSION %></option>
+                                            <%/LOOP %>
+					</select>
+				</dd>
+	
 				<dt class="empty">&nbsp;</dt>
 				<dd class="right">
 					<input type="submit" value="Search"/>

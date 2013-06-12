@@ -157,12 +157,13 @@ sub search {
     my %params      = $self->query->Vars;
     my $search_term = $params{search_term} || $self->param( 'term' ) || '*';
     my $page        = $self->param( 'page' ) || 1;
+    my $framework   = $params{framework} || $self->param( 'framework' ) || '';
     
     if ( $page =~ m{\D}x or $page <= 0 ) {
         $page = 1;
     }
     
-    my ($packages,$pages) = $self->page( $page, { search => $search_term } );
+    my ($packages,$pages) = $self->page( $page, { search => $search_term, framework => $framework } );
     my $pagelist          = $self->page_list( $pages, $page ) || [];
     
     $_->{SEARCH_TERM} = $search_term for @{$pagelist};
@@ -172,6 +173,7 @@ sub search {
         PACKAGES    => $packages,
         PAGES       => $pagelist,
         SEARCH_TERM => $search_term,
+        FRAMEWORK   => $framework,
     );
 }
 
