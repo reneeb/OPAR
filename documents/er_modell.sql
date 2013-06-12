@@ -48,7 +48,7 @@ CREATE TABLE `opr_package_dependencies` (
   dependency_id INTEGER NOT NULL AUTO_INCREMENT,
   package_id INTEGER NOT NULL,
   dependency VARCHAR(255) NOT NULL,
-  dependency_type ENUM(\aotrs\a,\acpan\a) NOT NULL,
+  dependency_type ENUM('otrs','cpan') NOT NULL,
   dependency_version VARCHAR(255),
   PRIMARY KEY(dependency_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -188,6 +188,6 @@ CREATE TABLE `opr_package_tags` (
 DROP TABLE IF EXISTS `opr_framework_versions`;
 
 CREATE TABLE `opr_framework_versions` (
-  framework VARCHAR(8) NOT NULL PRIMARY KEY,
+  framework VARCHAR(8) NOT NULL PRIMARY KEY
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
