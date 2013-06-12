@@ -13,6 +13,8 @@ my $ini_file = $dir . '/dist.ini';
 
 my $section_seen = 0;
 
+my @to_install;
+
 open my $fh, '<', $ini_file or die $!;
 while ( my $line = <$fh> ) {
     chomp $line;
@@ -31,6 +33,20 @@ while ( my $line = <$fh> ) {
     my $error;
     eval "use $module $version; 1;" or $error = $@;
 
-    print sprintf "%-40s %s %s\n", $module, '.' x 15, ( $error || 'ok' );
+    print sprintf "%-40s %s %s\n", $module, '.' x 15, ( $error ? 'not ok' : 'ok' );
+
+    push @to_install, $module if $error;
 }
 close $fh;
+
+if ( @to_install ) {
+    my $install_modules = join ' ', @to_install;
+    print qq~
+
+please run the following commands:
+
+curl -L http://cpanmin.us | perl - App::cpanminus
+cpanm $install_modules
+
+~;
+}
