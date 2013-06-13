@@ -202,10 +202,12 @@ sub config{
     my ($self) = @_;
     
     unless( $self->{config} ){        
-        my $configfile = Path::Class::File->new( $libdir, 'conf', 'base.yml' );
+        my $configfile = 
+            $ENV{OPAR_CONFIG} || 
+            Path::Class::File->new( $libdir, 'conf', 'base.yml' )->stringify;
         
         $self->{_config} = OTRS::OPR::Web::App::Config->new(
-            $configfile->stringify,
+            $configfile,
         );
     }
     
