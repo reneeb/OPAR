@@ -558,7 +558,7 @@ sub _upload_file {
     
     my $file_path = Path::Class::File->new(
         $path,
-        $$ . '-' . $file . $version . '.opm',
+        $$ . '-' . $file . '-' . $version . '.opm',
     );
     
     $self->logger->debug( "Target file: $file_path" );
