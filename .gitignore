@@ -4,3 +4,4 @@ conf/logging.conf
 conf/base.yml
 conf/base_tom.yml
 opr.web.log
+*.swp
