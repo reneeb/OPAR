@@ -275,8 +275,10 @@ sub download : Stream('text/xml') {
         $self->template( 'blank' );
         return;
     }
+
+    (my $name = $dao->path) =~ s/^\d+-//;
     
-    return [ $dao->path ];
+    return [ $dao->path, $name ];
 }
 
 sub author {
