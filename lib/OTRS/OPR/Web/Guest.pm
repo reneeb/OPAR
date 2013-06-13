@@ -167,6 +167,7 @@ sub search {
     my $pagelist          = $self->page_list( $pages, $page ) || [];
     
     $_->{SEARCH_TERM} = $search_term for @{$pagelist};
+    $_->{FRAMEWORK}   = $framework   for @{$pagelist};
     
     $self->template( 'index_search_result' );
     $self->stash(
