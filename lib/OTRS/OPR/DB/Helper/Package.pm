@@ -69,7 +69,7 @@ sub page {
     }
 
     if ( $params->{framework} ) {
-        $search_clauses{framework} = { LIKE => '%' . $framework . '.%' };
+        $search_clauses{framework} = { LIKE => '%' . $params->{framework} . '.%' };
     }
     
     if ( exists $params->{uploader} ) {

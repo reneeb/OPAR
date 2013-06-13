@@ -46,11 +46,12 @@ sub view{
     my $username = '';
     $username = $self->user->user_name if $self->user;
 
-    my @frameworks = map{ VERSION => $_->framework }$self->table( 'opr_framework_versions' )->search(
+    my @version_list = $self->table( 'opr_framework_versions' )->search(
         {},
         { order_by => 'framework', }
     );
 
+    my @frameworks = map{ { VERSION => $_->framework } }@version_list;
 
     $tmpl->param(
         BODY         => $tmpl_path . $template,
