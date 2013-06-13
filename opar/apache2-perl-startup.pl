@@ -14,7 +14,16 @@ BEGIN {
 use ModPerl::Util;
 
 # set otrs lib path!
-use lib "/var/www/perl-services/opar/lib/";
+use File::Spec;
+use File::Basename;
+
+my $dir;
+
+BEGIN {
+    $dir = File::Spec->catdir( dirname( __FILE__ ), '..', 'lib' );
+}
+
+use lib $dir;
 
 # pull in things we will use in most requests so it is read and compiled
 # exactly once
