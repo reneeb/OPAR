@@ -41,7 +41,7 @@ for my $package ( @packages ) {
     next if !$framework;
 
     my @version_list = split /\s*,\s*/, $framework;
-    my @shortened    = map{ my ($new) = $_ =~ m/(\d+.\d+)/; $new }@version_list;
+    my @shortened    = map{ my ($new) = $_ =~ m/(\d+\.\d+)/; $new }@version_list;
 
     @frameworks{@shortened} = (1) x @shortened;
 }
