@@ -191,3 +191,21 @@ CREATE TABLE `opr_framework_versions` (
   framework VARCHAR(8) NOT NULL PRIMARY KEY
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `opr_repo`;
+
+CREATE TABLE `opr_repo` (
+  repo_id VARCHAR(100) NOT NULL PRIMARY KEY,
+  framework VARCHAR(8),
+  email VARCHAR(255),
+  index_file TEXT
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `opr_repo_package`;
+
+CREATE TABLE `opr_repo_package` (
+  repo_id VARCHAR(100) NOT NULL,
+  name_id INTEGER NOT NULL,
+  PRIMARY KEY( repo_id, name_id )
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+

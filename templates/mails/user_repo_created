@@ -1,0 +1,15 @@
+Dear OPAR-User,
+
+you have created a repository that you can integrate in your OTRS Package Manager.
+To integrate the repository you can add the following data in the SysConfig option
+Package::RepositoryList in group "Framework" and subgroup "Core::Package":
+
+Key: <%= URL %>/repo/<%= REPO_ID %>/file?file=
+Value: [OPAR] My Repository
+
+You can add and remove packages from your repository at
+
+<%= URL %>/repo/<%= REPO_ID %>/manage
+
+Yours,
+OPAR-Team

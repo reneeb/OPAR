@@ -22,6 +22,8 @@ __PACKAGE__->has_many( opr_package_author => 'OTRS::OPR::DB::Schema::Result::opr
 __PACKAGE__->has_many( opr_package => 'OTRS::OPR::DB::Schema::Result::opr_package',
              { 'foreign.name_id' => 'self.name_id' });
 
+__PACKAGE__->has_many( opr_repo_package => 'OTRS::OPR::DB::Schema::Result::opr_repo_package',
+             { 'foreign.name_id' => 'self.name_id' });
 
 
 1;

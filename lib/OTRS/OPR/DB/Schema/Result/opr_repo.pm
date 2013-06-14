@@ -9,7 +9,8 @@ __PACKAGE__->table( 'opr_repo' );
 __PACKAGE__->add_columns( qw/
     repo_id
     framework
-    mail
+    email
+    index_file
 /);
 __PACKAGE__->set_primary_key( qw/ repo_id / );
 

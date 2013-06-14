@@ -12,13 +12,17 @@ CGI::Application::Dispatch->dispatch(
             app => 'Guest',
             rm  => 'start',
         },
-        'repo/add_form' => {
-            app => 'Guest::Repo',
-            rm  => 'add_form',
-        },
         'repo/add' => {
             app => 'Guest::Repo',
             rm  => 'add',
+        },
+        'repo/search' => {
+            app => 'Guest::Repo',
+            rm  => 'search',
+        },
+        'repo/manage' => {
+            app => 'Guest::Repo',
+            rm  => 'manage',
         },
         'repo/:id/manage' => {
             app => 'Guest::Repo',
@@ -26,15 +30,15 @@ CGI::Application::Dispatch->dispatch(
         },
         'repo/:id/save' => {
             app => 'Guest::Repo',
-            rm  => 'manage',
+            rm  => 'save',
         },
-        'repo/:id/recent' => {
-            app => 'Guest::Repo',
-            rm  => 'recent',
-        },
-        'repo/:id/:file' => {
+        'repo/:id/opm' => {
             app => 'Guest::Repo',
             rm  => 'file',
+        },
+        'repo/' => {
+            app => 'Guest::Repo',
+            rm  => 'add_form',
         },
         'static/:page' => {
             app => 'Guest',

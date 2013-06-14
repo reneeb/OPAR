@@ -5,12 +5,12 @@ use warnings;
 
 use parent qw(OTRS::OPR::Web::App);
 
+use Captcha::reCAPTCHA;
+use Data::UUID;
 use File::Spec;
-use OTRS::OPR::DAO::Repo;
-use OTRS::OPR::DB::Helper::Repo    qw(page);
-use OTRS::OPR::Web::App::Forms     qw(:all);
 
-use XML::RSS;
+use OTRS::OPR::DAO::Repo;
+use OTRS::OPR::Web::App::Forms     qw(:all);
 
 sub setup {
     my ($self) = @_;
@@ -26,10 +26,12 @@ sub setup {
     $self->start_mode( $startmode );
     $self->mode_param( 'rm' );
     $self->run_modes(
-        AUTOLOAD => \&add,
+        AUTOLOAD => \&add_form,
+        add      => \&add,
+        add_form => \&add_form,
         manage   => \&manage,
-        recent   => \&recent,
         file     => \&file,
+        search   => \&search,
     );
 }
 
@@ -42,54 +44,6 @@ sub file {
 
 }
 
-sub recent {
-    my ($self) = @_;
-
-    my $rss     = XML::RSS->new( version => '1.0' );
-    my $config  = $self->config;
-    my $repo_id =
-	
-    $rss->channel(
-        title        => 'OPAR Recent Packages',
-        link         => $self->script_url( 'index' ) . '/repo/' . '/recent/',
-        description  => 'The most recent packages in your OPAR repository',
-        dc => {
-            date       => '2011-01-01T07:00+00:00',
-            subject    => 'OTRS Packages',
-            creator    => $config->get( 'rss.creator' ),
-            publisher  => $config->get( 'rss.publisher' ),
-            rights     => 'Copyright 2011, ' . $config->get( 'rss.rights' ),
-            language   => 'en-us',
-        },
-        syn => {
-            updatePeriod     => 'hourly',
-            updateFrequency  => 1,
-            updateBase       => '1901-01-01T00:00+00:00',
-        },
-    );
-
-    my ($package_ref) = $self->page( 1, { rows => 30 } );
-    my @packages      = @{$package_ref};
-
-    for my $package (@packages) {
-        $rss->add_item(
-            title       => $package->{NAME},
-            link        => $self->script_url( 'index' ) . '/dist/' . $package->{NAME},
-            description => $package->{DESCRIPTION},
-            dc => {
-                subject  => $package->{NAME},
-                creator  => $package->{AUTHOR},
-            },
-        );
-    }
-	
-    $self->main_tmpl( 'rss.tmpl' );
-    $self->template( 'rss' );
-    $self->stash(
-        RSS_STRING => $rss->as_string,
-    );
-}
-
 sub add_form {
     my ($self) = @_;
         
@@ -99,7 +53,7 @@ sub add_form {
     my $html              = $captcha->get_html( $public_key );
 
     my $form_id = $self->get_formid;    
-    $self->template( 'index_add_repo' );
+    $self->template( 'index_repo_add' );
     $self->stash(
         FORMID            => $form_id,
         CAPTCHA           => $html,
@@ -112,6 +66,7 @@ sub add {
     my %params = $self->query->Vars();
     my %errors;
     my $notification_type = 'success';
+    my $config            = $self->config;
     
     my %uppercase = map { uc $_ => $params{$_} }keys %params;
 				 
@@ -119,9 +74,10 @@ sub add {
     my $formid_ok = $self->validate_formid( \%params );
  
     # check captcha
-    my $success = $self->validate_captcha( \%params );
+    #my $success = $self->validate_captcha( \%params );
+    my $success = 1;
 
-    $self->template( 'index_add_repo' );
+    $self->template( 'index_repo_add' );
 
     if ($formid_ok && $success) {
 
@@ -130,9 +86,32 @@ sub add {
             _schema => $self->schema,
         );
 
+        my $uuid = Data::UUID->new->create_str;
         $repo->repo_id( $uuid );
+        $repo->email( $params{email} );
+        $repo->save;
 
         if ( !keys %errors ) {
+
+            my $template_name = 'user_repo_created';
+
+            # send mail to user
+            my $mailer = $self->mailer;
+            $mailer->prepare_mail(
+                $template_name,
+                URL     => $self->base_url,
+                REPO_ID => $uuid,
+            );
+        
+            my $subject =
+                $config->get( 'mail.tag' ) . ' ' .
+                $config->get( 'mail.subjects.' . $template_name );
+        
+            my $success = $mailer->send_mail(
+                to      => $params{email},
+                subject => $subject,
+            );
+
             return $self->forward( '/repo/' . $uuid . '/manage' );
         }
 			
@@ -144,7 +123,70 @@ sub add {
         $self->stash(
             %template_params,
         );
+
+        $self->add_form();
     }		
 }
+
+sub manage {
+    my ($self) = @_;
+
+    my $repo_id = $self->param( 'id' ) || $self->query->param('repo_id');
+
+    my ($repo) = $self->table( 'opr_repo' )->find( $repo_id );
+
+    return $self->forward( '/repo' ) if !$repo;
+
+    my $repo_dao = OTRS::OPR::DAO::Repo->new(
+        _schema => $self->schema,
+        repo_id => $repo_id,
+    );
+
+    my @version_list = $self->table( 'opr_framework_versions' )->search(
+        {},
+        { order_by => 'framework', }
+    );
+
+    my $repo_framework = $repo_dao->framework || '';
+    my @frameworks = map{ {
+        VERSION  => $_->framework,
+        SELECTED => ( $repo_framework eq $_->framework ? 'selected="selected"' : '' ), 
+    } }@version_list;
+
+    $self->template( 'index_repo_manage' );
+    $self->stash( 
+        repo_frameworks => \@frameworks,
+        $repo_dao->to_hash,
+    );
+}
+
+sub save {
+    my ($self) = @_;
+
+    my $repo_id = $self->param( 'id' );
+
+    my ($repo) = $self->table( 'opr_repo' )->find( $repo_id );
+
+    return $self->forward( '/repo' ) if !$repo;
+
+    my %params      = $self->query->Vars;
+    my @package_ids = $self->query->param( 'packages' );
+
+    my $repo_dao = OTRS::OPR::DAO::Repo->new(
+        _schema => $self->schema,
+        repo_id => $repo_id,
+    );
+
+    $repo_dao->packages( \@package_ids );
+    $repo_dao->framework( $params{framework} );
+    $repo_dao->mail( $params{mail} );
+    $repo_dao->save;
+
+    $self->forward( '/repo/' . $repo_id . '/manage' );
+}
+
+sub search : Json {
+}
+
 
 1;

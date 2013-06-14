@@ -1,0 +1,42 @@
+<section>		
+	<div>
+		<form action="<%= __SCRIPT__ %>/repo/<%= REPO_ID %>" method="post">
+                        <input type="hidden" name="formid" value="<%= FORMID %>" />
+			<dl>
+				<dt>Email</dt>
+				<dd>
+					<input type="text" id="email" name="email" value="<%= EMAIL %>" />
+				</dd>
+
+				<dt>OTRS Version</dt>
+				<dd>
+                                        <select name="framework">
+                                            <%LOOP name="repo_frameworks" %>
+					        <option value="<%= VERSION %>" <%= SELECTED %>><%= VERSION %></option>
+                                            <%/LOOP %>
+                                        </select>
+				</dd>
+
+				<dt>Packages</dt>
+				<dd>
+                                    <input type="text" id="package_search" name="package_search" />
+                                    <ul>
+                                        <%LOOP name="PACKAGES" %>
+                                        <li>
+                                            <input type="hidden" name="package" id="package_<%= NAME_ID %>" />
+                                            <%= NAME %>
+                                            <img src="/img/delete.png" onclick="delete_package(<%= NAME_ID %>)" />
+                                        <li>
+                                        <%/LOOP %>
+                                    </ul>
+				</dd>
+
+				<dt class="empty">&nbsp;</dt>
+				<dd class="right">
+					<input type="submit" value="Save"/>
+				</dd>
+			</dl>
+		</form>
+	</div>
+</section>
+

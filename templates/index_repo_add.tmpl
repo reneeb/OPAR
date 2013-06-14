@@ -1,0 +1,40 @@
+<section>		
+	<div>
+		<form action="<%= __SCRIPT__ %>/repo/add" method="post">
+                        <input type="hidden" name="formid" value="<%= FORMID %>" />
+			<dl>
+				<dt>Email</dt>
+				<dd>
+					<input type="text" id="email" name="email" value="<%= email %>" />
+				</dd>
+
+                                <dt class="empty">&nbsp;</dt>
+                                <dd><%= CAPTCHA ESCAPE=0 %></dd>
+
+				<dt class="empty">&nbsp;</dt>
+				<dd class="right">
+					<input type="submit" value="Create"/>
+				</dd>
+			</dl>
+		</form>
+	</div>
+</section>
+
+<section>		
+	<div>
+		<form action="<%= __SCRIPT__ %>/repo/manage" method="post">
+			<dl>
+				<dt>Repository ID</dt>
+				<dd>
+					<input type="text" id="repo_id" name="repo_id" />
+				</dd>
+
+				<dt class="empty">&nbsp;</dt>
+				<dd class="right">
+					<input type="submit" value="Manage Repository"/>
+				</dd>
+			</dl>
+		</form>
+	</div>
+</section>
+
