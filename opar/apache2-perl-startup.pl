@@ -51,6 +51,12 @@ use OTRS::OPR::Web::App::Prerun;
 use OTRS::OPR::Web::App::Login;
 use OTRS::OPR::Web::Author;
 use OTRS::OPR::Web::Guest;
+use OTRS::OPR::Web::Guest::Repo;
+use OTRS::OPR::Web::Admin;
+use OTRS::OPR::Web::Admin::Package;
+use OTRS::OPR::Web::Admin::Author;
+use OTRS::OPR::Web::Admin::System;
+use OTRS::OPR::Web::Admin::Misc;
 
 
 1;

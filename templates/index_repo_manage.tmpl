@@ -1,6 +1,6 @@
 <section>		
 	<div>
-		<form action="<%= __SCRIPT__ %>/repo/<%= REPO_ID %>" method="post">
+		<form action="<%= __SCRIPT__ %>/repo/<%= REPO_ID %>/save" method="post">
                         <input type="hidden" name="formid" value="<%= FORMID %>" />
 			<dl>
 				<dt>Email</dt>
@@ -10,7 +10,7 @@
 
 				<dt>OTRS Version</dt>
 				<dd>
-                                        <select name="framework">
+                                        <select name="framework" id="framework">
                                             <%LOOP name="repo_frameworks" %>
 					        <option value="<%= VERSION %>" <%= SELECTED %>><%= VERSION %></option>
                                             <%/LOOP %>
@@ -20,13 +20,13 @@
 				<dt>Packages</dt>
 				<dd>
                                     <input type="text" id="package_search" name="package_search" />
-                                    <ul>
+                                    <ul id="package_list">
                                         <%LOOP name="PACKAGES" %>
-                                        <li>
-                                            <input type="hidden" name="package" id="package_<%= NAME_ID %>" />
+                                        <li id="package_<%= NAME_ID %>">
+                                            <input type="hidden" name="package" value="<%= NAME_ID %>" />
                                             <%= NAME %>
-                                            <img src="/img/delete.png" onclick="delete_package(<%= NAME_ID %>)" />
-                                        <li>
+                                            <img src="/img/delete.png" onclick="delete_package(<%= NAME_ID %>)" alt="delete" title="delete package" />
+                                        </li>
                                         <%/LOOP %>
                                     </ul>
 				</dd>
@@ -40,3 +40,34 @@
 	</div>
 </section>
 
+<script type="text/javascript">
+    var options = {
+        script: function (input) {
+            return '<%= __SCRIPT__ %>/repo/search?framework=' + document.getElementById('framework').value
+                + "&term=" + input;
+        },
+        varname: "term",
+        json: true,
+        delay: 100,
+        callback: function (opm) {
+           add_package( opm.id, opm.value ); 
+        },
+        maxresults: 35
+    };
+
+    new bsn.AutoSuggest('package_search', options);
+
+    function add_package ( id, name ) {
+        $('package_list').insert(
+            "<li id=\"package_" + id + "\"> " +
+            "    <input type=\"hidden\" name=\"package\" value=\"" + id + "\" /> " + 
+            name +
+            "    <img src=\"/img/delete.png\" onclick=\"delete_package(" + id + ")\" alt=\"delete\" title=\"delete package\" /> "  +
+            "</li>"
+        );
+    }
+
+    function delete_package ( id ) {
+        $('package_' + id).remove();
+    }
+</script>

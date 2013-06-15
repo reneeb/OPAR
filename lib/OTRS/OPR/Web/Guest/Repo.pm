@@ -3,7 +3,7 @@ package OTRS::OPR::Web::Guest::Repo;
 use strict;
 use warnings;
 
-use parent qw(OTRS::OPR::Web::App);
+use base qw(OTRS::OPR::Web::App);
 
 use Captcha::reCAPTCHA;
 use Data::UUID;
@@ -32,6 +32,7 @@ sub setup {
         manage   => \&manage,
         file     => \&file,
         search   => \&search,
+        save     => \&save,
     );
 }
 
@@ -154,7 +155,9 @@ sub manage {
     } }@version_list;
 
     $self->template( 'index_repo_manage' );
-    $self->stash( 
+    $self->stash(
+        __JS_INCLUDES__  => [ { JS_FILE => '/js/bsn.AutoSuggest_2.1.3_comp.js' } ],
+        __CSS_INCLUDES__ => [ { CSS_FILE => '/css/autosuggest_inquisitor.css' } ],
         repo_frameworks => \@frameworks,
         $repo_dao->to_hash,
     );
@@ -170,7 +173,7 @@ sub save {
     return $self->forward( '/repo' ) if !$repo;
 
     my %params      = $self->query->Vars;
-    my @package_ids = $self->query->param( 'packages' );
+    my @package_ids = $self->query->param( 'package' );
 
     my $repo_dao = OTRS::OPR::DAO::Repo->new(
         _schema => $self->schema,
@@ -179,13 +182,57 @@ sub save {
 
     $repo_dao->packages( \@package_ids );
     $repo_dao->framework( $params{framework} );
-    $repo_dao->mail( $params{mail} );
+    $repo_dao->email( $params{email} );
     $repo_dao->save;
 
     $self->forward( '/repo/' . $repo_id . '/manage' );
 }
 
 sub search : Json {
+    my $self = shift;
+
+    my %params = $self->query->Vars;
+    my %search_clauses;
+
+    my $term = $params{term} || '';
+    $term    =~ tr/*/%/;
+   
+    my @ors;
+    for my $field ( 'opr_package_names.package_name', 'description' ) {
+        next unless $term;
+        push @ors, { $field => { LIKE => '%' . $term . '%' } };
+        $search_clauses{'-or'} = \@ors;
+    }
+
+    if ( $params{framework} ) {
+        $search_clauses{framework} = { LIKE => '%' . $params{framework} . '.%' };
+    }
+
+    my $resultset = $self->table( 'opr_package' )->search(
+        {
+            %search_clauses,
+        },
+        {
+            rows      => 35,
+            order_by  => 'max(upload_time) DESC',
+            group_by  => [ 'opr_package_names.package_name' ],
+            join      => 'opr_package_names',
+            '+select' => [
+                'opr_package_names.package_name',
+                { max => 'version', '-as' => 'max_version' },
+                { max => 'upload_time', '-as' => 'latest_time' },
+            ],
+        },
+    );
+
+    my @packages = $resultset->all;
+    my @results  = map{ {
+        id    => $_->name_id,
+        value => $_->opr_package_names->package_name,
+        info  => $_->description,
+    }} @packages;
+
+    return { results => \@results }
 }
 
 

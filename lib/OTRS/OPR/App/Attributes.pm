@@ -15,13 +15,14 @@ sub Permission : ATTR(BEGIN) {
     my ($pkg,$sym,$code,$attrname,$params,$phase) = @_;
     
     my $permission = ref $params ? $params->[0] : $params;
+
     $CGI::Application::__permissions{$code} = $permission;
 }
 
 sub Json : ATTR(BEGIN) {
-    my ($pkg,$sym,$code) = @_;
-    
-    $CGI::Application::__json{$code} = 1;
+    my ($pkg,$sym,$code,$attrname,$params,$phase) = @_;
+
+    $CGI::Application::__json{"${$sym}"} = 1;
 }
 
 sub Stream : ATTR(BEGIN) {

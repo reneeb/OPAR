@@ -6,6 +6,7 @@ use warnings;
 use parent qw(CGI::Application OTRS::OPR::App::Attributes);
 use CGI::Application::Plugin::Redirect;
 
+use B;
 use Data::Dumper;
 use DBIx::Class;
 use File::Basename;
@@ -98,9 +99,11 @@ sub json_method {
     
     my $runmode  = $self->get_current_runmode;
     my %runmodes = $self->run_modes;
-    
+
     my $code = $runmodes{$runmode};
-    return $CGI::Application::__json{$code};
+    my $name = _coderef2name( $code );
+
+    return $CGI::Application::__json{$name};
 }
 
 sub is_stream {
@@ -155,7 +158,7 @@ sub cgiapp_postrun{
     #print STDERR ">>RUNMODE: ", $self->get_current_runmode,"<<\n";
     
     if ( $self->json_method ) {
-        
+ 
         # set http header for json output
         $self->header_type( 'none' );
         print $self->query->header( -type => 'application/json' );
@@ -289,6 +292,15 @@ sub _teardown {
     my ($self) = @_;
     
     $self->schema->storage->disconnect;
+}
+
+sub _coderef2name {
+    my ($ref) = @_;
+
+    eval {
+        my $obj = B::svref_2object( $ref );
+        '*' . $obj->GV->STASH->NAME . '::' . $obj->GV->NAME;
+    } || undef;
 }
 
 1;

@@ -5,6 +5,14 @@
 		<link rel="stylesheet" type="text/css" href="/css/form.css"/>
 		<script type="text/javascript" src="/js/prototype.js"></script>
 
+                <%LOOP name="__JS_INCLUDES__" %>
+                    <script type="text/javascript" src="<%= JS_FILE %>"></script>
+                <%/LOOP %>
+
+                <%LOOP name="__CSS_INCLUDES__" %>
+                    <link rel="stylesheet" type="text/css" href="<%= CSS_FILE %>" />
+                <%/LOOP %>
+
 		<!--[if lte IE 8]>
 		<script type="text/javascript" src="/js/html5.js"></script>
 		<![endif]-->
