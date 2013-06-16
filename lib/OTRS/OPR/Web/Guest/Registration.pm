@@ -3,47 +3,22 @@ package OTRS::OPR::Web::Guest::Registration;
 use strict;
 use warnings;
 
-use parent qw(OTRS::OPR::Web::App);
+use Mojo::Base 'Mojolicious::Controller';
 
 use Captcha::reCAPTCHA;
 use OTRS::OPR::DAO::User;
 use OTRS::OPR::DB::Helper::Passwd qw(:all);
 use OTRS::OPR::Web::App::Forms qw(:all);
 
-sub setup {
-    my ($self) = @_;
-
-    $self->main_tmpl( $self->config->get('templates.guest') );
-    
-    my $startmode = 'start';
-    my $param     = $self->param( 'run' );
-    if( $param ){
-        $startmode = $param;
-    }
-
-    $self->start_mode( $startmode );
-    $self->mode_param( 'rm' );
-    $self->run_modes(
-        AUTOLOAD       => \&start,
-        start          => \&start,
-        send           => \&send,
-        confirm        => \&confirm,
-        forgot_passwd  => \&forgot_password,
-        send_passwd    => \&send_new_password,
-        change_passwd  => \&change_passwd,
-        confirm_passwd => \&confirm_password_change,
-    );
-}
-
 sub start {
     my ($self) = @_;
     
-    $self->logger->trace( 'Registration form' );
+    $self->app->log->debug( 'Registration form' );
     
     my $captcha = Captcha::reCAPTCHA->new;
     
-    my $public_key = $self->config->get( 'recaptcha.public_key' );
-    my $html       = $captcha->get_html( $public_key );
+    my $public_key   = $self->opar_config->get( 'recaptcha.public_key' );
+    my $captcha_html = $captcha->get_html( $public_key );
     
     my $formid = $self->get_formid;
 
@@ -52,16 +27,18 @@ sub start {
         my $config_key = 'registration.' . $key;
         push @js_help, {
             NAME  => $config_key,
-            VALUE => $self->config->get( 'help.' . $config_key ),
+            VALUE => $self->opar_config->get( 'help.' . $config_key ),
         };
     }
     
-    $self->template( 'index_registration' );
     $self->stash(
-        CAPTCHA => $html,
+        CAPTCHA => $captcha_html,
         FORMID  => $formid,
         JSHELP  => \@js_help,
     );
+
+    my $html = $self->render_opar( 'index_registration' );
+    $self->render( text => $html, format => 'html' );
 }
 
 sub send {
@@ -108,8 +85,8 @@ sub send {
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
-            ERROR_HEADLINE => $self->config->get( 'errors.username_exists.headline' ),
-            ERROR_MESSAGE  => $self->config->get( 'errors.username_exists.message' ),
+            ERROR_HEADLINE => $self->opar_config->get( 'errors.username_exists.headline' ),
+            ERROR_MESSAGE  => $self->opar_config->get( 'errors.username_exists.message' ),
         });
         return $self->start( %params, %errors );
     }
@@ -123,8 +100,6 @@ sub send {
     
     # send mail to user with token to set password ({register => 1})
     my $mail_sent = $self->_send_mail_to_user( $user, {register => 1} );
-    
-    $self->template( 'blank' );
     
     if ( $mail_sent ) {
         $self->notify({
@@ -142,6 +117,9 @@ sub send {
             ERROR_MESSAGE  => 'Some problems with our mailsystem occured. Please try later again.',
         });
     }
+
+    my $html = $self->render_opar( 'blank' );
+    $self->render( text => $html, format => 'html' );
 }
 
 sub forgot_password {
@@ -149,15 +127,17 @@ sub forgot_password {
     
     my $captcha = Captcha::reCAPTCHA->new;
     
-    my $public_key = $self->config->get( 'recaptcha.public_key' );
-    my $html       = $captcha->get_html( $public_key );
+    my $public_key   = $self->opar_config->get( 'recaptcha.public_key' );
+    my $captcha_html = $captcha->get_html( $public_key );
     
     my $formid = $self->get_formid;
-    $self->template( 'index_forgot_password' );
     $self->stash(
         FORMID  => $formid,
-        CAPTCHA => $html,
+        CAPTCHA => $captcha_html,
     );
+
+    my $html = $self->render_opar( 'index_forgot_password' );
+    $self->render( text => $html, format => 'html' );
 }
 
 sub send_new_password {
@@ -193,11 +173,10 @@ sub send_new_password {
         return $self->forgot_password;
     }
     
-    my $config = $self->config;
+    my $config = $self->opar_config;
     
     my $mail_sent = $self->_send_mail_to_user( $user );
     
-    $self->template( 'blank' );
     
     if ( $mail_sent ) {
         $self->notify({
@@ -215,6 +194,9 @@ sub send_new_password {
             ERROR_MESSAGE  => 'Some problems with our mailsystem occured. Please try later again.',
         });
     }
+
+    my $html = $self->render_opar( 'blank' );
+    $self->render( text => $html, format => 'html' );
 }
 
 sub change_passwd {
@@ -228,8 +210,8 @@ sub change_passwd {
     
     my $captcha = Captcha::reCAPTCHA->new;
     
-    my $public_key = $self->config->get( 'recaptcha.public_key' );
-    my $html       = $captcha->get_html( $public_key );
+    my $public_key   = $self->opar_config->get( 'recaptcha.public_key' );
+    my $captcha_html = $captcha->get_html( $public_key );
     
     my $formid = $self->get_formid;
     
@@ -237,9 +219,12 @@ sub change_passwd {
     $self->stash(
         TOKEN   => $params{token},
         FORMID  => $formid,
-        #CAPTCHA => $html,
+        #CAPTCHA => $captcha_html,
         %params,
     );
+
+    my $html = $self->render_opar( 'index_change_password' );
+    $self->render( text => $html, format => 'html' );
 }
 
 sub confirm_password_change {
@@ -287,26 +272,28 @@ sub confirm_password_change {
         _schema => $self->schema,
     );
     
-    my $crypted_passwd = crypt $params{password}, $self->config->get( 'password.salt' );
+    my $crypted_passwd = crypt $params{password}, $self->opar_config->get( 'password.salt' );
     $user->user_password( $crypted_passwd );
     $user->active( 1 );
     $user->add_group( 'author' => 1 );
     
     $self->delete_temp_passwd( \%params );
     
-    $self->template( 'blank' );
     $self->notify({
         type             => 'success',
         include          => 'notifications/generic_success',
         SUCCESS_HEADLINE => 'Your changes were applied!',
         SUCCESS_MESSAGE  => 'New password was set!',
     });
+
+    my $html = $self->render_opar( 'blank' );
+    $self->render( text => $html, format => 'html' );
 }
 
 sub _send_mail_to_user {
     my ($self,$user,$opt) = @_;
     
-    my $config = $self->config;
+    my $config = $self->opar_config;
     
     # generate temp password with get_formid
     # but expiration time is longer than for simple forms

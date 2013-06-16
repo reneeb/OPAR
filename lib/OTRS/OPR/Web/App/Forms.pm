@@ -2,6 +2,7 @@ package OTRS::OPR::Web::App::Forms;
 
 use strict;
 use warnings;
+
 use Captcha::reCAPTCHA;
 use Data::Validate::WithYAML;
 use Digest::MD5 qw(md5_hex);
@@ -14,7 +15,7 @@ our @EXPORT_OK = qw(check_formid get_formid validate_captcha validate_formid val
 sub validate_fields {
     my ($self, $conf, $params) = @_;
     
-    my $confdir    = $self->config->get( 'paths.conf' );
+    my $confdir    = $self->opar_config->get( 'paths.conf' );
     my $configfile = Path::Class::File->new( $confdir, $conf );
     
     my $validator  = Data::Validate::WithYAML->new( $configfile->stringify );
@@ -33,8 +34,8 @@ sub validate_fields {
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
-            ERROR_HEADLINE => $self->config->get( 'errors.input.headline' ),
-            ERROR_MESSAGE  => $self->config->get( 'errors.input.message' ),
+            ERROR_HEADLINE => $self->opar_config->get( 'errors.input.headline' ),
+            ERROR_MESSAGE  => $self->opar_config->get( 'errors.input.message' ),
         });
     }
 
@@ -50,8 +51,8 @@ sub validate_formid {
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
-            ERROR_HEADLINE => $self->config->get( 'errors.formid.headline' ),
-            ERROR_MESSAGE  => $self->config->get( 'errors.formid.message' ),
+            ERROR_HEADLINE => $self->opar_config->get( 'errors.formid.headline' ),
+            ERROR_MESSAGE  => $self->opar_config->get( 'errors.formid.message' ),
         });
         
         return;
@@ -65,8 +66,8 @@ sub validate_captcha {
     
     my $captcha = Captcha::reCAPTCHA->new;
     my $result  = $captcha->check_answer(
-        $self->config->get( 'recaptcha.private_key' ),
-        $ENV{REMOTE_ADDR},
+        $self->opar_config->get( 'recaptcha.private_key' ),
+        $self->tx->remote_address,
         $params->{recaptcha_challenge_field},
         $params->{recaptcha_response_field},
     );
@@ -77,8 +78,8 @@ sub validate_captcha {
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
-            ERROR_HEADLINE => $self->config->get( 'errors.captcha.headline' ),
-            ERROR_MESSAGE  => $self->config->get( 'errors.captcha.message' ),
+            ERROR_HEADLINE => $self->opar_config->get( 'errors.captcha.headline' ),
+            ERROR_MESSAGE  => $self->opar_config->get( 'errors.captcha.message' ),
         });
         
         return;
@@ -93,6 +94,8 @@ sub check_formid {
     _delete_expired( $self );
     
     my $already_used;
+
+    return if !$id;
     
     my ($object) = $self->table( 'opr_formid' )->find( $id );
     
@@ -108,8 +111,8 @@ sub check_formid {
 sub get_formid {
     my ($self, $expiration_span) = @_;
     
-    my $formid = md5_hex( time . ( $ENV{REMOTE_ADDR} || '127.0.0.1' ) . rand 1000 );
-    my $expire = time + ( $expiration_span || $self->config->get( 'formid.expire' ) );
+    my $formid = md5_hex( time . ( $self->tx->remote_address || '127.0.0.1' ) . rand 1000 );
+    my $expire = time + ( $expiration_span || $self->opar_config->get( 'formid.expire' ) );
     
     my ($object) = $self->table( 'opr_formid' )->create( {
         formid => $formid,

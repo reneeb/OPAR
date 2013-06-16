@@ -56,8 +56,9 @@ sub notify {
 
 sub base_url {
     my ($self) = @_;
-    
-    my $uri = "http://$ENV{HTTP_HOST}$ENV{SCRIPT_NAME}";
+   
+    my $http_host = $self->config->get( 'host' ); 
+    my $uri       = "http://$http_host$ENV{SCRIPT_NAME}";
     
     return $uri;
 }
@@ -69,7 +70,8 @@ sub script_url {
     
     my $script = $ENV{SCRIPT_NAME};
     $script    =~ s{[a-z]*\.cgi}{$name.cgi};
-    my $uri    = "http://$ENV{HTTP_HOST}$script";
+    my $http_host = $self->config->get( 'host' ); 
+    my $uri    = "http://$http_host$script";
     
     return $uri;
 }

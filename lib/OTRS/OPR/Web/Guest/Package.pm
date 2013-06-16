@@ -3,7 +3,7 @@ package OTRS::OPR::Web::Guest::Package;
 use strict;
 use warnings;
 
-use parent qw(OTRS::OPR::Web::App);
+use Mojo::Base 'Mojolicious::Controller';
 
 use File::Spec;
 use OTRS::OPR::DAO::Author;
@@ -15,43 +15,12 @@ use OTRS::OPR::Web::App::Forms     qw(:all);
 
 use XML::RSS;
 
-sub setup {
-    my ($self) = @_;
-
-    $self->main_tmpl( $self->config->get('templates.guest') );
-    
-    my $startmode = 'start';
-    my $param     = $self->param( 'run' );
-    if( $param ){
-        $startmode = $param;
-    }
-
-    $self->start_mode( $startmode );
-    $self->mode_param( 'rm' );
-    $self->run_modes(
-        AUTOLOAD        => \&start,
-        comment         => \&comment,
-        send_comment    => \&send_comment,
-        dist            => \&dist,
-        author          => \&author,
-        oq              => \&oq,
-        download        => \&download,
-        recent_packages => \&recent_packages,
-    );
-}
-
-sub start {
-    my ($self) = @_;
-    
-    $self->forward( '/' );
-}
-
 sub recent_packages {
     my ($self) = @_;
 
     my $rss = XML::RSS->new( version => '1.0' );
     
-    my $config = $self->config;
+    my $config = $self->opar_config;
 	
     $rss->channel(
         title        => 'OPAR Recent Packages',
@@ -87,11 +56,13 @@ sub recent_packages {
         );
     }
 	
-    $self->main_tmpl( 'rss.tmpl' );
-    $self->template( 'rss' );
     $self->stash(
+        main_template => 'rss.tmpl',
         RSS_STRING => $rss->as_string,
     );
+
+    my $rss_text = $self->render_opar( 'rss' );
+    $self->render( text => $rss_text, format => 'xml' );
 }
 
 sub comment {
@@ -99,24 +70,26 @@ sub comment {
         
     my $captcha = Captcha::reCAPTCHA->new;
 	 
-    my $public_key        = $self->config->get( 'recaptcha.public_key' );
-    my $html              = $captcha->get_html( $public_key );
+    my $public_key        = $self->opar_config->get( 'recaptcha.public_key' );
+    my $captcha_html      = $captcha->get_html( $public_key );
     my $package_full_name = $self->param( 'id' );
 
     my $form_id = $self->get_formid;    
-    $self->template( 'index_comment_form' );
     $self->stash(
         FORMID            => $form_id,
         PACKAGE_NAME      => ${[split /\-/, $package_full_name]}[0],
         PACKAGE_FULL_NAME => $package_full_name,
-        CAPTCHA           => $html,
+        CAPTCHA           => $captcha_html,
     );
+
+    my $html = $self->render_opar( 'index_comment_form' );
+    $self->render( text => $html, format => 'html' );
 }
 
 sub send_comment {    
     my ($self) = @_;
     
-    my %params = $self->query->Vars();
+    my %params = %{ $self->req->params->to_hash || {} };
     my %errors;
     my $notification_type = 'success';
     
@@ -133,8 +106,6 @@ sub send_comment {
     if ( !$success ) {
         #return $self->forgot_password( %uppercase );
     }
-
-    $self->template( 'index_comment_sent' );
 
     if ($formid_ok && $success) {
         # save data object to db
@@ -164,13 +135,16 @@ sub send_comment {
 
         my %template_params;
         for my $error_key ( keys %errors ) {
-            $template_params{ 'ERROR_' . uc $error_key } = $self->config->get( 'errors.' . $error_key );
+            $template_params{ 'ERROR_' . uc $error_key } = $self->opar_config->get( 'errors.' . $error_key );
 	}
 
         $self->stash(
             %template_params,
         );
-    }		
+    }
+
+    my $html = $self->render_opar( 'index_comment_sent' );
+    $self->render( text => $html, format => 'html' );
 }
 
 sub dist {
@@ -197,11 +171,11 @@ sub dist {
             type           => 'error',
             include        => 'notifications/generic_error',
             ERROR_HEADLINE => 'No Package Name Given',
-            ERROR_MESSAGE  => $self->config->get( 'error.package_not_given' ),
+            ERROR_MESSAGE  => $self->opar_config->get( 'error.package_not_given' ),
         });
         
-        $self->template( 'blank' );
-        return;
+        my $html = $self->render_opar( 'blank' );
+        return $self->render( text => $html, format => 'html' ); ;
     }
     
     my %version;
@@ -221,27 +195,29 @@ sub dist {
             type           => 'error',
             include        => 'notifications/generic_error',
             ERROR_HEADLINE => 'Package Not Found',
-            ERROR_MESSAGE  => $self->config->get( 'error.package_not_found' ),
+            ERROR_MESSAGE  => $self->opar_config->get( 'error.package_not_found' ),
         });
         
-        $self->template( 'blank' );
-        return;
+        my $html = $self->render_opar( 'blank' );
+        return $self->render( text => $html, format => 'html' ); ;
     }
     
     my %stash = $dao->to_hash;
 
     my $versions = $self->version_list( $name, { not_framework => $dao->framework } );
     
-    $self->template( 'index_package' );
     $self->stash(
         %stash,
         OK_GRADE           => 'red',
         OTHER_VERSIONS     => $versions,
         HAS_OTHER_VERSIONS => scalar( @{$versions} ),
     );
+        
+    my $html = $self->render_opar( 'index_package' );
+    return $self->render( text => $html, format => 'html' ); ;
 }
 
-sub download : Stream('text/xml') {
+sub download {
     my ($self) = @_;
     
     my $package_id = $self->param( 'id' );
@@ -250,12 +226,12 @@ sub download : Stream('text/xml') {
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
-            ERROR_HEADLINE => $self->config->get( 'errors.package_not_found.headline' ),
-            ERROR_MESSAGE  => $self->config->get( 'errors.package_not_found.message' ),
+            ERROR_HEADLINE => $self->opar_config->get( 'errors.package_not_found.headline' ),
+            ERROR_MESSAGE  => $self->opar_config->get( 'errors.package_not_found.message' ),
         });
         
-        $self->template( 'blank' );
-        return;
+        my $html = $self->render_opar( 'blank' );
+        return $self->render( text => $html, format => 'html' ); ;
     }
     
     my $dao = OTRS::OPR::DAO::Package->new(
@@ -268,17 +244,17 @@ sub download : Stream('text/xml') {
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
-            ERROR_HEADLINE => $self->config->get( 'errors.package_not_found.headline' ),
-            ERROR_MESSAGE  => $self->config->get( 'errors.package_not_found.message' ),
+            ERROR_HEADLINE => $self->opar_config->get( 'errors.package_not_found.headline' ),
+            ERROR_MESSAGE  => $self->opar_config->get( 'errors.package_not_found.message' ),
         });
         
-        $self->template( 'blank' );
-        return;
+        my $html = $self->render_opar( 'blank' );
+        return $self->render( text => $html, format => 'html' ); ;
     }
 
     (my $name = $dao->path) =~ s/^\d+-//;
     
-    return [ $dao->path, $name ];
+    $self->render_file( filepath => $dao->path, filename => sprintf "%s-%s.opm", $dao->name, $dao->version );
 }
 
 sub author {
@@ -287,26 +263,25 @@ sub author {
     my ($name) = $self->param( 'id' );
     
     if ( !$name ) {
-        $self->template( 'blank' );
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
-            ERROR_HEADLINE => $self->config->get( 'errors.author_not_found.headline' ),
-            ERROR_MESSAGE  => $self->config->get( 'errors.author_not_found.message' ),
+            ERROR_HEADLINE => $self->opar_config->get( 'errors.author_not_found.headline' ),
+            ERROR_MESSAGE  => $self->opar_config->get( 'errors.author_not_found.message' ),
         });
-        return;
     }
     
     my $id = $self->id_by_uppercase( $name );
     if ( !$id ) {
-        $self->template( 'blank' );
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
-            ERROR_HEADLINE => $self->config->get( 'errors.author_not_found.headline' ),
-            ERROR_MESSAGE  => $self->config->get( 'errors.author_not_found.message' ),
+            ERROR_HEADLINE => $self->opar_config->get( 'errors.author_not_found.headline' ),
+            ERROR_MESSAGE  => $self->opar_config->get( 'errors.author_not_found.message' ),
         });
-        return;
+        
+        my $html = $self->render_opar( 'blank' );
+        return $self->render( text => $html, format => 'html' ); ;
     }
     
     my $dao = OTRS::OPR::DAO::Author->new(
@@ -315,14 +290,15 @@ sub author {
     );
     
     if ( $dao->not_in_db || !$dao->active ) {
-        $self->template( 'blank' );
         $self->notify({
             type           => 'error',
             include        => 'notifications/generic_error',
-            ERROR_HEADLINE => $self->config->get( 'errors.author_not_found.headline' ),
-            ERROR_MESSAGE  => $self->config->get( 'errors.author_not_found.message' ),
+            ERROR_HEADLINE => $self->opar_config->get( 'errors.author_not_found.headline' ),
+            ERROR_MESSAGE  => $self->opar_config->get( 'errors.author_not_found.message' ),
         });
-        return;
+        
+        my $html = $self->render_opar( 'blank' );
+        return $self->render( text => $html, format => 'html' ); ;
     }
     
     my @packages = $dao->packages( is_in_index => 1, latest => 1 );
@@ -330,11 +306,13 @@ sub author {
     
     my %info = $dao->to_hash;
     
-    $self->template( 'index_author_packages' );
     $self->stash(
         %info,
         PACKAGES => \@for_tmpl,
     );
+    
+    my $html = $self->render_opar( 'index_author_packages' );
+    return $self->render( text => $html, format => 'html' ); ;
 }
 
 sub ok {

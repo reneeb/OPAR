@@ -54,7 +54,7 @@ sub package_exists {
 sub page {
     my ($self,$page,$params) = @_;
     
-    my $rows = $params->{rows} || $self->config->get( 'rows.search' );
+    my $rows = $params->{rows} || $self->opar_config->get( 'rows.search' );
     
     my %search_clauses;
     if ( exists $params->{search} ) {
@@ -275,7 +275,6 @@ sub package_to_hash {
         VERSION      => $package->version,
         DESCRIPTION  => $desc,
         AUTHOR       => ($author ? $author->user_name : '' ),
-        __SCRIPT__   => $self->base_url,
         DATE         => time_to_date( $self, $package->upload_time ),
         PACKAGE_ID   => $package->package_id,
         DELETION     => $package->deletion_flag,

@@ -2,75 +2,92 @@
 
 use strict;
 use warnings;
-use lib qw(../lib ../perllib);
-use CGI::Application::Dispatch;
 
-CGI::Application::Dispatch->dispatch(
+use File::Basename;
+
+my $dir;
+BEGIN { $dir = dirname __FILE__ }
+
+use lib ("$dir/../lib", "$dir/../perllib");
+use CGI::Application::Dispatch::PSGI;
+
+use OTRS::OPR::Web::Guest;
+use OTRS::OPR::Web::Guest::Registration;
+use OTRS::OPR::Web::Guest::Package;
+use OTRS::OPR::Web::Guest::Repo;
+
+$ENV{SCRIPT_NAME} = 'index.cgi';
+
+CGI::Application::Dispatch::PSGI->as_psgi(
     prefix => 'OTRS::OPR::Web',
     table  => [
         '' => {
             app => 'Guest',
             rm  => 'start',
         },
-        'repo/add' => {
+        '/index.cgi' => {
+            app => 'Guest',
+            rm  => 'start',
+        },
+        '/index.cgi/repo/add' => {
             app => 'Guest::Repo',
             rm  => 'add',
         },
-        'repo/search' => {
+        '/index.cgi/repo/search' => {
             app => 'Guest::Repo',
             rm  => 'search',
         },
-        'repo/manage' => {
+        '/index.cgi/repo/manage' => {
             app => 'Guest::Repo',
             rm  => 'manage',
         },
-        'repo/:id/manage' => {
+        '/index.cgi/repo/:id/manage' => {
             app => 'Guest::Repo',
             rm  => 'manage',
         },
-        'repo/:id/save' => {
+        '/index.cgi/repo/:id/save' => {
             app => 'Guest::Repo',
             rm  => 'save',
         },
-        'repo/:id/file/:file' => {
+        '/index.cgi/repo/:id/file/:file' => {
             app => 'Guest::Repo',
             rm  => 'file',
         },
-        'repo/' => {
+        '/index.cgi/repo/' => {
             app => 'Guest::Repo',
             rm  => 'add_form',
         },
-        'static/:page' => {
+        '/index.cgi/static/:page' => {
             app => 'Guest',
             rm  => 'static',
         },
-        'dist/:package' => {
+        '/index.cgi/dist/:package' => {
             app => 'Guest::Package',
             rm  => 'dist',
         },
-        'search/:page?' => {
+        '/index.cgi/search/:page?' => {
             app => 'Guest',
             rm  => 'search',
         },
-        'registration/:rm?' => {
+        '/index.cgi/registration/:rm?' => {
             app => 'Guest::Registration',
         },
-        '/package/:initial/:short/:author/:package' => {
+        '/index.cgi/package/:initial/:short/:author/:package' => {
             app => 'Guest::Package',
             rm  => 'dist',
         },
-        '/package/:run/:id' => {
+        '/index.cgi/package/:run/:id' => {
             app => 'Guest::Package',
         },
-        '/authors/:initial?/:short?' => {
+        '/index.cgi/authors/:initial?/:short?' => {
             app => 'Guest',
             rm  => 'authors',
         },
-        '/rss/recent' => {
+        '/index.cgi/rss/recent' => {
             app => 'Guest::Package',
             rm  => 'recent_packages',
         },
-        ':run' => {
+        '/index.cgi/:run' => {
             app => 'Guest',
         },
     ],

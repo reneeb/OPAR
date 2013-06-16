@@ -3,7 +3,7 @@ package OTRS::OPR::Web::Guest;
 use strict;
 use warnings;
 
-use parent qw(OTRS::OPR::Web::App);
+use Mojo::Base 'Mojolicious::Controller';
 
 use Data::Tabulate;
 use File::Spec;
@@ -12,35 +12,11 @@ use OTRS::OPR::DB::Helper::Package qw(page);
 use OTRS::OPR::Web::App::Forms     qw(:all);
 use OTRS::OPR::Web::Utils          qw(prepare_select page_list);
 
-sub setup {
-    my ($self) = @_;
-
-    $self->main_tmpl( $self->config->get('templates.guest') );
-    
-    my $startmode = 'start';
-    my $param     = $self->param( 'run' );
-    if( $param ){
-        $startmode = $param;
-    }
-
-    $self->start_mode( $startmode );
-    $self->mode_param( 'rm' );
-    $self->run_modes(
-        AUTOLOAD      => \&start,
-        start         => \&start,
-        feedback      => \&feedback,
-        send_feedback => \&send_feedback,
-        static        => \&static,
-        recent        => \&recent,
-        search        => \&search,
-        authors       => \&authors,
-    );
-}
-
 sub start {
     my ($self) = @_;
     
-    $self->template( 'index_home' );
+    my $html = $self->render_opar( 'index_home' );
+    $self->render( text => $html, format => 'html' )
 }
 
 sub authors {
@@ -55,14 +31,17 @@ sub authors {
     $tabulator->max_columns( 6 );
     $tabulator->min_columns( 3 );
     
-    @authors = map{ { NAME => $_, __SCRIPT__ => $self->base_url, LISTURL => $short, INITIAL => $initial } }@authors;
+    @authors = map{ { NAME => $_, LISTURL => $short, INITIAL => $initial } }@authors;
+
     @authors = $tabulator->tabulate( @authors );
     @authors = map{ { INNER => $_ } }@authors;
     
-    $self->template( 'index_authors' );
     $self->stash(
-        AUTHORS => \@authors,
+        AUTHORS  => \@authors,
     );
+
+    my $html = $self->render_opar( 'index_authors' );
+    $self->render( text => $html, format => 'html' )
 }
 
 sub feedback {
@@ -70,23 +49,25 @@ sub feedback {
     
     my $captcha = Captcha::reCAPTCHA->new;
     
-    my $public_key = $self->config->get( 'recaptcha.public_key' );
-    my $html       = $captcha->get_html( $public_key );
+    my $public_key   = $self->opar_config->get( 'recaptcha.public_key' );
+    my $captcha_html = $captcha->get_html( $public_key );
     
     my $form_id = $self->get_formid;
     
-    $self->template( 'index_feedback_form' );
     $self->stash(
         %params,
         FORMID  => $form_id,
-        CAPTCHA => $html,
+        CAPTCHA => $captcha_html,
     );
+
+    my $html = $self->render_opar( 'index_feedback_form' );
+    $self->render( text => $html, format => 'html' )
 }
 
 sub send_feedback {
     my ($self) = @_;
     
-    my %params = $self->query->Vars;
+    my %params = %{ $self->req->params->to_hash || {} };
     
     # check formid
     my $formid_ok = $self->validate_formid( \%params );
@@ -124,7 +105,8 @@ sub send_feedback {
         });
     }
     
-    $self->template( 'blank' );
+    my $html = $self->render_opar( 'blank' );
+    $self->render( text => $html, format => 'html' )
 }
 
 sub static {
@@ -135,26 +117,27 @@ sub static {
     $page =~ s{[^a-z_]}{}g;
     $page .= '.tmpl';
     
-    my $config = $self->config;
+    my $opar_config = $self->opar_config;
     
     my $path = File::Spec->catfile(
-        $config->get( 'paths.base' ),
-        $config->get( 'paths.templates' ),
+        $opar_config->get( 'paths.base' ),
+        $opar_config->get( 'paths.templates' ),
         'static',
         $page,
     );
     
     if ( !$page or !-f $path ) {
-        $page = $self->config->get( 'defaults.static' );
+        $page = $self->opar_config->get( 'defaults.static' );
     }
     
-    $self->template( 'static/' . $page );
+    my $html = $self->render_opar( 'static/' . $page );
+    $self->render( text => $html, format => 'html' )
 }
 
 sub search {
     my ($self) = @_;
     
-    my %params      = $self->query->Vars;
+    my %params      = $self->req->params->to_hash;
     my $search_term = $params{search_term} || $self->param( 'term' ) || '*';
     my $page        = $self->param( 'page' ) || 1;
     my $framework   = $params{framework} || $self->param( 'framework' ) || '';
@@ -169,19 +152,21 @@ sub search {
     $_->{SEARCH_TERM} = $search_term for @{$pagelist};
     $_->{FRAMEWORK}   = $framework   for @{$pagelist};
     
-    $self->template( 'index_search_result' );
     $self->stash(
         PACKAGES    => $packages,
         PAGES       => $pagelist,
         SEARCH_TERM => $search_term,
         FRAMEWORK   => $framework,
     );
+    
+    my $html = $self->render_opar( 'index_search_result' );
+    $self->render( text => $html, format => 'html' )
 }
 
 sub _send_feedbackmail {
     my ($self,%params) = @_;
     
-    my $config = $self->config;
+    my $opar_config = $self->opar_config;
     
     # send mail to user
     my $mailer = $self->mailer;
@@ -191,12 +176,12 @@ sub _send_feedbackmail {
     );
     
     my $subject = 
-        $config->get( 'mail.tag' ) . ' ' . 
-        $config->get( 'mail.subjects.feedback' ) . ' ' .
+        $opar_config->get( 'mail.tag' ) . ' ' . 
+        $opar_config->get( 'mail.subjects.feedback' ) . ' ' .
         $params{subject};
     
     my $success = $mailer->send_mail(
-        to      => $config->get( 'mail.to' ),
+        to      => $opar_config->get( 'mail.to' ),
         subject => $subject,
     );
     
