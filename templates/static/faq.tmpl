@@ -18,13 +18,14 @@
 <!-- Sections with answers to "General Questions" -->
 <section>
 	<a href="#" name="General"></a>
-	<h2>Account</h2>
+	<h2>General Questions</h2>
 </section>
 <section class="faq">
 	<div>
 		<div>
 			<ul>
 				<li><a href="#About">What is OPAR?</a></li>
+                                <li><a href="">Install OPM files</a></li>
 			</ul>
 			
 			<h4><a href="#" name="About">What is OPAR?</a></h4>
@@ -37,6 +38,20 @@
 				system, the system is then more audit proof. Additionally, the package system backs up all 
 				files changed, to make sure that an uninstall is successful.
 			</p>
+
+                        <h4><a href="#" name="InstallOPM">Install/Upgrade OPM files</a></h4>
+                        <p>
+                                You can install the OPM files via OTRS package manager. You can create your own repository
+                                and add this repository in SysConfig.
+                        </p>
+                        <p>
+                                <ol>
+                                    <li>Create a repository at <a href="<%= __SCRIPT__ %>/repo"><%= __SCRIPT__ %>/repo</a></li>
+                                    <li>Complete settings for your repository</li>
+                                    <li>Add repo in SysConfig (Framework &rarr; Core::Package &rarr; Package::RepositoryList</li>
+                                    <li>Go to package manager and install/upgrade add ons</li>
+                                </ol>
+                        </p>
 		</div>
 	</div>
 </section>
@@ -70,12 +85,14 @@
 	<div>
 		<div>
 			<ul>
-				<li><a href="#Account">Naming schema for OPM files</a></li>
+				<li><a href="#OPMNaming">Naming schema for OPM files</a></li>
 				<li><a href="#OPM">How to create a opm file?</a></li>
 				<li><a href="#NotInIndex">I've uploaded a new package, but it can't be found via package search. What went wrong?</a></li>
 			</ul>
+
+                        <h4><a href="#" name="OPMNaming">Naming schema for OPM files</a></h4>
 			<p>
-			
+			       
 			</p>
 		</div>
 	</div>
