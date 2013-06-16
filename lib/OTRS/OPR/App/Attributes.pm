@@ -16,7 +16,7 @@ sub Permission : ATTR(BEGIN) {
     
     my $permission = ref $params ? $params->[0] : $params;
 
-    $CGI::Application::__permissions{$code} = $permission;
+    $CGI::Application::__permissions{"${$sym}"} = $permission;
 }
 
 sub Json : ATTR(BEGIN) {
@@ -29,7 +29,7 @@ sub Stream : ATTR(BEGIN) {
     my ($pkg,$sym,$code,$attrname,$params,$phase) = @_;
     
     my $type = ref $params ? $params->[0] : $params;
-    $CGI::Application::__streams{$code} = $type;
+    $CGI::Application::__streams{"${$sym}"} = $type;
 }
 
 1;

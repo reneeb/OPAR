@@ -32,7 +32,7 @@ CGI::Application::Dispatch->dispatch(
             app => 'Guest::Repo',
             rm  => 'save',
         },
-        'repo/:id/opm' => {
+        'repo/:id/file/:file' => {
             app => 'Guest::Repo',
             rm  => 'file',
         },

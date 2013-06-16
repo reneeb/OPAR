@@ -113,7 +113,9 @@ sub is_stream {
     my %runmodes = $self->run_modes;
     
     my $code = $runmodes{$runmode};
-    return $CGI::Application::__streams{$code};
+    my $name = _coderef2name( $code );
+
+    return $CGI::Application::__streams{$name};
 }
 
 sub user {

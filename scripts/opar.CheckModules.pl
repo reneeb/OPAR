@@ -9,7 +9,7 @@ no warnings 'redefine';
 no warnings 'prototype';
 
 my $dir      = dirname __FILE__;
-my $ini_file = $dir . '/dist.ini';
+my $ini_file = $dir . '/../dist.ini';
 
 my $section_seen = 0;
 

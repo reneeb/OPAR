@@ -2,6 +2,8 @@ package OTRS::OPR::Web::App::Prerun;
 
 use strict;
 use warnings;
+
+use B;
 use CGI::Application;
 
 use base 'OTRS::OPR::Exporter::Aliased';
@@ -31,8 +33,10 @@ sub cgiapp_prerun {
     else{
         my %runmodes = $self->run_modes();
         my $code     = $runmodes{ $runmode};
+
+        my $name     = _coderef2name( $code );
         
-        my $needed_permission = $CGI::Application::__permissions{$code};
+        my $needed_permission = $CGI::Application::__permissions{$name};
         
         # check if user is allowed to run modes for a specific area
         if ( $needed_permission && !$self->user->has_group( $needed_permission ) ) {
@@ -41,6 +45,15 @@ sub cgiapp_prerun {
         
         $session->update_session;
     }
+}
+
+sub _coderef2name {
+    my ($ref) = @_;
+
+    eval {
+        my $obj = B::svref_2object( $ref );
+        '*' . $obj->GV->STASH->NAME . '::' . $obj->GV->NAME;
+    } || undef;
 }
 
 1;

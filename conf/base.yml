@@ -78,4 +78,6 @@ help:
   registration:
     username: Username has to be longer than 3 characters (A-Z, a-z), no special characters
     email: Must be in valid email format
+otrs:
+  index: /home/opar/otrs.xml
 

@@ -11,7 +11,7 @@ BEGIN {
     $dir = dirname __FILE__;
 }
 
-use lib "$dir/lib";
+use lib "$dir/../lib";
 
 use OTRS::OPR::DB::Schema;
 use OTRS::OPR::Web::App::Config;

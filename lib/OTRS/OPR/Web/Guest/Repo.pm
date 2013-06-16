@@ -7,10 +7,12 @@ use base qw(OTRS::OPR::Web::App);
 
 use Captcha::reCAPTCHA;
 use Data::UUID;
+use File::Basename;
 use File::Spec;
 
 use OTRS::OPR::DAO::Repo;
-use OTRS::OPR::Web::App::Forms     qw(:all);
+use OTRS::OPR::Web::App::Forms qw(:all);
+use OTRS::OPR::Web::Utils      qw(validate_opm_name);
 
 sub setup {
     my ($self) = @_;
@@ -36,13 +38,35 @@ sub setup {
     );
 }
 
-sub file {
+sub file : Stream('text/xml') {
     my ($self) = @_;
 
-    my $file = $self->param('file');
+    my $file    = $self->param('file');
+    my $repo_id = $self->param('id');
+    my $config  = $self->config;
 
-    my $index_dir = $self->config->get( 'repos.index_dir' );
+    if ( $repo_id eq 'otrs' && $file eq 'otrs.xml' ) {
+        return [ $config->get( 'otrs.index' ), 'otrs.xml' ];
+    }
+    elsif ( $file eq 'otrs.xml' ) {
+        my ($repo) = $self->table( 'opr_repo' )->find( $repo_id );
+        return [ \( $repo->index_file ), 'otrs.xml' ];
+    }
+    else {
+        my ($name,$version) = OTRS::OPR::Web::Utils->validate_opm_name( $file );
 
+        my ($package)       = $self->table( 'opr_package' )->search(
+            {
+                'opr_package_names.package_name' => $name,
+                version                          => $version,
+            },
+            {
+                join => 'opr_package_names',
+            }
+        );
+
+        return [ $package->path, $file ]
+    }
 }
 
 sub add_form {
