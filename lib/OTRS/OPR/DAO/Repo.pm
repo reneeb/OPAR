@@ -140,7 +140,7 @@ sub DEMOLISH {
         if ( $attr eq 'packages' ) {
             my @package_ids = $self->packages;
 
-            $self->ask_table( 'opr_repo_package' )->delete({ repo_id => $self->repo_id });
+            $self->ask_table( 'opr_repo_package' )->search({ repo_id => $self->repo_id })->delete;
 
             for my $name_id ( @package_ids ) {
                 $self->ask_table( 'opr_repo_package' )->find_or_create({
