@@ -29,7 +29,7 @@
 					Browseable collection of
 					plugins for the popular OTRS software.
 				</p>
-				<form action="<%= __SCRIPT__ %>/search" method="post">
+				<form action="/search" method="post">
 					<input type="text" id="query" name="search_term" title="Enter your search criteria - e.g. package name or description"/>
 					<input type="submit" value="Search" title="Start search within OPAR"/><br />
                                         <select name="framework">
@@ -50,12 +50,12 @@
 			
 			<section class="menu">
 				<ul>
-					<li><a href="<%= __SCRIPT__ %>">Home</a></li>
-					<li><a href="<%= __SCRIPT__ %>/repo">User Repository</a></li>
-					<li><a href="<%= __SCRIPT__ %>/rss/recent">Packages RSS Feed</a></li>
-					<li><a href="<%= __SCRIPT__ %>/authors">List of Authors</a></li>
+					<li><a href="/">Home</a></li>
+					<li><a href="/repo">User Repository</a></li>
+					<li><a href="/rss/recent">Packages RSS Feed</a></li>
+					<li><a href="/authors">List of Authors</a></li>
 					<li><a href="<%= __AUTHOR__ %>">Author-Login</a></li>
-					<li><a href="<%= __SCRIPT__ %>/registration">Register</a></li>
+					<li><a href="/registration">Register</a></li>
 				</ul>
 			</section>
 
@@ -80,7 +80,7 @@
 		<script type="text/javascript" src="/js/OPAR.User.js"></script>
 		<script type="text/javascript">
 		//<![CDATA[
-		    OPAR.Config.Set('BaseURL', '<%= __SCRIPT__ %>');
+		    OPAR.Config.Set('BaseURL', '<%= __HOST__ %>');
 		    <%LOOP JSHELP %>
 		    OPAR.Help.Set( '<%= NAME %>', '<%= VALUE %>' );
 		    <%/LOOP %>

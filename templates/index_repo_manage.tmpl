@@ -1,6 +1,6 @@
 <section>		
 	<div>
-		<form action="<%= __SCRIPT__ %>/repo/<%= REPO_ID %>/save" method="post">
+		<form action="/repo/<%= REPO_ID %>/save" method="post">
                         <input type="hidden" name="formid" value="<%= FORMID %>" />
 			<dl>
 				<dt>Email</dt>
@@ -43,7 +43,7 @@
 <script type="text/javascript">
     var options = {
         script: function (input) {
-            return '<%= __SCRIPT__ %>/repo/search?framework=' + document.getElementById('framework').value
+            return '<%= __HOST__ %>/repo/search?framework=' + document.getElementById('framework').value
                 + "&term=" + input;
         },
         varname: "term",

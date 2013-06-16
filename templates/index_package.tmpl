@@ -12,7 +12,7 @@
 	        					<dt>Other Versions</dt>
 							<dd>
 								<%LOOP OTHER_VERSIONS %>
-        							<a href="<%= __SCRIPT__ %>/dist/<%= NAME ESCAPE=URL %>-<%= MAX_VERSION ESCAPE=URL %>"><%= MAX_VERSION %></a>,
+        							<a href="/dist/<%= NAME ESCAPE=URL %>-<%= MAX_VERSION ESCAPE=URL %>"><%= MAX_VERSION %></a>,
 								<%/LOOP %>
 							</dd>
                                                 <%/IF %>
@@ -25,7 +25,7 @@
 
 						<dt>Links</dt>
 						<dd>
-							<a href="<%= __SCRIPT__ %>/package/download/<%= PACKAGE_ID %>" class="download">Download</a>
+							<a href="/package/download/<%= PACKAGE_ID %>" class="download">Download</a>
 							<%IF WEBSITE %><a href="<%= WEBSITE %>" class="web">Website</a><%/IF %>
 							<%IF BUGTRACKER %><a href="<%= BUGTRACKER %>" class="bugs">Bugtracker</a><%/IF %>
 						</dd>
@@ -48,7 +48,7 @@
 						<dt>OPAR Kwalitee (OK)</dt>
 						<dd class="kwalitee">
 							<span class="<%= OK_GRADE %>">
-								<a href="<%= __SCRIPT__ %>/package/ok/<%= PACKAGE_ID %>">
+								<a href="/package/ok/<%= PACKAGE_ID %>">
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 								</a>
 							</span>
@@ -59,7 +59,7 @@
 			</section>
 			
 			<section>
-				<p class="right"><a href="<%= __SCRIPT__ %>/package/comment/<%= NAME %>-<%= VERSION %>" class="button">Rate/comment this package</a></p>
+				<p class="right"><a href="/package/comment/<%= NAME %>-<%= VERSION %>" class="button">Rate/comment this package</a></p>
 			</section>
 			
 			<%IF DOCUMENTATION %>
