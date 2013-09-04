@@ -68,12 +68,8 @@ sub page {
         }
     }
 
-    my $framework_version = '%';
     if ( $params->{framework} ) {
-        $params->{framework}       =~ s{[^0-9\.x]}{}g;
         $search_clauses{framework} = { LIKE => '%' . $params->{framework} . '.%' };
-        $framework_version         = '%' . $params->{framework} . '.%';
-
     }
     
     if ( exists $params->{uploader} ) {
@@ -87,9 +83,6 @@ sub page {
     my $resultset = $self->table( 'opr_package' )->search(
         {
             %search_clauses,
-            'me.package_id' => { 
-                '=' => \"(SELECT package_id FROM opr_package WHERE name_id = me.name_id AND framework LIKE '$framework_version' ORDER BY upload_time DESC LIMIT 1)"
-            },
         },
         {
             page      => $page,

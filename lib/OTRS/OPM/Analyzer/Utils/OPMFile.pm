@@ -577,11 +577,6 @@ __DATA__
                     <xs:attribute name="Default" use="optional" type="xs:anySimpleType"/>
                     <xs:attribute name="NameOld" use="optional" type="xs:anySimpleType"/>
                     <xs:attribute name="NameNew" use="optional" type="xs:anySimpleType"/>
-                    <xs:attribute name="AutoIncrement" use="optional" type="xs:anySimpleType"/>
-                    <xs:attribute name="Required" use="optional" type="xs:anySimpleType"/>
-                    <xs:attribute name="Size" use="optional" type="xs:anySimpleType"/>
-                    <xs:attribute name="PrimaryKey" use="optional" type="xs:anySimpleType"/>
-                    <xs:attribute name="Default" use="optional" type="xs:anySimpleType"/>
                 </xs:extension>
             </xs:simpleContent>
         </xs:complexType>
