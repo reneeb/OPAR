@@ -3,64 +3,45 @@ package OTRS::OPR::Web::Author::Profile;
 use strict;
 use warnings;
 
-use parent qw(OTRS::OPR::Web::App);
+use Mojo::Base qw(Mojolicious::Controller);
 
 use OTRS::OPR::DAO::User;
-use OTRS::OPR::Web::App::Forms  qw(:all);
-use OTRS::OPR::Web::App::Prerun qw(cgiapp_prerun);
+use OTRS::OPR::Web::App::Forms qw(:all);
 
-sub setup {
-    my ($self) = @_;
-
-    $self->main_tmpl( $self->config->get('templates.author') );
-    
-    my $startmode = 'show';
-    my $param     = $self->param( 'run' );
-    if( $param ){
-        $startmode = $param;
-    }
-
-    $self->start_mode( $startmode );
-    $self->mode_param( 'run' );
-    $self->run_modes(
-        AUTOLOAD => \&show,
-        show     => \&show,
-        edit     => \&edit,
-        save     => \&save,
-    );
-}
-
-sub show : Permission( 'author' ) {
+sub show {
     my ($self) = @_;
     
     my %info = $self->_user_to_hash;
     
-    $self->template( 'author_profile' );
     $self->stash(
         %info,
     );
+
+    my $html = $self->render_opar( 'author_profile' );
+    $self->render( text => $html, format => 'html' );
 }
 
-sub edit : Permission( 'author' ) {
+sub edit {
     my ($self, %params) = @_;
     
     my $formid = $self->get_formid;
+    my %info   = $self->_user_to_hash;
     
-    my %info = $self->_user_to_hash;
-    
-    $self->template( 'author_profile_edit' );
     $self->stash(
         %info,
         %params,
         FORMID => $formid,
     );
+
+    my $html = $self->render_opar( 'author_profile_edit' );
+    $self->render( text => $html, format => 'html' );
 }
 
-sub save : Permission( 'author' ) {
+sub save {
     my ($self) = @_;
     
     # get user input
-    my %params = $self->query->Vars;
+    my %params = %{ $self->req->params->to_hash || {} };
     
     # validate user input
     my %errors = $self->validate_fields( 'profile.yml', \%params );
@@ -83,7 +64,6 @@ sub save : Permission( 'author' ) {
     
     my %info = $self->_user_to_hash( $dao );
     
-    $self->template( 'author_profile_edit' );
     $self->stash(
         %info,
     );
@@ -95,6 +75,9 @@ sub save : Permission( 'author' ) {
         SUCCESS_HEADLINE => 'Your changes have been saved',
         SUCCESS_MESSAGE  => 'Your profile changes have been saved',
     });
+
+    my $html = $self->render_opar( 'author_profile_edit' );
+    $self->render( text => $html, format => 'html' );
 }
 
 sub _user_to_hash {

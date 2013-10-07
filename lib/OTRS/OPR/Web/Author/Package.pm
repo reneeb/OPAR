@@ -3,7 +3,7 @@ package OTRS::OPR::Web::Author::Package;
 use strict;
 use warnings;
 
-use parent qw(OTRS::OPR::Web::App);
+use Mojo::Base qw(Mojolicious::Controller);
 
 use File::Basename;
 use File::Spec;
@@ -18,7 +18,6 @@ use OTRS::OPR::DB::Helper::Job     qw(create_job find_job);
 use OTRS::OPR::DB::Helper::Package (qw(page user_is_maintainer package_exists package_name_object),
                                     { version_list => 'versions' } );
 use OTRS::OPR::Web::App::Forms     qw(:all);
-use OTRS::OPR::Web::App::Prerun    qw(cgiapp_prerun);
 use OTRS::OPR::Web::Utils          qw(prepare_select page_list time_to_date);
 
 sub setup {
