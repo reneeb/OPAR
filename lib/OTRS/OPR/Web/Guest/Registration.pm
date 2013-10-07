@@ -41,10 +41,10 @@ sub start {
     $self->render( text => $html, format => 'html' );
 }
 
-sub send {
+sub send_registration {
     my ($self) = @_;
     
-    my %params = $self->query->Vars;
+    my %params = %{ $self->req->params->to_hash || {} };
     
     # check captcha
     my $success = $self->validate_captcha( \%params );
@@ -143,7 +143,7 @@ sub forgot_password {
 sub send_new_password {
     my ($self) = @_;
     
-    my %params = $self->query->Vars;
+    my %params = %{ $self->req->params->to_hash || {} };
     
     # check formid
     my $formid_ok = $self->validate_formid( \%params );
@@ -202,7 +202,7 @@ sub send_new_password {
 sub change_passwd {
     my ($self, %params) = @_;
     
-    %params = $self->query->Vars if !%params;
+    %params = %{ $self->req->params->to_hash || {} } if !%params;
     
     if ( !$params{token} ) {
         return $self->start;
@@ -215,7 +215,6 @@ sub change_passwd {
     
     my $formid = $self->get_formid;
     
-    $self->template( 'index_change_password' );
     $self->stash(
         TOKEN   => $params{token},
         FORMID  => $formid,
@@ -230,7 +229,7 @@ sub change_passwd {
 sub confirm_password_change {
     my ($self) = @_;
     
-    my %params = $self->query->Vars;
+    my %params = %{ $self->req->params->to_hash || {} };
     
     # check formid
     my $formid_ok = $self->validate_formid( \%params );

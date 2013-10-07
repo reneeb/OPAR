@@ -137,7 +137,7 @@ sub static {
 sub search {
     my ($self) = @_;
     
-    my %params      = $self->req->params->to_hash;
+    my %params      = %{ $self->req->params->to_hash || {} };
     my $search_term = $params{search_term} || $self->param( 'term' ) || '*';
     my $page        = $self->param( 'page' ) || 1;
     my $framework   = $params{framework} || $self->param( 'framework' ) || '';
@@ -145,7 +145,7 @@ sub search {
     if ( $page =~ m{\D}x or $page <= 0 ) {
         $page = 1;
     }
-    
+
     my ($packages,$pages) = $self->page( $page, { search => $search_term, framework => $framework } );
     my $pagelist          = $self->page_list( $pages, $page ) || [];
     

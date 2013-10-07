@@ -3,7 +3,7 @@ package OTRS::OPR::Web::Guest::Repo;
 use strict;
 use warnings;
 
-use base qw(OTRS::OPR::Web::App);
+use Mojo::Base qw(Mojolicious::Controller);
 
 use Captcha::reCAPTCHA;
 use Data::UUID;
@@ -14,43 +14,19 @@ use OTRS::OPR::DAO::Repo;
 use OTRS::OPR::Web::App::Forms qw(:all);
 use OTRS::OPR::Web::Utils      qw(validate_opm_name);
 
-sub setup {
-    my ($self) = @_;
-
-    $self->main_tmpl( $self->config->get('templates.guest') );
-    
-    my $startmode = 'add';
-    my $param     = $self->param( 'run' );
-    if( $param ){
-        $startmode = $param;
-    }
-
-    $self->start_mode( $startmode );
-    $self->mode_param( 'rm' );
-    $self->run_modes(
-        AUTOLOAD => \&add_form,
-        add      => \&add,
-        add_form => \&add_form,
-        manage   => \&manage,
-        file     => \&file,
-        search   => \&search,
-        save     => \&save,
-    );
-}
-
-sub file : Stream('text/xml') {
+sub file {
     my ($self) = @_;
 
     my $file    = $self->param('file');
     my $repo_id = $self->param('id');
-    my $config  = $self->config;
+    my $config  = $self->opar_config;
 
     if ( $repo_id eq 'otrs' && $file eq 'otrs.xml' ) {
-        return [ $config->get( 'otrs.index' ), 'otrs.xml' ];
+        return $self->render_file( filepath => $config->get( 'otrs.index' ), filename => 'otrs.xml' );
     }
     elsif ( $file eq 'otrs.xml' ) {
         my ($repo) = $self->table( 'opr_repo' )->find( $repo_id );
-        return [ \( $repo->index_file ), 'otrs.xml' ];
+        return $self->render_file( data => $repo->index_file, filename => 'otrs.xml' );
     }
     else {
         my ($name,$version) = OTRS::OPR::Web::Utils->validate_opm_name( $file );
@@ -65,7 +41,7 @@ sub file : Stream('text/xml') {
             }
         );
 
-        return [ $package->path, $file ]
+        return $self->render_file( filepath => $package->path, filename => 'otrs.xml' );
     }
 }
 
@@ -74,24 +50,26 @@ sub add_form {
         
     my $captcha = Captcha::reCAPTCHA->new;
 	 
-    my $public_key        = $self->config->get( 'recaptcha.public_key' );
-    my $html              = $captcha->get_html( $public_key );
+    my $public_key   = $self->opar_config->get( 'recaptcha.public_key' );
+    my $captcha_html = $captcha->get_html( $public_key );
 
     my $form_id = $self->get_formid;    
-    $self->template( 'index_repo_add' );
     $self->stash(
-        FORMID            => $form_id,
-        CAPTCHA           => $html,
+        FORMID  => $form_id,
+        CAPTCHA => $captcha_html,
     );
+
+    my $html = $self->render_opar( 'index_repo_add' );
+    $self->render( text => $html, format => 'html' );
 }
 
 sub add {    
     my ($self) = @_;
     
-    my %params = $self->query->Vars();
+    my %params = %{ $self->req->params->to_hash || {} };
     my %errors;
     my $notification_type = 'success';
-    my $config            = $self->config;
+    my $config            = $self->opar_config;
     
     my %uppercase = map { uc $_ => $params{$_} }keys %params;
 				 
@@ -101,8 +79,6 @@ sub add {
     # check captcha
     #my $success = $self->validate_captcha( \%params );
     my $success = 1;
-
-    $self->template( 'index_repo_add' );
 
     if ($formid_ok && $success) {
 
@@ -137,7 +113,7 @@ sub add {
                 subject => $subject,
             );
 
-            return $self->forward( '/repo/' . $uuid . '/manage' );
+            return $self->redirect_to( '/repo/' . $uuid . '/manage' );
         }
 			
         my %template_params;
@@ -148,19 +124,19 @@ sub add {
         $self->stash(
             %template_params,
         );
+    }
 
-        $self->add_form();
-    }		
+    $self->add_form();
 }
 
 sub manage {
     my ($self) = @_;
 
-    my $repo_id = $self->param( 'id' ) || $self->query->param('repo_id');
+    my $repo_id = $self->param( 'id' ) || $self->param('repo_id');
 
     my ($repo) = $self->table( 'opr_repo' )->find( $repo_id );
 
-    return $self->forward( '/repo' ) if !$repo;
+    return $self->redirect_to( '/repo' ) if !$repo;
 
     my $repo_dao = OTRS::OPR::DAO::Repo->new(
         _schema => $self->schema,
@@ -178,13 +154,15 @@ sub manage {
         SELECTED => ( $repo_framework eq $_->framework ? 'selected="selected"' : '' ), 
     } }@version_list;
 
-    $self->template( 'index_repo_manage' );
     $self->stash(
         __JS_INCLUDES__  => [ { JS_FILE => '/js/bsn.AutoSuggest_2.1.3_comp.js' } ],
         __CSS_INCLUDES__ => [ { CSS_FILE => '/css/autosuggest_inquisitor.css' } ],
         repo_frameworks => \@frameworks,
         $repo_dao->to_hash,
     );
+
+    my $html = $self->render_opar( 'index_repo_manage' );
+    $self->render( text => $html, format => 'html' );
 }
 
 sub save {
@@ -194,10 +172,10 @@ sub save {
 
     my ($repo) = $self->table( 'opr_repo' )->find( $repo_id );
 
-    return $self->forward( '/repo' ) if !$repo;
+    return $self->redirect_to( '/repo' ) if !$repo;
 
-    my %params      = $self->query->Vars;
-    my @package_ids = $self->query->param( 'package' );
+    my %params      = %{ $self->req->params->to_hash || {} };
+    my @package_ids = $self->param( 'package' );
 
     my $repo_dao = OTRS::OPR::DAO::Repo->new(
         _schema => $self->schema,
@@ -209,13 +187,13 @@ sub save {
     $repo_dao->email( $params{email} );
     $repo_dao->save;
 
-    $self->forward( '/repo/' . $repo_id . '/manage' );
+    $self->redirect_to( '/repo/' . $repo_id . '/manage' );
 }
 
-sub search : Json {
+sub search {
     my $self = shift;
 
-    my %params = $self->query->Vars;
+    my %params = %{ $self->req->params->to_hash || {} };
     my %search_clauses;
 
     my $term = $params{term} || '';
@@ -256,7 +234,7 @@ sub search : Json {
         info  => $_->description,
     }} @packages;
 
-    return { results => \@results }
+    $self->render( json => { results => \@results } );
 }
 
 

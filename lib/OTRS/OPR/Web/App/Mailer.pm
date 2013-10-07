@@ -2,6 +2,7 @@ package OTRS::OPR::Web::App::Mailer;
 
 use strict;
 use warnings;
+
 use Path::Class;
 use Mail::Sender;
 use HTML::Template::Compiled;

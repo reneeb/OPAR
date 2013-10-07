@@ -79,9 +79,9 @@ sub _my_renderer {
         %notifications,
     );
 
-    $app->log->error( 'params set' );
+    $app->log->debug( 'params set' );
     my $html = $tmpl->output;
-    $app->log->error( 'output generated' );
+    $app->log->debug( 'output generated' );
 
     return $html;
 }

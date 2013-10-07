@@ -195,7 +195,7 @@ sub dist {
             type           => 'error',
             include        => 'notifications/generic_error',
             ERROR_HEADLINE => 'Package Not Found',
-            ERROR_MESSAGE  => $self->opar_config->get( 'error.package_not_found' ),
+            ERROR_MESSAGE  => ( $self->opar_config->get( 'error.package_not_found' ) || '' ),
         });
         
         my $html = $self->render_opar( 'blank' );
@@ -254,7 +254,7 @@ sub download {
 
     (my $name = $dao->path) =~ s/^\d+-//;
     
-    $self->render_file( filepath => $dao->path, filename => sprintf "%s-%s.opm", $dao->name, $dao->version );
+    $self->render_file( filepath => $dao->path, filename => sprintf "%s-%s.opm", $name, $dao->version );
 }
 
 sub author {
