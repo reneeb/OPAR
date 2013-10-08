@@ -1,10 +1,10 @@
     <section>
-        <h1>(Co-)Maintainers off <i><%= PACKAGE_NAME %></i></h1>
+        <h1>(Co-)Maintainers of <i><%= PACKAGE_NAME %></i></h1>
     </section>
 
     <section>		
         <div>
-            <form action="/author/package/edit_maintainer/<%= PACKAGE_NAME %>" method="post">
+            <form action="/author/package/maintainer/<%= PACKAGE_NAME %>/edit" method="post">
                 <input type="hidden" name="formid" value="<%= FORMID %>" />
                 <dl>
                     <dt>Maintainer</dt>

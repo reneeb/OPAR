@@ -277,6 +277,8 @@ sub goto_comments {
     my ($self) = @_;
 	
     my $comment_id = $self->param( 'id' );
+
+    return $self->comments if !$comment_id;
     
     my $comment = $self->schema->resultset('opr_comments')->find({ comment_id => $comment_id });
     
@@ -284,7 +286,7 @@ sub goto_comments {
     
     my $package_name = $self->package_name_object( $comment->packagename );
   
-    $self->param('id', $package_name->package_name);
+    $self->param('package', $package_name->package_name);
     $self->comments;
 }
 
@@ -319,7 +321,7 @@ sub unpublish_comment {
 sub comments {
     my ($self) = @_;
 
-    my $id = $self->param( 'id' );
+    my $id = $self->param( 'package' );
     my ($package_name, $package_version) = OTRS::OPR::Web::Utils->validate_opm_name( $id, 1 );
 
     my @packages = (); # all packages of author OR the single one requested
@@ -388,7 +390,7 @@ sub maintainer {
         push @possible_co_maintainers, {
             USER_NAME => $user->user_name,
             USER_ID   => $user_id,
-        } unless scalar grep { $_->{USER_ID} == $user_id } ($maintainer, @co_maintainers);
+        } unless scalar grep { $_ && $_->{USER_ID} == $user_id } ($maintainer, @co_maintainers);
     }
     
     my $is_main_author = ( $maintainer->{USER_ID} == $self->user->user_id );

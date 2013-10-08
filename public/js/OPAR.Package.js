@@ -29,8 +29,12 @@ OPAR.Package = (function (TargetNS) {
      */
     TargetNS.Delete = function (PackageID) {
         var URL = OPAR.Config.Get('BaseURL');
+
+        if ( !URL.match(/\/$/) ) {
+            URL += '/';
+        }
         
-        URL += '/package/delete/' + PackageID;
+        URL += 'package/delete/' + PackageID;
         
         new Ajax.Request( 
             URL,
@@ -48,8 +52,12 @@ OPAR.Package = (function (TargetNS) {
     
     TargetNS.UnDelete = function (PackageID) {
         var URL = OPAR.Config.Get('BaseURL');
+
+        if ( !URL.match(/\/$/) ) {
+            URL += '/';
+        }
         
-        URL += '/package/undelete/' + PackageID;
+        URL += 'package/undelete/' + PackageID;
         
         new Ajax.Request( 
             URL,
@@ -69,8 +77,12 @@ OPAR.Package = (function (TargetNS) {
     
     TargetNS.TagsGet = function (Path) {
         var URL = OPAR.Config.Get('BaseURL');
+
+        if ( !URL.match(/\/$/) ) {
+            URL += '/';
+        }
         
-        URL += '/package/tags?path=' + Path;
+        URL += 'package/tags?path=' + Path;
         
         new Ajax.Request( 
             URL,
