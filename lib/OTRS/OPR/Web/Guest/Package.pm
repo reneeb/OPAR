@@ -24,7 +24,7 @@ sub recent_packages {
 	
     $rss->channel(
         title        => 'OPAR Recent Packages',
-        link         => $self->script_url( 'index' ) . '/rss/recent/',
+        link         => $self->base_url . '/recent/',
         description  => 'The most recent packages in the OTRS package archive (OPAR).',
         dc => {
             date       => '2011-01-01T07:00+00:00',
@@ -47,7 +47,7 @@ sub recent_packages {
     for my $package (@packages) {
         $rss->add_item(
             title       => $package->{NAME} . ' (' . $package->{MAX_VERSION} . ')',
-            link        => $self->script_url( 'index' ) . '/dist/' . $package->{NAME},
+            link        => $self->base_url . '/dist/' . $package->{NAME},
             description => $package->{DESCRIPTION},
             dc => {
                 subject  => $package->{NAME},
