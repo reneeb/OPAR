@@ -12,7 +12,7 @@ sub page {
     my ($self,$page,$params) = @_;
     return ([], 0) if !exists $params->{package_name} || !length $params->{package_name};
     
-    my $rows = $self->config->get( 'rows.search' );
+    my $rows = $self->opar_config->get( 'rows.search' );
     
     my $resultset = $self->table( 'opr_comments' )->search(
         {

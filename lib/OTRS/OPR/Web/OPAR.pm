@@ -74,8 +74,9 @@ sub startup {
     
         unless( $c->{___user} ) {
             my $session_id = $session->id;
+$c->app->log->debug( "SessionID: $session_id" );
             if( $session_id and not $session->is_expired ){
-                $c->logger->trace( 'Get User by Session: ' . $session_id );
+                $c->app->log->debug( 'Get User by Session: ' . $session_id );
                 my ($user) = OTRS::OPR::DAO::User->new(
                     session_id => $session_id,
                     _schema    => $c->schema,
@@ -128,29 +129,31 @@ sub startup {
             '/authors/'                                 => [ 'Guest',               'authors'                 ],
             '/feedback'                                 => [ 'Guest',               'feedback'                ],
             '/login'                                    => [ 'Guest',               'login'                   ],
+            '/do_login'                                 => [ 'Guest',               'do_login'                ],
             '/logout'                                   => [ 'Guest',               'logout'                  ],
             '/send_feedback'                            => [ 'Guest',               'send_feedback'           ],
         },
         'author' => {
-            '/author'                      => [ 'Author::Package', 'list_packages'     ],
-            '/author/comments/'            => [ 'Author::Package', 'comments'          ],
-            '/author/comments/:package'    => [ 'Author::Package', 'comments'          ],
-            '/author/comments/publish/:id' => [ 'Author::Package', 'publish_comment'   ], 
-            '/author/comments/delete/:id'  => [ 'Author::Package', 'delete_comment'    ],
-            '/author/package/delete'       => [ 'Author::Package', 'delete_package'    ],
-            '/author/package/undelete'     => [ 'Author::Package', 'undelete_package'  ],
-            '/author/package/reanalyze'    => [ 'Author::Package', 'reanalyze_package' ],
-            '/author/package/:id/versions' => [ 'Author::Package', 'package_versions'  ],
-            '/author/package/:id/show'     => [ 'Author::Package', 'package_show'      ],
-            '/author/list'                 => [ 'Author::Package', 'list_packages'     ],
-            '/author/upload'               => [ 'Author::Package', 'upload_package'    ],
-            '/author/upload/do'            => [ 'Author::Package', 'do_upload_package' ],
-            '/author/tags'                 => [ 'Author::Package', 'get_tags'          ],
-            '/author/maintainer/:id'       => [ 'Author::Package', 'maintainer'        ],
-            '/author/maintainer/:id/edit'  => [ 'Author::Package', 'maintainer_edit'   ],
-            '/author/profile'              => [ 'Author::Profile', 'show'              ],
-            '/author/profile/edit'         => [ 'Author::Profile', 'edit'              ],
-            '/author/profile/save'         => [ 'Author::Profile', 'save'              ],
+            '/author'                                => [ 'Author::Package', 'list_packages'     ],
+            '/author/package/comments/'              => [ 'Author::Package', 'comments'          ],
+            '/author/package/comments/:package'      => [ 'Author::Package', 'comments'          ],
+            '/author/package/comments/publish/:id'   => [ 'Author::Package', 'publish_comment'   ], 
+            '/author/package/comments/unpublish/:id' => [ 'Author::Package', 'publish_comment'   ], 
+            '/author/package/comments/delete/:id'    => [ 'Author::Package', 'delete_comment'    ],
+            '/author/package/delete'                 => [ 'Author::Package', 'delete_package'    ],
+            '/author/package/undelete'               => [ 'Author::Package', 'undelete_package'  ],
+            '/author/package/reanalyze'              => [ 'Author::Package', 'reanalyze_package' ],
+            '/author/package/versions/:package'      => [ 'Author::Package', 'version_list'      ],
+            '/author/package/:id/show'               => [ 'Author::Package', 'package_show'      ],
+            '/author/package/list'                   => [ 'Author::Package', 'list_packages'     ],
+            '/author/package/upload'                 => [ 'Author::Package', 'upload_package'    ],
+            '/author/package/do_upload'              => [ 'Author::Package', 'do_upload_package' ],
+            '/author/tags'                           => [ 'Author::Package', 'get_tags'          ],
+            '/author/maintainer/:id'                 => [ 'Author::Package', 'maintainer'        ],
+            '/author/maintainer/:id/edit'            => [ 'Author::Package', 'maintainer_edit'   ],
+            '/author/profile'                        => [ 'Author::Profile', 'show'              ],
+            '/author/profile/edit'                   => [ 'Author::Profile', 'edit'              ],
+            '/author/profile/save'                   => [ 'Author::Profile', 'save'              ],
         },
     );
 

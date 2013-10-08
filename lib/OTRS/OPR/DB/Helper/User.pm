@@ -15,12 +15,12 @@ our @EXPORT_OK = qw(
 sub check_credentials {
     my ($self,$params) = @_;
     
-    my $logger = $self->logger;
+    my $logger = $self->app->log;
     
     return if !($params->{user} and $params->{password});
     
     my $username = $params->{user};
-    my $password = crypt $params->{password}, $self->config->get( 'password.salt' );
+    my $password = crypt $params->{password}, $self->opar_config->get( 'password.salt' );
     
     my $check    = $params->{password};
     $logger->debug( "Try $username -> $check -> $password" );
@@ -38,14 +38,14 @@ sub check_credentials {
     
     $logger->debug( "Login $username successful" );
     
-    my $session = $self->session;
+    my $session = $self->opar_session;
     $session->session->force_new;
     
     my $session_id = $session->id;
     $user->session_id( $session_id );
     $user->update;
     
-    $logger->trace( "Session ID for $user: $session_id" );
+    $logger->debug( "Session ID for $user: $session_id" );
     
     return 1;
 }
@@ -53,7 +53,7 @@ sub check_credentials {
 sub page {
     my ($self, $page, $params) = @_;
 
-    my $rows = $params->{rows} || $self->config->get( 'rows.search' );
+    my $rows = $params->{rows} || $self->opar_config->get( 'rows.search' );
     
     my %search_clauses;
     if ( exists $params->{search} ) {
@@ -98,7 +98,7 @@ sub user_to_hash {
         
     # create the infos for the template
     my $info = {
-    		USER_ID			 => $user->user_id,
+        USER_ID      => $user->user_id,
         NAME         => $user->user_name,
         WEBSITE      => $user->website,
         MAIL         => $user->mail,

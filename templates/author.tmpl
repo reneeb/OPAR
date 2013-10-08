@@ -14,7 +14,7 @@
 	
 			<header>
 				<h1>
-					<a href="<%= __INDEX__ %>" class="home">OPAR</a>
+					<a href="/" class="home">OPAR</a>
 					<span>OTRS Package Archive</span>
 					<span class="right">Logged in as <%= __LOGGEDIN__ %></span>
 				</h1>
@@ -34,10 +34,10 @@
 
 			<section class="menu">
 				<ul>
-					<li><a href="<%= __SCRIPT__ %>/package/upload">Upload a new opm file</a></li>
-					<li><a href="<%= __SCRIPT__ %>/package/list">Package list</a></li>
-					<li><a href="<%= __SCRIPT__ %>/profile">View/Edit your profile</a></li>
-					<li><a href="<%= __SCRIPT__ %>/package/comments/">Administer the comments</a></li>
+					<li><a href="/author/package/upload">Upload a new opm file</a></li>
+					<li><a href="/author/package/list">Package list</a></li>
+					<li><a href="/author/profile">View/Edit your profile</a></li>
+					<li><a href="/author/package/comments/">Administer the comments</a></li>
 				</ul>
 			</section>
 
@@ -47,10 +47,11 @@
 			<%INCLUDE_VAR BODY %>
 			
 			<footer>
-				&copy; 2010 by 
-				<a href="<%= __INDEX__ %>/static/team">OPAR Team</a> --
-				<a href="<%= __INDEX__ %>/static/imprint">Imprint</a> -
-				<a href="<%= __INDEX__ %>/feedback">Feedback</a>
+				&copy; 2010 - 2013 by 
+				<a href="/static/team">OPAR Team</a> --
+				<a href="/static/imprint">Imprint</a> -
+				<a href="/feedback">Feedback</a> -
+				<a href="http://github.com/reneeb/OPAR/issues">Bugtracker</a>
 			</footer>
 	
 		</div>
@@ -59,7 +60,7 @@
 		<script type="text/javascript" src="/js/OPAR.User.js"></script>
 		<script type="text/javascript">
 		//<![CDATA[
-		    OPAR.Config.Set('BaseURL', '<%= __SCRIPT__ %>');
+		    OPAR.Config.Set('BaseURL', '/author/');
 		//]]>
 		</script>
 	</body>

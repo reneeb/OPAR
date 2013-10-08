@@ -1,6 +1,6 @@
 <h2>Maintainer of Package <%= PACKAGE_NAME %></h2>
 
-<form action="<%= __SCRIPT__ %>" method="post">
+<form action="/author/" method="post">
   <fieldset class="table_like">
                
       <label for="maintainer">
@@ -23,7 +23,7 @@
       </div>
       <div class="clear"></div>
     
-      <%IF IS_MAIN_AUTHOR %><button type="submit" value="Save co-maintainer">Save co-maintainer</button>
+      <%IF IS_MAIN_AUTHOR %><button type="submit" value="Save co-maintainer">Save co-maintainer</button><%/IF %>
     
     </fieldset>
 </form>

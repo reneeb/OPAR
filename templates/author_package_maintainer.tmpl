@@ -1,59 +1,55 @@
-						
-			<section>
-				<h1>(Co-)Maintainers off <i><%= PACKAGE_NAME %></i></h1>
-			</section>
+    <section>
+        <h1>(Co-)Maintainers off <i><%= PACKAGE_NAME %></i></h1>
+    </section>
 
-			<section>		
-				<div>
-					<form action="<%= __SCRIPT__ %>/package/edit_maintainer/<%= PACKAGE_NAME %>" method="post">
-						<input type="hidden" name="formid" value="<%= FORMID %>" />
-						<dl>
-							<dt>Maintainer</dt>
-							<dd>
-								<%= MAINTAINER.USER_NAME %>
-							</dd>
+    <section>		
+        <div>
+            <form action="/author/package/edit_maintainer/<%= PACKAGE_NAME %>" method="post">
+                <input type="hidden" name="formid" value="<%= FORMID %>" />
+                <dl>
+                    <dt>Maintainer</dt>
+                    <dd>
+                        <%= MAINTAINER.USER_NAME %>
+                    </dd>
+				
+                    <dt>Co-Maintainers</dt>
+                    <dd>
+                        <%IF HAS_CO_MAINTAINERS %>
+                            <%LOOP CO_MAINTAINERS %><%= USER_NAME %><br/>
+                            <%/LOOP %>
+                        <%ELSE%>
+                            <i>none</i>
+                        <%/IF %>
+                        &nbsp;
+                    </dd>
 						
-							<dt>Co-Maintainers</dt>
-							<dd>
-								<%IF HAS_CO_MAINTAINERS %>
-									<%LOOP CO_MAINTAINERS %>
-										<%= USER_NAME %><br/>
-									<%/LOOP %>
-								<%ELSE%>
-									<i>none</i>
-								<%/IF %>
-								&nbsp;
-							</dd>
-						
-							<%IF IS_MAIN_AUTHOR %>
-						
-							<dt>Add a Co-Maintainer</dt>
-							<dd>
-								<select name="add">
-									<option value="">-- none --</option>
-									<%LOOP POSSIBLE_CO_MAINTAINERS %>
-										<option value="<%= USER_ID %>"><%= USER_NAME %></option>
-									<%/LOOP %>
-								</select>
-							</dd>
+                    <%IF IS_MAIN_AUTHOR %>
+		
+                        <dt>Add a Co-Maintainer</dt>
+                        <dd>
+                            <select name="add">
+                                <option value="">-- none --</option>
+                                <%LOOP POSSIBLE_CO_MAINTAINERS %><option value="<%= USER_ID %>"><%= USER_NAME %></option>
+                                <%/LOOP %>
+                            </select>
+                        </dd>
 
-							<dt>Remove a Co-Maintainer</dt>
-							<dd>
-								<select name="remove">
-									<option value="">-- none --</option>
-									<%LOOP CO_MAINTAINERS %>
-										<option value="<%= USER_ID %>"><%= USER_NAME %></option>
-									<%/LOOP %>
-								</select>
-							</dd>
+                        <dt>Remove a Co-Maintainer</dt>
+                        <dd>
+                            <select name="remove">
+                                <option value="">-- none --</option>
+                                <%LOOP CO_MAINTAINERS %><option value="<%= USER_ID %>"><%= USER_NAME %></option>
+                                <%/LOOP %>
+                            </select>
+                        </dd>
 
-							<dt class="empty">&nbsp;</dt>
-							<dd class="right">
-								<input type="submit" value="Update"/>
-							</dd>
+                        <dt class="empty">&nbsp;</dt>
+                        <dd class="right">
+                            <input type="submit" value="Update"/>
+                        </dd>
 							
-							<%/IF %>
-						</dl>
-					</form>
-				</div>
-			</section>
+                    <%/IF %>
+                </dl>
+            </form>
+        </div>
+    </section>

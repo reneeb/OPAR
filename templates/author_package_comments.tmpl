@@ -23,10 +23,10 @@
 						</p>						
 						<p class="right">
 						<%IF IS_PUBLISHED %>
-								<a href="/bin/author.cgi/package/unpublish_comment/<%= COMMENT_ID %>" class="button">Un-Publish comment</a>
-							<%ELSE%>
-								<a href="/bin/author.cgi/package/publish_comment/<%= COMMENT_ID %>" class="button">Publish comment</a>
-							<%/IF%>
+                                                    <a href="/author/package/comment/unpublish/<%= COMMENT_ID %>" class="button">Un-Publish comment</a>
+						<%ELSE%>
+						    <a href="/author/package/comment/publish/<%= COMMENT_ID %>" class="button">Publish comment</a>
+						<%/IF%>
 						</p>
 					</div>
 				</div>

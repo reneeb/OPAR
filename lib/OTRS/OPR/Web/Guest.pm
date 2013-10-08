@@ -9,6 +9,7 @@ use Data::Tabulate;
 use File::Spec;
 use OTRS::OPR::DB::Helper::Author  { list => 'author_list' };
 use OTRS::OPR::DB::Helper::Package qw(page);
+use OTRS::OPR::DB::Helper::User    qw(check_credentials);
 use OTRS::OPR::Web::App::Forms     qw(:all);
 use OTRS::OPR::Web::Utils          qw(prepare_select page_list);
 
@@ -161,6 +162,44 @@ sub search {
     
     my $html = $self->render_opar( 'index_search_result' );
     $self->render( text => $html, format => 'html' )
+}
+
+sub login {
+    my ($self) = @_;
+    
+    my $html = $self->render_opar( 'login' );
+    $self->render( text => $html, format => 'html' )
+}
+
+sub do_login {
+    my ($self,$forward,$template) = @_;
+
+    $self->app->log->debug( 'do_login' );
+
+    my %params = %{ $self->req->params->to_hash || {} };
+    $forward ||= $params{redirect_to};
+
+    $self->app->log->debug( "$params{user} tries to login" );
+    my $user = $self->check_credentials( \%params );
+
+    # successful login    
+    if( $user ) {
+
+        # redirect to page configured in admin.startpage
+        $self->app->log->debug( "Forward to $forward" );
+        $self->redirect_to( '/' . ( $self->opar_config->get( $forward ) || 'author' ) );
+    }
+    else {
+
+        # show login form and show error message
+        $self->notify({
+            type           => 'error',
+            include        => 'notifications/generic_error',
+            ERROR_HEADLINE => $self->opar_config->get( 'errors.login_incorrect.headline' ),
+            ERROR_MESSAGE  => $self->opar_config->get( 'errors.login_incorrect.message' ),
+        });
+        $self->login( $template );
+    }
 }
 
 sub _send_feedbackmail {

@@ -23,14 +23,17 @@ sub new{
         no warnings 'redefine';
         *ReneeB::Session::State::Cookie::save = sub {
             my ($session,$id) = @_;
+            $self->app->session( OPAR => $id );
+        };
 
-            my $cookie = CGI::Cookie->new(
-                -name   => $session->cookiename,
-                -value  => $id,
-                -expire => $session->expire,
-            );
+        *ReneeB::Session::State::Cookie::delete = sub {
+            my ($session,$id) = @_;
+            $self->app->session( OPAR => '' );
+        };
 
-            $self->app->header_add( -cookie => $cookie );
+        *ReneeB::Session::State::Cookie::id = sub {
+            my ($session,$id) = @_;
+            $self->app->session( 'OPAR' );
         };
     }
 

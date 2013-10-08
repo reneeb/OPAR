@@ -20,49 +20,17 @@ use OTRS::OPR::DB::Helper::Package (qw(page user_is_maintainer package_exists pa
 use OTRS::OPR::Web::App::Forms     qw(:all);
 use OTRS::OPR::Web::Utils          qw(prepare_select page_list time_to_date);
 
-sub setup {
-    my ($self) = @_;
-
-    $self->main_tmpl( $self->config->get('templates.author') );
-    
-    my $startmode = 'start';
-    my $param     = $self->param( 'run' );
-    if( $param ){
-        $startmode = $param;
-    }
-
-    $self->start_mode( $startmode );
-    $self->mode_param( 'rm' );
-    $self->run_modes(
-        AUTOLOAD          => \&list,
-        list              => \&list,
-        upload            => \&upload,
-        do_upload         => \&do_upload,
-        delete            => \&delete_package,
-        undelete          => \&undelete_package,
-        maintainer        => \&maintainer,
-        edit_maintainer   => \&edit_maintainer,
-        versions          => \&version_list,
-        show              => \&show,
-        comments          => \&comments,
-        publish_comment   => \&publish_comment,
-        unpublish_comment => \&unpublish_comment,
-        tags              => \&get_tags,
-        reanalyze					=> \&reanalyze,
-    );
-}
-
-sub delete_package : Permission( 'author' ) : Json {
+sub delete_package {
     my ($self) = @_;
     
     my $package = $self->param( 'id' );
     
     if ( $package =~ m{\D}x or $package <= 0 ) {
-        return {};
+        return $self->render( json => {} );
     }
     
     if ( !$self->user_is_maintainer( $self->user, { id => $package } ) ) {
-        return { ERROR => 'User is not maintainer' };
+        return $self->render( json => { ERROR => 'User is not maintainer' } );
     }
     
     my $package_dao = OTRS::OPR::DAO::Package->new(
@@ -70,7 +38,7 @@ sub delete_package : Permission( 'author' ) : Json {
         _schema    => $self->schema,
     );
     
-    my $deletion = time + $self->config->get( 'time.deletion' );
+    my $deletion = time + $self->opar_config->get( 'time.deletion' );
     $package_dao->deletion_flag( $deletion );
         
     my $job_id = $self->create_job({
@@ -78,20 +46,20 @@ sub delete_package : Permission( 'author' ) : Json {
         type => 'delete',
     });
     
-    return { deletionTime => $self->time_to_date( $deletion ) };
+    return $self->render( json => { deletionTime => $self->time_to_date( $deletion ) } );
 }
 
-sub undelete_package : Permission( 'author' ) : Json {
+sub undelete_package {
     my ($self) = @_;
     
     my $package = $self->param( 'id' );
     
     if ( $package =~ m{\D} or $package <= 0 ) {
-        return { ERROR => 'Invalid package ID' };
+        return $self->render( json => { ERROR => 'Invalid package ID' } );
     }
     
     if ( !$self->user_is_maintainer( $self->user, { id => $package } ) ) {
-        return { ERROR => 'User is not maintainer' };
+        return $self->render( json => { ERROR => 'User is not maintainer' } );
     }
     
     my $job = $self->find_job({
@@ -99,7 +67,7 @@ sub undelete_package : Permission( 'author' ) : Json {
         type => 'delete',
     });
     
-    return { ERROR => 'Cannot find deletion job' } if !$job;
+    return $self->render( json => { ERROR => 'Cannot find deletion job' } ) if !$job;
     
     $job->delete;
     
@@ -109,27 +77,27 @@ sub undelete_package : Permission( 'author' ) : Json {
     );
     
     $package_dao->deletion_flag( 0 );
-    return { Success => 1 };
+    return $self->render( json => { Success => 1 } );
 }
 
-sub upload : Permission( 'author' ) {
+sub upload_package {
     my ($self,%params) = @_;
     
     my $formid = $self->get_formid;
-    $self->template( 'author_upload' );
     $self->stash(
         %params,
         FORMID => $formid,
     );
+
+    my $html = $self->render_opar( 'author_upload' );
+    $self->render( text => $html, format => 'html' );
 }
 
-sub do_upload : Permission( 'author' ) {
+sub do_upload_package {
     my ($self) = @_;
     
-    my %params = $self->query->Vars;
+    my %params = %{ $self->req->params->to_hash || {} };
     my %errors;
-    
-    $self->template( 'blank' );
     
     # check formid
     $errors{formid} = 1 if !$self->check_formid( $params{formid} );
@@ -163,13 +131,13 @@ sub do_upload : Permission( 'author' ) {
     # extract (<Name>.*</Name>) from .opm validate against opr_package_names
     # if user is the main author or co-maintainer, then upload is ok.
     my $package_name = $self->_get_package_name( $file );
-    $self->logger->trace( "Uploaded package: $package_name" );
+    $self->app->log->debug( "Uploaded package: $package_name" );
     my $name_id      = $self->user_is_maintainer( $self->user, { name => $package_name, add => 1 } );
 
-    $self->logger->debug( "PackageName ID: " . (defined $name_id ? $name_id : '<undef>') );
+    $self->app->log->debug( "PackageName ID: " . (defined $name_id ? $name_id : '<undef>') );
 
     if ( !$name_id ) {
-        $self->logger->debug( sprintf "UserID: %d -> Package: %s", $self->user->user_id, $package_name );
+        $self->app->log->debug( sprintf "UserID: %d -> Package: %s", $self->user->user_id, $package_name );
         
         $self->notify({
             type           => 'error',
@@ -209,7 +177,7 @@ sub do_upload : Permission( 'author' ) {
     
     $package->save;
     
-    $self->logger->trace( 'created package id ' . $package->package_id );
+    $self->app->log->debug( 'created package id ' . $package->package_id );
     
     # create an entry in job queue that the package
     # should be analyzed    
@@ -224,25 +192,26 @@ sub do_upload : Permission( 'author' ) {
         SUCCESS_HEADLINE => 'OPM upload successful',
         SUCCESS_MESSAGE  => 'OPM file uploaded and ready for analysis',
     });
+
+    my $html = $self->render_opar( 'blank' );
+    $self->render( text => $html, format => 'html' );
 }
 
 
 
-sub get_tags : Permission( 'author' ) : Json {
+sub get_tags {
     my ($self) = @_;
     
-    my %params = $self->query->Vars;
+    my %params = %{ $self->req->params->to_hash || {} };
     my %errors;
     
-    $self->template( 'blank' );
-
-    return { tags => '', package => '' };
+    return $self->render( json => { tags => '', package => '' } );
     
     # get package name
     my ($file,$version,$suffix) = OTRS::OPR::Web::Utils->validate_opm_name( $params{path} );
     
     if ( !$file ) {
-        return { tags => '' };
+        return $self->render( json => { tags => '' } );
     }
     
     # create new object and save basic information (uploaded_by, name_id, path and virtual path)
@@ -257,12 +226,13 @@ sub get_tags : Permission( 'author' ) : Json {
         $tags_string = join ', ', $package->tags;
     }
 
-    return { tags => $tags_string, package => $file };
+    return $self->render( json => { tags => $tags_string, package => $file } );
 }
 
-sub edit_maintainer : Permission( 'author' ) {
+sub edit_maintainer {
     my ($self) = @_;
-    my %params = $self->query->Vars;
+
+    my %params = %{ $self->req->params->to_hash || {} };
  
     # check formid
     my $formid_ok = $self->validate_formid( \%params );
@@ -303,7 +273,7 @@ sub edit_maintainer : Permission( 'author' ) {
     $self->maintainer;
 }
 
-sub goto_comments : Permission( 'author' ) {
+sub goto_comments {
     my ($self) = @_;
 	
     my $comment_id = $self->param( 'id' );
@@ -318,7 +288,7 @@ sub goto_comments : Permission( 'author' ) {
     $self->comments;
 }
 
-sub publish_comment : Permission( 'author' ) {
+sub publish_comment {
     my ($self) = @_;
 
     my $comment_id = $self->param( 'id' );
@@ -332,7 +302,7 @@ sub publish_comment : Permission( 'author' ) {
     $self->goto_comments;
 }
 
-sub unpublish_comment : Permission( 'author' ) {
+sub unpublish_comment {
     my ($self) = @_;
 
     my $comment_id = $self->param( 'id' );
@@ -346,7 +316,7 @@ sub unpublish_comment : Permission( 'author' ) {
     $self->goto_comments;
 }
 
-sub comments : Permission( 'author' ) {
+sub comments {
     my ($self) = @_;
 
     my $id = $self->param( 'id' );
@@ -384,16 +354,18 @@ sub comments : Permission( 'author' ) {
     }
 
     my $formid = $self->get_formid;
-    $self->template( 'author_package_comments' );
     $self->stash(
         FORMID       => $formid,
         NAME         => $package_name,
         HAS_COMMENTS => (scalar @comments > 0),
         COMMENTS     => \@comments,
     );
+
+    my $html = $self->render_opar( 'author_package_comments' );
+    $self->render( text => $html, format => 'html' );
 }
 
-sub maintainer : Permission( 'author' ) {
+sub maintainer {
     my ($self) = @_;
     
     my $id = $self->param( 'id' );
@@ -406,7 +378,7 @@ sub maintainer : Permission( 'author' ) {
     );
     
     my @co_maintainers = $package->maintainer_list;
-    my $maintainer = shift @co_maintainers;
+    my $maintainer     = shift @co_maintainers;
     
     # get possible co maintainers
     my @possible_co_maintainers;
@@ -422,7 +394,6 @@ sub maintainer : Permission( 'author' ) {
     my $is_main_author = ( $maintainer->{USER_ID} == $self->user->user_id );
     
     my $formid = $self->get_formid;
-    $self->template( 'author_package_maintainer' );
     $self->stash(
         FORMID                      => $formid,
         MAINTAINER                  => $maintainer,
@@ -433,14 +404,17 @@ sub maintainer : Permission( 'author' ) {
         HAS_POSSIBLE_CO_MAINTAINERS => (scalar @possible_co_maintainers > 0),
         PACKAGE_NAME                => $package_name,
     );
+
+    my $html = $self->render_opar( 'author_package_maintainer' );
+    $self->render( text => $html, format => 'html' );
 }
 
-sub list : Permission( 'author' ) {
+sub list_packages {
     my ($self) = @_;
     
-    my $config = $self->config;
+    my $config = $self->opar_config;
     
-    my %params      = $self->query->Vars;
+    my %params      = %{ $self->req->params->to_hash || {} };
     my $search_term = $params{search_term};
     my $page        = $params{page} || 1;
     
@@ -458,21 +432,21 @@ sub list : Permission( 'author' ) {
     );
     my $pagelist = $self->page_list( $pages, $page );
     
-    $self->template( 'author_package_list' );
     $self->stash(
         PACKAGES => $packages,
         PAGES    => $pagelist,
     );
+
+    my $html = $self->render_opar( 'author_package_list' );
+    $self->render( text => $html, format => 'html' );
 }
 
-sub version_list : Permission( 'author' ) {
+sub version_list {
     my ($self) = @_;
     
-    my $package = $self->param( 'id' );
+    my $package = $self->param( 'package' );
     
-    $self->template( 'blank' );
-    
-    $self->logger->trace( 'Version list for ' . $package );
+    $self->app->log->debug( 'Version list for ' . $package );
     
     if ( !$self->package_exists( $package ) ) {
         $self->notify({
@@ -481,7 +455,9 @@ sub version_list : Permission( 'author' ) {
             ERROR_HEADLINE => 'No versionlist available',
             ERROR_MESSAGE  => 'The package does not exist, so there is no version list',
         });
-        return;
+
+        my $html = $self->render_opar( 'blank' );
+        return $self->render( text => $html, format => 'html' );
     }
     
     if ( !$self->user_is_maintainer( $self->user, { name => $package } ) ) {
@@ -491,7 +467,9 @@ sub version_list : Permission( 'author' ) {
             ERROR_HEADLINE => 'No versionlist available',
             ERROR_MESSAGE  => 'You are not maintainer of this package, so you cannot see the list of all versions',
         });
-        return;
+
+        my $html = $self->render_opar( 'blank' );
+        return $self->render( text => $html, format => 'html' );
     }
     
     my $version_list = $self->versions( $package, { all => 1 } ) || [];
@@ -500,11 +478,13 @@ sub version_list : Permission( 'author' ) {
        $version->{CLASS} = $version->{DELETION} ? 'visible' : 'hidden'
     }
         
-    $self->template( 'author_package_version_list' );
     $self->stash(
         VERSIONS     => $version_list,
         PACKAGE_NAME => $package,
     );
+
+    my $html = $self->render_opar( 'author_package_version_list' );
+    return $self->render( text => $html, format => 'html' );
 }
 
 sub _get_package_name {
@@ -532,13 +512,13 @@ sub _upload_file {
     
     my $field_name = 'opm_file';
     
-    my $fh = $self->query->upload( $field_name );
+    my $upload = $self->req->upload( $field_name );
     
-    if ( !$fh ) {
+    if ( !$upload ) {
         return 0, 'Cannot open filehandle to read upload';
     }
     
-    my $name = $self->query->param( $field_name );
+    my $name = $upload->filename;
     
     my ($file,$version,$suffix) = OTRS::OPR::Web::Utils->validate_opm_name( $name );
     
@@ -549,7 +529,7 @@ sub _upload_file {
     my $user_name = $self->user->user_name;
     
     my $path = Path::Class::Dir->new(
-        $self->config->get( 'paths.uploads' ),
+        $self->opar_config->get( 'paths.uploads' ),
         $user_name,
     );
     
@@ -560,7 +540,7 @@ sub _upload_file {
         $$ . '-' . $file . '-' . $version . '.opm',
     );
     
-    $self->logger->debug( "Target file: $file_path" );
+    $self->app->log->debug( "Target file: $file_path" );
     
     if ( -e $file_path ) {
         return 0, 'File already exists';
@@ -570,66 +550,54 @@ sub _upload_file {
     
     mkdir $path_stringified unless -e $path_stringified;
     
-    $self->logger->warn( "Directory $path_stringified does not exist" ) unless -e $path_stringified;
+    $self->app->log->warn( "Directory $path_stringified does not exist" ) unless -e $path_stringified;
 
     my $buffer;
     my $something_read = '';
-    
-    if(open my $wfh, '>', $file_path->stringify ){
-        binmode $wfh;
-        while ( read $name, $buffer, 1024 ) {
-            print $wfh $buffer;
-            $something_read .= $buffer;
-        }
-        close $wfh;
-        
-        if ( !$something_read ) {
-            $self->logger->warn( "File seems to be empty!" );
-            return 0, 'file seems to be empty';
-        }
-    }
-    else {
-        $self->logger->warn( "Cannot open target file $file_path" );
-        return 0, 'Cannot open target file';
+
+    $upload->move_to( $file_path->stringify );
+    if ( !-s $file_path->stringify ) {
+        return 0, 'file seems to be empty';
     }
     
     return 1, $file_path->stringify;
 }
 
-sub reanalyze : Permission( 'author' ) {
-	my ($self) = @_;
+sub reanalyze_package {
+    my ($self) = @_;
 	
-	my ($package_id) = $self->param('id');
+    my ($package_id) = $self->param('id');
 
-	# check if author is a maintainer of this package
-	if (!$self->user_is_maintainer( $self->user, { id => $package_id } )) {
-		return $self->list();	
-	}
+    # check if author is a maintainer of this package
+    if ( !$self->user_is_maintainer( $self->user, { id => $package_id } ) ) {
+        return $self->list_packages;
+    }
 
-	# check if an analyzation job for that package is already scheduled
-  my $job = $self->find_job({
-			id   => $package_id,
-			type => 'analyze',
-	});
-	if ($job) {
-		return $self->list();
-	}
+    # check if an analyzation job for that package is already scheduled
+    my $job = $self->find_job({
+        id   => $package_id,
+        type => 'analyze',
+    });
 
-	# create an entry in job queue that the package
-	# should be analyzed    
-	my $job_id = $self->create_job({
-			id   => $package_id,
-			type => 'analyze',
-	});
-	
-	$self->notify({
-			type             => 'success',
-			include          => 'notifications/generic_success',
-			SUCCESS_HEADLINE => 'OPM reanalyzation has been scheduled',
-			SUCCESS_MESSAGE  => 'OPM will be reanalyzed during the next analyzation run',
-	});
-	
-	return $self->list();
+    if ($job) {
+        return $self->list_packages;
+    }
+
+    # create an entry in job queue that the package
+    # should be analyzed    
+    my $job_id = $self->create_job({
+        id   => $package_id,
+        type => 'analyze',
+    });
+
+    $self->notify({
+        type             => 'success',
+        include          => 'notifications/generic_success',
+        SUCCESS_HEADLINE => 'OPM reanalyzation has been scheduled',
+        SUCCESS_MESSAGE  => 'OPM will be reanalyzed during the next analyzation run',
+    });
+
+    return $self->list_packages;
 }
 
 1;

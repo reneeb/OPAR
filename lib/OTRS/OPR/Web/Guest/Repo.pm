@@ -118,7 +118,7 @@ sub add {
 			
         my %template_params;
         for my $error_key ( keys %errors ) {
-            $template_params{ 'ERROR_' . uc $error_key } = $self->config->get( 'errors.' . $error_key );
+            $template_params{ 'ERROR_' . uc $error_key } = $config->get( 'errors.' . $error_key );
 	}
 
         $self->stash(
