@@ -5,11 +5,11 @@ use warnings;
 
 use Mojo::Base 'Mojolicious';
 use MojoX::Renderer::HTC;
+use MojoX::Log::Log4perl;
 
 use Data::Dumper;
 use DBIx::Class;
 use File::Basename;
-use Log::Log4perl;
 use Path::Class;
 
 use OTRS::OPR::DAO::User;
@@ -30,6 +30,15 @@ sub startup {
             file => $ENV{OPAR_CONFIG} ||
                 Path::Class->file( $self->home, 'conf', 'base.yml' )->stringify,
         },
+    );
+
+    $self->log(
+        MojoX::Log::Log4perl->new(
+            File::Spec->catfile(
+                $self->opar_config->get( 'paths.conf' ),
+                $self->opar_config->get( 'logging' ),
+            )
+        )
     );
 
     $self->plugin(
