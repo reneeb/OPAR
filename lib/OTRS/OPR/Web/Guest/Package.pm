@@ -5,15 +5,16 @@ use warnings;
 
 use Mojo::Base 'Mojolicious::Controller';
 
+use File::Basename;
 use File::Spec;
+use XML::RSS;
+
 use OTRS::OPR::DAO::Author;
 use OTRS::OPR::DAO::Package;
 use OTRS::OPR::DAO::Comment;
 use OTRS::OPR::DB::Helper::Author  qw(id_by_uppercase);
 use OTRS::OPR::DB::Helper::Package qw(:all);
 use OTRS::OPR::Web::App::Forms     qw(:all);
-
-use XML::RSS;
 
 sub recent_packages {
     my ($self) = @_;
@@ -252,9 +253,7 @@ sub download {
         return $self->render( text => $html, format => 'html' ); ;
     }
 
-    (my $name = $dao->path) =~ s/^\d+-//;
-    
-    $self->render_file( filepath => $dao->path, filename => sprintf "%s-%s.opm", $name, $dao->version );
+    $self->render_file( filepath => $dao->path, filename => sprintf "%s-%s.opm", $dao->package_name, $dao->version );
 }
 
 sub author {
