@@ -16,6 +16,7 @@ __PACKAGE__->add_columns( qw/
     deletion_flag
     headline
     published
+    created
 /);
 __PACKAGE__->set_primary_key( qw/ comment_id / );
 

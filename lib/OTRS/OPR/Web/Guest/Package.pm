@@ -115,7 +115,7 @@ sub send_comment {
         );
 			
         my ($package_name, $package_version) = split /\-/, $self->param( 'id' );
-        my $username = ($self->user ? $self->user->user_name : 'anonymous');
+        my $username = ($self->user ? $self->user->user_name : $params{username} . ' (guest)' );
 
         $comment->username( $username );
         $comment->packagename( $package_name );

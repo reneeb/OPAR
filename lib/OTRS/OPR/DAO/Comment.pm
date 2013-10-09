@@ -45,14 +45,15 @@ sub to_hash {
     
     # create the infos for the template
     my %info = (
-    		COMMENT_ID			=> $comment->comment_id,
-    		USERNAME				=> $comment->username,
-    		PACKAGENAME 		=> $comment->packagename,
-    		PACKAGEVERSION 	=> $comment->packageversion,
-    		COMMENTS 				=> $comment->comments,
-    		RATING 					=> $comment->rating,
-    		HEADLINE 				=> $comment->headline,
-    		PUBLSHED 				=> time_to_date( $self, $comment->published ),    
+        COMMENT_ID     => $comment->comment_id,
+        USERNAME       => $comment->username,
+        PACKAGENAME    => $comment->packagename,
+        PACKAGEVERSION => $comment->packageversion,
+        COMMENTS       => $comment->comments,
+        RATING         => $comment->rating,
+        HEADLINE       => $comment->headline,
+        PUBLISHED      => time_to_date( $self, $comment->published ),
+        CREATED        => time_to_date( $self, $comment->created || $comment->published ),
     );
     
     return %info;
@@ -87,10 +88,11 @@ sub DEMOLISH {
     
     if ( !$comment ) {
         $comment = $self->ask_table( 'opr_comments' )->create({
-            username     		=> '',
-            packagename			=> '',
-            packageversion	=> '',
-            comments     		=> '',
+            username       => '',
+            packagename    => '',
+            packageversion => '',
+            comments       => '',
+            created        => time,
         });
     }
 
