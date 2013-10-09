@@ -23,7 +23,7 @@ my @ps        = `ps auwx`;
 my @processes = grep{ m[starman .*? --listen .*? opar\.psgi]xms }@ps;
 
 if ( @processes ) {
-    my ($cur_ip,$cur_port) =~ m{ --listen  .*? ([0-9]+\.[0-9]+\.[0-9]+\.[0-9])?:([0-9]+) }xms;
+    my ($cur_ip,$cur_port) =~ m{ --listen  .*? ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)?:([0-9]+) }xms;
 
     $ip   ||= $cur_ip || '';
     $port ||= $cur_port;
@@ -69,6 +69,6 @@ TELL
 
 my $exports = join '', map{ $_ . ' && ' }@exports;
 
-my $command = 'starman --listen :3050 --workers ' . $workers . ' --max-requests ' . $max_requests . ' --preload-app ' . $app;
+my $command = 'starman --listen ' . $ip . ':' . $port . ' --workers ' . $workers . ' --max-requests ' . $max_requests . ' --preload-app ' . $app;
 #exec( $command );
 exec( "$exports nohup $command &" );
