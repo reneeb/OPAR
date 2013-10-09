@@ -32,7 +32,11 @@ sub startup {
         },
     );
 
+    if ( $self->opar_config->get( 'app.reverse_proxy' ) ) {
         $ENV{MOJO_REVERSE_PROXY} = 1;
+    }
+
+    $self->secret( $self->opar_config->get( 'app.secret' ) || 'la28gj1o110890582euf9u2$!"HASH{MD5}' );
 
     $self->log(
         MojoX::Log::Log4perl->new(
@@ -83,7 +87,6 @@ sub startup {
     
         unless( $c->{___user} ) {
             my $session_id = $session->id;
-$c->app->log->debug( "SessionID: $session_id" );
             if( $session_id and not $session->is_expired ){
                 $c->app->log->debug( 'Get User by Session: ' . $session_id );
                 my ($user) = OTRS::OPR::DAO::User->new(

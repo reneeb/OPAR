@@ -80,4 +80,7 @@ help:
     email: Must be in valid email format
 otrs:
   index: /home/opar/otrs.xml
+app:
+  reverse_proxy: 1
+  secret: 2387t813797198fasdhvljashdsadasld13589(51)
 
