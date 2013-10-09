@@ -33,7 +33,7 @@ sub check_credentials {
         return;
     }
 
-    if ( !Crypt::SaltedHash->validate( $user->user_password, $params->{password} ) {
+    if ( !Crypt::SaltedHash->validate( $user->user_password, $params->{password} ) ) {
         $logger->info( "Login for $username not successful (wrong password)" );
         return;
     }
