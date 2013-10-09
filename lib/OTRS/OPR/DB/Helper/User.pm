@@ -39,7 +39,7 @@ sub check_credentials {
     $logger->debug( "Login $username successful" );
     
     my $session = $self->opar_session;
-    $session->session->force_new;
+    $session->force_new;
     
     my $session_id = $session->id;
     $user->session_id( $session_id );

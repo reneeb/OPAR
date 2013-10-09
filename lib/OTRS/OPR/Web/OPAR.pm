@@ -32,6 +32,8 @@ sub startup {
         },
     );
 
+        $ENV{MOJO_REVERSE_PROXY} = 1;
+
     $self->log(
         MojoX::Log::Log4perl->new(
             File::Spec->catfile(
@@ -66,10 +68,8 @@ sub startup {
             $expire *= 60; # but we need it in seconds
     
             $c->{___session} = OTRS::OPR::Web::App::Session->new(
-                config => $config,
                 expire => $expire,
                 app    => $c,
-                schema => $c->schema,
             );
         }
     

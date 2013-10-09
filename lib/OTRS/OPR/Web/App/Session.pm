@@ -2,43 +2,33 @@ package OTRS::OPR::Web::App::Session;
 
 use strict;
 use warnings;
-use DBI;
 
-use ReneeB::Session;
-use OTRS::OPR::Web::App::Config;
+use Crypt::SaltedHash;
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
+
+my $generate = sub{
+    my ($self) = @_;
+
+    my @valid_token = ('a'..'z','A'..'Z',0..9,'$', '_', '/','\\', '(', ')', '{', '}');
+    my $string = '';
+    $string .= $valid_token[rand @valid_token] for ( 0 .. 30 );
+
+    my $salted_ip = Crypt::SaltedHash->new->add( $self->app->tx->remote_address )->generate;
+    my $id        = sprintf "%s%s%s", $string, time(), $salted_ip;
+
+    return $id;
+};
 
 sub new{
     my ($class,%args) = @_;
     my $self = bless {},$class;
     
-    $self->_config( $args{config} );
-    $self->expire( $args{expire} );
-
     $self->app( $args{app} );
-    $self->_dbh( $args{schema} );
-
-    {
-        no warnings 'redefine';
-        *ReneeB::Session::State::Cookie::save = sub {
-            my ($session,$id) = @_;
-            $self->app->session( OPAR => $id );
-        };
-
-        *ReneeB::Session::State::Cookie::delete = sub {
-            my ($session,$id) = @_;
-            $self->app->session( OPAR => '' );
-        };
-
-        *ReneeB::Session::State::Cookie::id = sub {
-            my ($session,$id) = @_;
-            $self->app->session( 'OPAR' );
-        };
-    }
+    $self->app->app->sessions->default_expiration( $args{expire} || 3600 );
 
     return $self;
-}# new
+}
 
 sub app {
     my ($self,$value) = @_;
@@ -47,76 +37,41 @@ sub app {
     return $self->{__app__};
 }
 
-sub session{
+sub force_new {
     my ($self) = @_;
-    
-    unless( $self->{_session} ){
-        $self->{_session} = ReneeB::Session->new(
-            storage_args => {
-                type   => 'dbh',
-                dbh    => $self->_dbh,
-            },
-            state_args   => {
-                type => 'cookie',
-            },
-            expire       => $self->expire,
-            cookiename   => 'OPAR',
-        );
-    }
 
-    return $self->{_session};
-}
-
-sub _dbh {
-    my ($self,$schema) = @_;
-    
-    if ( !$self->{_schema} && $schema ) {
-        $self->{_schema} = $schema->storage->dbh;
-    }
-
-    $self->{_schema};
-}
-
-sub expire{
-  my ($self,$time) = @_;
-  $self->{expire} = $time if defined $time;
-  return $self->{expire};
-}
-
-sub delete{
-    my ($self) = @_;
-    $self->session->delete( $self->session->id );
-}
-
-sub logout{
-    my ($self) = @_;
-    $self->session->logout;
+    $self->app->session( OPAR => $generate->($self) );
 }
 
 sub is_expired{
     my ($self) = @_;
-    my $ex = $self->session->is_expired;
-    #$self->session->force_new if $ex;
-    return $ex;
-}# is_expired
+    my $id = $self->app->session( 'OPAR' );
 
-sub force_db{}
+    $self->app->app->log->debug( $id );
+
+    return 1 if !$id;
+
+    my $ip         = $self->app->tx->remote_address;
+    my $session_ip = substr $id, -38;
+
+    my $valid = Crypt::SaltedHash->validate( $session_ip, $ip ) || '';
+    $self->app->app->log->debug( "$ip // $session_ip // $valid" );
+
+    return !$valid;
+}
 
 sub update_session{
-    my ($self) = @_;    
-    return $self->session->update;
+    return 1;
 }
 
 sub id{
-  my ($self) = @_;
-  return $self->session->id;
-}# id
+    my ($self) = @_;
 
-sub _config{
-    my ($self,$config) = @_;
-    
-    $self->{__config__} = $config if @_ == 2;
-    return $self->{__config__};
+    my $id = $self->app->session( 'OPAR' );
+
+    $self->app->app->log->debug( $id );
+
+    return $id;
 }
 
 1;
