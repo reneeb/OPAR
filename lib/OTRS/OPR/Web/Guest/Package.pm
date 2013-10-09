@@ -178,7 +178,7 @@ sub dist {
         my $html = $self->render_opar( 'blank' );
         return $self->render( text => $html, format => 'html' ); ;
     }
-    
+
     my %version;
     
     $version{version} = $version if $version;
@@ -201,6 +201,30 @@ sub dist {
         
         my $html = $self->render_opar( 'blank' );
         return $self->render( text => $html, format => 'html' ); ;
+    }
+    
+    # if method is called by route /package/:initial/:short/:author/*package the author settings should be checked
+    if ( $self->param( 'short' ) ) {
+        my $author_requested  = $self->param( 'author' );
+        my $short_requested   = $self->param( 'short' );
+        my $initial_requested = $self->param( 'initial' );
+        my @maintainers       = $dao->maintainer_list;
+
+        if (
+            $short_requested ne substr($author_requested, 0, 2) ||
+            $initial_requested ne substr($author_requested, 0, 1) ||
+            !grep{ uc $_->{USER_NAME} eq $author_requested }@maintainers
+        ) {
+            $self->notify({
+                type           => 'error',
+                include        => 'notifications/generic_error',
+                ERROR_HEADLINE => $self->opar_config->get( 'errors.author_not_found.headline' ) || '',
+                ERROR_MESSAGE  => $self->opar_config->get( 'errors.author_not_found.message' ) || '',
+            });
+        
+            my $html = $self->render_opar( 'blank' );
+            return $self->render( text => $html, format => 'html' ); ;
+        }
     }
     
     my %stash = $dao->to_hash;
