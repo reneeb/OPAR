@@ -6,12 +6,14 @@
   <tr>
     <th>Version</th>
     <th>Date</th>
+    <th>Framework</th>
     <th>Action</th>
   </tr>
   <%LOOP VERSIONS %>
   <tr>
     <td><%= VERSION %></td>
     <td><%= DATE %></td>
+    <td><%= FRAMEWORK %></td>
     <td>
       <span class="<%= CLASS %>" id="span_<%= PACKAGE_ID %>">
         scheduled for deletion on
