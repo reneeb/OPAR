@@ -59,7 +59,7 @@ sub startup {
         my $c   = shift;
         my $url = $c->req->url->to_abs;
 
-        return sprintf "%s://%s/", $url->protocol || 'http', $url->host || 'localhost';
+        return sprintf "%s://%s", $url->protocol || 'http', $url->host || 'localhost';
     } );
 
     $self->helper( opar_session => sub {
