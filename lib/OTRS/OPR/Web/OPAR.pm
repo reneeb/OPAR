@@ -36,7 +36,8 @@ sub startup {
         $ENV{MOJO_REVERSE_PROXY} = 1;
     }
 
-    $self->secret( $self->opar_config->get( 'app.secret' ) || 'la28gj1o110890582euf9u2$!"HASH{MD5}' );
+    $self->secret( $self->opar_config->get( 'app.secret' )  || 'la28gj1o110890582euf9u2$!"HASH{MD5}' );
+    $self->app->mode( $self->opar_config->get( 'app.mode' ) || 'development' );
 
     $self->log(
         MojoX::Log::Log4perl->new(
