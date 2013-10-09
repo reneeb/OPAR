@@ -62,6 +62,9 @@ errors:
   login_incorrect:
     headline: Login incorrect!
     message: Please check your username and your password.
+  author_not_found:
+    headline: Author not found!
+    message: The author you have request cannot be found
 utils:
   config: /home/opar/opar_sources/conf
   perltidy:
