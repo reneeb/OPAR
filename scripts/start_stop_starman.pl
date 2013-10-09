@@ -23,7 +23,10 @@ my @ps        = `ps auwx`;
 my @processes = grep{ m[starman .*? --listen .*? opar\.psgi]xms }@ps;
 
 if ( @processes ) {
-    ($ip,$port) =~ m{ --listen  .*? ([0-9]+\.[0-9]+\.[0-9]+\.[0-9])?:([0-9]+) }xms;
+    my ($cur_ip,$cur_port) =~ m{ --listen  .*? ([0-9]+\.[0-9]+\.[0-9]+\.[0-9])?:([0-9]+) }xms;
+
+    $ip   ||= $cur_ip || '';
+    $port ||= $cur_port;
 
     my @pids = map{ m/ \A .*? (\d+) /xms; $1 }@processes;
 
