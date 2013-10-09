@@ -86,6 +86,7 @@ CREATE TABLE `opr_comments` (
   deletion_flag BIGINT ,
   headline VARCHAR(255) ,
   published BIGINT,
+  created BIGINT,
   PRIMARY KEY(comment_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
