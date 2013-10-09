@@ -131,7 +131,7 @@ sub startup {
             '/registration/confirm'                     => [ 'Guest::Registration', 'confirm'                 ],
             '/registration/forgot_passwd'               => [ 'Guest::Registration', 'forgot_password'         ],
             '/registration/send_passwd'                 => [ 'Guest::Registration', 'send_new_password'       ],
-            '/registration/change_passwd'               => [ 'Guest::Registration', 'change_password'         ],
+            '/registration/change_passwd'               => [ 'Guest::Registration', 'change_passwd'           ],
             '/registration/confirm_passwd'              => [ 'Guest::Registration', 'confirm_password_change' ],
             '/static/:page'                             => [ 'Guest',               'static'                  ],
             '/search/:page'                             => [ 'Guest',               'search'                  ],
