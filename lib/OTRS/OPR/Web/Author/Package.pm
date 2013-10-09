@@ -418,7 +418,7 @@ sub list_packages {
     
     my %params      = %{ $self->req->params->to_hash || {} };
     my $search_term = $params{search_term};
-    my $page        = $params{page} || 1;
+    my $page        = $self->param( 'page' ) || 1;
     
     if ( $page =~ m{\D} or $page <= 0 ) {
         $page = 1;

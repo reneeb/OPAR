@@ -158,6 +158,7 @@ sub startup {
             '/author/package/versions/:package'      => [ 'Author::Package', 'version_list'      ],
             '/author/package/:id/show'               => [ 'Author::Package', 'package_show'      ],
             '/author/package/list'                   => [ 'Author::Package', 'list_packages'     ],
+            '/author/package/list/:page'             => [ 'Author::Package', 'list_packages'     ],
             '/author/package/upload'                 => [ 'Author::Package', 'upload_package'    ],
             '/author/package/do_upload'              => [ 'Author::Package', 'do_upload_package' ],
             '/author/tags'                           => [ 'Author::Package', 'get_tags'          ],
