@@ -24,6 +24,8 @@ my $dir = File::Spec->rel2abs( dirname __FILE__ );
 
 chdir $dir;
 
+my $app = File::Spec->rel2abs( $dir, '..', 'opar', 'opar.psgi' );
+
 my $config = $ENV{OPAR_CONFIG};
 my $mode   = $ENV{MOJO_MODE};
 
@@ -43,6 +45,6 @@ print "\tMOJO_MODE=$mode\t\t# production | development\n";
 
 my $exports = join '', map{ $_ . ' && ' }@exports;
 
-my $command = 'starman --listen :3050 --workers ' . $workers . ' --max-requests ' . $max_requests . ' --preload-app';
+my $command = 'starman --listen :3050 --workers ' . $workers . ' --max-requests ' . $max_requests . ' --preload-app ' . $app;
 #exec( $command );
 exec( "$exports nohup $command &" );
