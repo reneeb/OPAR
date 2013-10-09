@@ -3,6 +3,8 @@ package OTRS::OPR::DB::Helper::User;
 use strict;
 use warnings;
 
+use Crypt::SaltedHash;
+
 use parent 'OTRS::OPR::Exporter::Aliased';
 use OTRS::OPR::Web::Utils qw(time_to_date looks_empty looks_like_number);
 
@@ -20,19 +22,19 @@ sub check_credentials {
     return if !($params->{user} and $params->{password});
     
     my $username = $params->{user};
-    my $password = crypt $params->{password}, $self->opar_config->get( 'password.salt' );
-    
-    my $check    = $params->{password};
-    $logger->debug( "Try $username -> $check -> $password" );
     
     my ($user) = $self->table( 'opr_user' )->search({
         user_name     => $username,
-        user_password => $password,
         active        => 1,
     })->all;
     
     if ( !$user ) {
         $logger->info( "Login for $username not successful" );
+        return;
+    }
+
+    if ( !Crypt::SaltedHash->validate( $user->user_password, $params->{password} ) {
+        $logger->info( "Login for $username not successful (wrong password)" );
         return;
     }
     

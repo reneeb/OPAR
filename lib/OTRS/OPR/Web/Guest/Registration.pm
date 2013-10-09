@@ -6,6 +6,8 @@ use warnings;
 use Mojo::Base 'Mojolicious::Controller';
 
 use Captcha::reCAPTCHA;
+use Crypt::SaltedHash;
+
 use OTRS::OPR::DAO::User;
 use OTRS::OPR::DB::Helper::Passwd qw(:all);
 use OTRS::OPR::Web::App::Forms qw(:all);
@@ -271,7 +273,10 @@ sub confirm_password_change {
         _schema => $self->schema,
     );
     
-    my $crypted_passwd = crypt $params{password}, $self->opar_config->get( 'password.salt' );
+    my $crypted_passwd = Crypt::SaltedHash->new(
+        algorithm => 'SHA-256',
+    )->add( $params{password} )->generate;
+
     $user->user_password( $crypted_passwd );
     $user->active( 1 );
     $user->add_group( 'author' => 1 );
