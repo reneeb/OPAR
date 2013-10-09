@@ -318,6 +318,15 @@ sub unpublish_comment {
     $self->goto_comments;
 }
 
+sub delete_comment {
+    my ($self) = @_;
+
+    my $comment_id = $self->param( 'id' );
+    $self->table( 'opr_comments' )->search({ comment_id => $comment_id})->first->delete;
+
+    $self->goto_comments;
+}
+
 sub comments {
     my ($self) = @_;
 
