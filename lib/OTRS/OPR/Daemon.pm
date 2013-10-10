@@ -56,7 +56,7 @@ sub run {
     
     $logger->info( 'found ' . @jobs_to_run . ' jobs to run!' );
     
-    my $local_config = $self->_base_conf->stringify;
+    my $local_config = $self->_analyzer_conf->stringify;
     
     # set state to 'running' this is done so early to avoid race conditions
     my @job_info;
@@ -131,7 +131,7 @@ sub _conf_dir {
     return $self->{__config_dir__};
 }
 
-sub _base_conf {
+sub _analyzer_conf {
     my ($self) = @_;
     
     unless ( $self->{__analyzer_config__} ) {
@@ -142,6 +142,16 @@ sub _base_conf {
     }
     
     return $self->{__analyzer_config__};
+}
+
+sub _base_conf {
+    my ($self) = @_;
+    
+    $self->{__base_config__} ||= OTRS::OPM::Analyzer::Utils::Config->new(
+        $self->_analyzer_conf->stringify,
+    );
+
+    $self->{__base_config__};
 }
 
 sub _init_db {
