@@ -36,7 +36,8 @@ sub startup {
         $ENV{MOJO_REVERSE_PROXY} = 1;
     }
 
-    $self->secret( $self->opar_config->get( 'app.secret' ) || 'la28gj1o110890582euf9u2$!"HASH{MD5}' );
+    $self->secret( $self->opar_config->get( 'app.secret' )  || 'la28gj1o110890582euf9u2$!"HASH{MD5}' );
+    $self->app->mode( $self->opar_config->get( 'app.mode' ) || 'development' );
 
     $self->log(
         MojoX::Log::Log4perl->new(
@@ -59,7 +60,7 @@ sub startup {
         my $c   = shift;
         my $url = $c->req->url->to_abs;
 
-        return sprintf "%s://%s/", $url->protocol || 'http', $url->host || 'localhost';
+        return sprintf "%s://%s", $url->protocol || 'http', $url->host || 'localhost';
     } );
 
     $self->helper( opar_session => sub {
@@ -131,7 +132,7 @@ sub startup {
             '/registration/confirm'                     => [ 'Guest::Registration', 'confirm'                 ],
             '/registration/forgot_passwd'               => [ 'Guest::Registration', 'forgot_password'         ],
             '/registration/send_passwd'                 => [ 'Guest::Registration', 'send_new_password'       ],
-            '/registration/change_passwd'               => [ 'Guest::Registration', 'change_password'         ],
+            '/registration/change_passwd'               => [ 'Guest::Registration', 'change_passwd'           ],
             '/registration/confirm_passwd'              => [ 'Guest::Registration', 'confirm_password_change' ],
             '/static/:page'                             => [ 'Guest',               'static'                  ],
             '/search/:page'                             => [ 'Guest',               'search'                  ],
