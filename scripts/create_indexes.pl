@@ -21,7 +21,7 @@ use lib "$dir/../lib";
 use OTRS::OPR::DB::Schema;
 use OTRS::OPR::Web::App::Config;
 
-my $configfile = $ENV{OPAR_CONFIG} || Path::Class::File->new( $dir, 'conf', 'base.yml' )->stringify;
+my $configfile = $ENV{OPAR_CONFIG} || Path::Class::File->new( $dir, '..', 'conf', 'base.yml' )->stringify;
 my $config     = OTRS::OPR::Web::App::Config->new(
     $configfile,
 );

@@ -3,6 +3,7 @@ package OTRS::OPR::Daemon;
 use strict;
 use warnings;
 
+use File::Basename;
 use Log::Log4perl;
 use Parallel::ForkManager;
 use Path::Class;
@@ -55,7 +56,7 @@ sub run {
     
     $logger->info( 'found ' . @jobs_to_run . ' jobs to run!' );
     
-    my $local_config = $self->_analyzer_conf->stringify;
+    my $local_config = $self->_base_conf->stringify;
     
     # set state to 'running' this is done so early to avoid race conditions
     my @job_info;
@@ -118,6 +119,10 @@ sub table {
 
 sub _conf_dir {
     my ($self,$value) = @_;
+
+    if ( $ENV{OPAR_CONFIG} && $value ) {
+        $value = dirname $ENV{OPAR_CONFIG};
+    }
     
     if ( $value ) {
         $self->{__config_dir__} = Path::Class::Dir->new( $value );
@@ -126,7 +131,7 @@ sub _conf_dir {
     return $self->{__config_dir__};
 }
 
-sub _analyzer_conf {
+sub _base_conf {
     my ($self) = @_;
     
     unless ( $self->{__analyzer_config__} ) {
@@ -164,6 +169,13 @@ sub _init_config {
         'daemon.yml',
     );
     
+    if ( !-e "$config_file" ) {
+        $config_file = Path::Class::File->new(
+            $self->_base_conf->get( 'paths.conf' ),
+            'daemon.yml',
+        );
+    }
+    
     $self->{__config__} = OTRS::OPM::Analyzer::Utils::Config->new(
         "$config_file",
     );
@@ -176,6 +188,13 @@ sub _init_logging {
         $self->_conf_dir,
         'logging.conf',
     );
+
+    if ( !-e "$logging_conf" ) {
+        $logging_conf = Path::Class::File->new(
+            $self->_base_conf->get( 'paths.conf' ),
+            'logging.conf',
+        );
+    }
     
     Log::Log4perl->init( "$logging_conf" );
 }
