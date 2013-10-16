@@ -8,6 +8,7 @@ our @EXPORT_OK = qw(
     list
     id_by_uppercase
     active_authors
+    activity
 );
 
 sub active_authors {
@@ -33,6 +34,19 @@ sub active_authors {
     );
     
     return @list;
+}
+
+sub activity {
+    my ($self, %params) = @_;
+
+    my $user    = $self->table( 'opr_user' )->search({ user_name => $params{id} })->first;
+    my @uploads = $self->table( 'opr_package' )->search({
+        uploaded_by => $user->user_id,
+        upload_time => { '>=', $params{start} || 0 }
+    });
+
+    my @upload_times = map{ $_->upload_time }@uploads;
+    return @upload_times;
 }
 
 sub list {

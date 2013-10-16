@@ -554,3 +554,8 @@ section form input[type="submit"]:hover, section form button:hover { background:
 	font-size: 0.6em; 
 	background-color: red; 
 }
+.activity { 
+	position: relative; 
+	top: -130px; 
+	left: 530px; 
+}

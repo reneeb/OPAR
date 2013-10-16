@@ -67,6 +67,7 @@ sub run {
             job_id          => $job->job_id,
             analyzer_config => $local_config,
             config          => $self->config,
+            base_conf       => $self->_base_conf,
         };
         
         $job->job_state( 'running' );

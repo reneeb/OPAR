@@ -787,3 +787,9 @@ section form button:hover {
 	font-size: 0.6em;
 	background-color: red;
 }
+
+.activity {
+    position: relative;
+    top: -130px;
+    left: 530px
+}

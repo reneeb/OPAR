@@ -14,7 +14,21 @@ our @EXPORT_OK = qw(
     version_list
     package_to_hash
     package_name_object
+    activity
 );
+
+sub activity {
+    my ($self, %params) = @_;
+
+    my $package = $self->table( 'opr_package_names' )->search({ package_name => $params{id} })->first;
+    my @uploads = $self->table( 'opr_package' )->search({
+        name_id     => $package->name_id,
+        upload_time => { '>=', $params{start} || 0 },
+    });
+
+    my @upload_times = map{ $_->upload_time }@uploads;
+    return @upload_times;
+}
 
 sub package_name_object {
     my ( $self, $name ) = @_;
