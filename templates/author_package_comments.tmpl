@@ -13,7 +13,11 @@
 					<div>
 						<h2>
 							<a href="<%= WEBSITE %>"><%= USERNAME %></a>
-							<span><%IF DATE %>published on <%= DATE %> <%/IF%>written on <%= SENT_DATE %></span>
+							<span>
+                                                            <%IF DATE %>published on <%= DATE %><%/IF%>
+                                                            written on <%= SENT_DATE %>
+                                                            (<%= PACKAGE %>)
+                                                        </span>
 							<div>
 								<span class="score-<%= SCORE %>"></span>&nbsp;
 							</div>

@@ -148,6 +148,7 @@ sub comments {
     for my $comment ( @comments_found ) {
         push @comments, {
             #'WEBSITE' => $comment->website,
+            'PACKAGE'      => $self->package_name,
             'DATE'         => time_to_date( $self, $comment->published ),
             'SENT_DATE'    => time_to_date( $self, $comment->created || $comment->published ),
             'USERNAME'     => $comment->username,
