@@ -364,6 +364,8 @@ sub comments {
         push @comments, $package->comments;
     }
 
+    @comments = sort{ $b->{COMMENT_ID} <=> $a->{COMMENT_ID} }@comments;
+
     my $formid = $self->get_formid;
     $self->stash(
         FORMID       => $formid,
