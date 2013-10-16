@@ -192,6 +192,30 @@ sub startup {
 
     # add content-type for xml data
     $self->types->type( xml => 'application/octet-stream' );
+
+    # add hook to show own error pages
+    $self->hook( after_dispatch => sub {
+        my $c = shift;
+        my $code = $c->res->code;
+
+        my %templates = (
+            404 => 'not_found',
+            500 => 'exception',
+        );
+
+        my $template = $templates{ $c->res->code };
+        if ( $template && $self->app->mode ne 'development' ) {
+            $c->notify({
+                type           => 'error',
+                include        => 'notifications/generic_error',
+                ERROR_HEADLINE => $c->opar_config->get( 'errors.' . $code . '.headline' ),
+                ERROR_MESSAGE  => $c->opar_config->get( 'errors.' . $code . '.message' ),
+            });
+
+            my $html = $c->render_opar( 'blank' );
+            $c->render( text => $html, format => 'html' );
+        }
+    } );
 }
 
 1;

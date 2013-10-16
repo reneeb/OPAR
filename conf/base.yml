@@ -65,6 +65,12 @@ errors:
   author_not_found:
     headline: Author not found!
     message: The author you have request cannot be found
+  404:
+    headline: File not found!
+    message: The file you have request cannot be found
+  500:
+    headline: An error occured!
+    message: Please drop us a line (opar@perl-services.de) and send us more details about the situation where the error occured.
 utils:
   config: /home/opar/opar_sources/conf
   perltidy:
