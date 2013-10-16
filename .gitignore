@@ -3,6 +3,7 @@ conf/logging.web.conf
 conf/logging.conf
 conf/base.yml
 conf/base_tom.yml
+public/img/activities/*
 opr.web.log
 *.swp
 *nohup.out
