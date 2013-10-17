@@ -10,14 +10,13 @@ use Log::Log4perl;
 use OTRS::OPM::Analyzer;
 use OTRS::OPR::DB::Schema;
 use OTRS::OPR::Doc::Converter;
-use OTRS::OPR::App::Activity;
 
 sub new {
     my ( $class, %args ) = @_;
     
     my $self = bless {}, $class;
     
-    for my $needed ( qw(job_id old_state analyzer_config config base_conf) ) {
+    for my $needed ( qw(job_id old_state analyzer_config config) ) {
         return if !$args{$needed};
     }
     
@@ -25,7 +24,6 @@ sub new {
     $self->job_id( $args{job_id} );
     $self->old_state( $args{old_state} );
     $self->analyzer_config( $args{analyzer_config} );
-    $self->base_conf( $args{base_conf} );
     $self->config( $args{config} );
     
     # initialize db connection
@@ -39,13 +37,6 @@ sub analyzer_config {
     
     $self->{__analyzer_config__} = $config if @_ == 2;
     return $self->{__analyzer_config__};
-}
-
-sub base_conf {
-    my ( $self, $config ) = @_;
-    
-    $self->{__base_conf__} = $config if @_ == 2;
-    return $self->{__base_conf__};
 }
 
 sub run {
@@ -77,15 +68,21 @@ sub run {
     # delete job from queue if successful
     if ( $result ) {
         $job->delete;
-        $self->create_activity_graphs( $job );
         $logger->info( 'deleted job ' . $job->job_id );
     }
     
     $self->_teardown;
+
+    my $graphs = $self->create_activity_graphs( $job ) || {};
+    return $graphs;
 }
 
 sub create_activity_graphs {
     my ( $self, $job ) = @_;
+
+    my $logger = Log::Log4perl->get_logger;
+
+    $logger->info( 'create activity graph for job ' . $job->job_id );
 
     # get the package object that belongs to the job
     my $package = $self->table( 'opr_package' )->find( $job->package_id );
@@ -94,13 +91,12 @@ sub create_activity_graphs {
     my $user = $self->table( 'opr_user' )->search({ user_id => $package->uploaded_by })->first;
     my $name = $self->table( 'opr_package_names' )->search({ name_id => $package->name_id })->first;
 
-    my $activity = OTRS::OPR::App::Activity->new(
-        schema     => $self->{__schema__},
-        output_dir => File::Spec->catdir( $self->base_conf->get( 'paths.base' ), 'public', 'img', 'activities' ),
-    );
+    $logger->info( 'user found (id ' . $package->uploaded_by . ') - ' . ($user ? 'success' : 'fail') );
+    $logger->info( 'name found (id ' . $package->name_id . ') - ' . ($name ? 'success' : 'fail') );
 
-    $activity->create_activity( type => 'author',  id => $user->user_name );
-    $activity->create_activity( type => 'package', id => $name->package_name );
+    return if !$user || !$name;
+
+    return { user => $user->user_name, package => $name->package_name };
 }
 
 sub analyze_package {

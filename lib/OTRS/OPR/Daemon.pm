@@ -3,6 +3,7 @@ package OTRS::OPR::Daemon;
 use strict;
 use warnings;
 
+use Data::Dumper;
 use File::Basename;
 use Log::Log4perl;
 use Parallel::ForkManager;
@@ -12,6 +13,7 @@ use OTRS::OPR::Daemon::Job;
 use OTRS::OPM::Analyzer;
 use OTRS::OPM::Analyzer::Utils::Config;
 use OTRS::OPR::DB::Schema;
+use OTRS::OPR::App::Activity;
 
 sub new {
     my ( $class, %args ) = @_;
@@ -67,7 +69,6 @@ sub run {
             job_id          => $job->job_id,
             analyzer_config => $local_config,
             config          => $self->config,
-            base_conf       => $self->_base_conf,
         };
         
         $job->job_state( 'running' );
@@ -81,6 +82,11 @@ sub run {
     my $max_processes = $self->config->get( 'fork.max' );
     my $fork_manager  = Parallel::ForkManager->new( $max_processes );
     $logger->trace( 'init fork manager with max ' . $max_processes . ' processes' );
+
+    my @activity_graphs;
+    $fork_manager->run_on_finish( sub {
+        push @activity_graphs, $_[5];
+    });
     
     $self->{__schema__}->storage->disconnect;
     
@@ -88,18 +94,41 @@ sub run {
         
         # do the fork
         $fork_manager->start and next;
+
+        $logger->trace( 'start handling job ' . $tmpjob->{job_id} );
         
         # create job and run it
         my $job = OTRS::OPR::Daemon::Job->new(
             %{$tmpjob},
         );
-        $job->run if $job;
-        
+        my $graphs = {};
+        $graphs = $job->run if $job;
+
+        $logger->trace( 'created daemon_job object for job ' . $tmpjob->{job_id} . ' (' . ($job ? 'success' : 'fail') . ')' );
+        $logger->trace( 'Graphs info: ' . Dumper $graphs );
+ 
         # exit the forked process
-        $fork_manager->finish;
+        $fork_manager->finish(0, $graphs);
     }
     
     $fork_manager->wait_all_children;
+    $logger->trace( 'Graphs info (all): ' . Dumper \@activity_graphs );
+
+    $self->_init_db;
+
+    my $activity = OTRS::OPR::App::Activity->new(
+        schema     => $self->{__schema__},
+        output_dir => File::Spec->catdir( $self->_base_conf->get( 'paths.base' ), 'public', 'img', 'activities' ),
+        #logger     => $logger,
+    );
+
+    for my $graphs ( @activity_graphs ) {
+        $logger->info( 'create activity graph for user ' . $graphs->{user} );
+        $activity->create_activity( type => 'author',  id => $graphs->{user} );
+
+        $logger->info( 'create activity graph for package ' . $graphs->{package} );
+        $activity->create_activity( type => 'package', id => $graphs->{package} );
+    }
 }
 
 sub config {

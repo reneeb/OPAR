@@ -7,6 +7,7 @@ use Moose;
 
 use Chart::Clicker;
 use Chart::Clicker::Renderer::Bar;
+use Data::Dumper;
 use File::Spec;
 use List::Util qw(first);
 
@@ -25,6 +26,7 @@ has y_hidden   => (is => 'ro', isa => 'Bool', default => 1);
 has legend     => (is => 'ro', isa => 'Bool', default => 0);
 has title      => (is => 'ro', isa => 'Str', default => 'Activity (24 months)');
 has start      => (is => 'ro', isa => 'Int', default => sub { time - $TWO_YEARS });
+has logger     => (is => 'ro', predicate => 'has_logger');
 
 sub table {
     my ($self, $table) = @_;
@@ -41,37 +43,44 @@ sub create_activity {
 
     return if !$params{id};
 
+    $self->has_logger && $self->logger->debug( sprintf 'create graph for %s %s', $params{type}, $params{id} );
+
     my $activity = Chart::Clicker->new(
         width  => $self->width,
         height => $self->height,
     );
 
     # we want bar diagrams
+    $self->has_logger && $self->logger->debug( 'set bar renderer' );
     my $renderer = Chart::Clicker::Renderer::Bar->new;
     $activity->set_renderer( $renderer );
 
     # set some basic stuff
+    $self->has_logger && $self->logger->debug( sprintf 'visible: %s // hidden-x: %s // hidden-y: %s', $self->legend, $self->x_hidden, $self->y_hidden );
     $activity->legend->visible( $self->legend );
     $activity->get_context('default')->domain_axis->hidden( $self->x_hidden );
     $activity->get_context('default')->range_axis->hidden( $self->y_hidden );
 
+    $self->has_logger && $self->logger->debug( sprintf 'title: %s', $self->title );
     $activity->title->text( $self->title );
 
     # push an extra 0 to make the graph look nicer. Without that push
     # the last bar is too small...
     my @activity_data = $self->_get_activity_data( %params );
+    $self->has_logger && $self->logger->debug( Dumper \@activity_data );
 
     if ( @activity_data && first { $_ != 0 }@activity_data ) {
         push @activity_data, 0;
         $activity->add_data( 'Uploads', \@activity_data );
     }
 
-    $activity->write_output(
-        File::Spec->catfile(
-            $self->output_dir,
-            sprintf "%s_%s.png", $params{type}, $params{id}
-        )
+    my $output_file = File::Spec->catfile(
+         $self->output_dir,
+        sprintf "%s_%s.png", $params{type}, $params{id}
     );
+
+    $self->has_logger && $self->logger->debug( "Output: $output_file" );
+    $activity->write_output( $output_file );
 }
 
 sub _get_activity_data {
@@ -83,6 +92,8 @@ sub _get_activity_data {
         start => $self->start,
     );
     
+    $self->has_logger && $self->logger->debug( "Raw data: " . Dumper \@raw_data );
+
     my %hashed_data;
 
     # initialize months values with 0 to get 24 values
@@ -91,6 +102,8 @@ sub _get_activity_data {
         my ($month,$year)  = (localtime $time)[4,5];
         my $key            = sprintf "%04d%02d", $year, $month;
         $hashed_data{$key} = 0;
+
+        $time += $MONTH;
     }
 
     # get activity values
@@ -100,7 +113,11 @@ sub _get_activity_data {
         $hashed_data{$key}++;
     }
 
+    $self->has_logger && $self->logger->debug( "Hashed data: " . Dumper \%hashed_data );
+
     my @activity_data = map{ $hashed_data{$_} } sort keys %hashed_data;
+    $self->has_logger && $self->logger->debug( "Activity data: " . Dumper \@activity_data );
+
     return @activity_data;
 }
 
