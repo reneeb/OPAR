@@ -5,6 +5,7 @@ use warnings;
 
 use Data::Dumper;
 use File::Basename;
+use File::Temp qw(tempdir);
 use Log::Log4perl;
 use Parallel::ForkManager;
 use Path::Class;
@@ -79,8 +80,9 @@ sub run {
     }
     
     # init fork manager
+    my $tempdir       = tempdir( CLEANUP => 1 );
     my $max_processes = $self->config->get( 'fork.max' );
-    my $fork_manager  = Parallel::ForkManager->new( $max_processes );
+    my $fork_manager  = Parallel::ForkManager->new( $max_processes, $tempdir );
     $logger->trace( 'init fork manager with max ' . $max_processes . ' processes' );
 
     my @activity_graphs;
