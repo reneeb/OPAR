@@ -277,6 +277,7 @@ sub download {
         return $self->render( text => $html, format => 'html' ); ;
     }
 
+    $dao->increment_download;
     $self->render_file( filepath => $dao->path, filename => sprintf "%s-%s.opm", $dao->package_name, $dao->version );
 }
 

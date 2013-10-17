@@ -21,6 +21,7 @@ __PACKAGE__->add_columns( qw/
     virtual_path
     deletion_flag
     documentation
+    downloads
 /);
 __PACKAGE__->set_primary_key( qw/ package_id / );
 

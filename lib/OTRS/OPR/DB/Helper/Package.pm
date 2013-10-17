@@ -124,9 +124,18 @@ sub page {
         
     my @packages_for_template;
     for my $package ( @packages ) {
+        my $info = package_to_hash( $self, $package, $params );
+
+        if ( $params->{downloads} ) {
+            my $sum_result = $self->table( 'opr_package' )->search(
+                { name_id => $package->name_id },
+                { select  => [ { sum => 'downloads', '-as' => 'sum_downloads' } ] },
+            )->first;
+            $info->{DOWNLOADS} = $sum_result->get_column( 'sum_downloads' );
+        }
         
         # create the infos for the template
-        push @packages_for_template, package_to_hash( $self, $package, $params );
+        push @packages_for_template, $info;
     }
     
     return ( \@packages_for_template, $pages );
@@ -158,7 +167,7 @@ sub version_list {
         push @selects, { max => 'upload_time', '-as' => 'latest_time' };
         $other_options{group_by} = [ 'framework' ];
     }
-    
+   
     my $resultset = $self->table( 'opr_package' )->search(
         {
             %search_clauses,
@@ -182,6 +191,8 @@ sub version_list {
             $info->{DELETION_PRE}  = 'Un';
             $info->{DELETION_DATE} = time_to_date( $self, $package->deletion_flag );
         }
+
+        $info->{DOWNLOADS} = $package->downloads;
         
         # create the infos for the template
         push @packages_for_template, $info;

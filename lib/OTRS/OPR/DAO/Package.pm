@@ -209,6 +209,12 @@ sub save {
     $self->DEMOLISH;
 }
 
+sub increment_download {
+    my ($self) = @_;
+
+    $self->ask_table( 'opr_package' )->search({ package_id => $self->package_id })->update({ downloads => \'downloads + 1' });
+}
+
 sub BUILD {
     my ($self) = @_;
     

@@ -445,9 +445,10 @@ sub list_packages {
     my ($packages,$pages) = $self->page(
         $page,
         {
-            search   => $search_term,
-            uploader => $self->user->user_id,
-            all      => 1,
+            search    => $search_term,
+            uploader  => $self->user->user_id,
+            all       => 1,
+            downloads => 1,
         }
     );
     my $pagelist = $self->page_list( $pages, $page );
