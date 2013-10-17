@@ -110,7 +110,7 @@ sub do_upload_package {
             ERROR_MESSAGE  => 'The form ID was invalid',
         });
         
-        return $self->upload( %params );
+        return $self->upload_package( %params );
     }
     
     # upload file. This file is needed anyways.
@@ -124,7 +124,7 @@ sub do_upload_package {
             ERROR_MESSAGE  => $file,
         });
         
-        return $self->upload( %params );
+        return $self->upload_package( %params );
     }
     
     # quickcheck for package name:
@@ -148,7 +148,7 @@ sub do_upload_package {
         
         unlink $file;
         
-        return $self->upload( %params );
+        return $self->upload_package( %params );
     }
     
     # create new object and save basic information (uploaded_by, name_id, path and virtual path)
