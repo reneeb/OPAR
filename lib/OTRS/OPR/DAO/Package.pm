@@ -81,6 +81,12 @@ has _last_published => (
     isa => 'Str',
 );
 
+has _is_upload => (
+    is      => 'ro',
+    isa     => 'Int',
+    default => 0,
+);
+
 sub author {
     my ($self) = @_;
     
@@ -283,6 +289,8 @@ sub DEMOLISH {
         
     my @changed_attrs = $self->changed_attrs;
     my $package       = $self->get_object( 'package' );
+
+    return if !$self->package_id && !$self->_is_upload;
     
     if ( !$package ) {
         $package = $self->ask_table( 'opr_package' )->create({

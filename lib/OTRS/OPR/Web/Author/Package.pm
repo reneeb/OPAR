@@ -153,7 +153,8 @@ sub do_upload_package {
     
     # create new object and save basic information (uploaded_by, name_id, path and virtual path)
     my $package = OTRS::OPR::DAO::Package->new(
-        _schema => $self->schema,
+        _schema    => $self->schema,
+        _is_upload => 1,
     );
     
     my $user_name    = $self->user->user_name;
