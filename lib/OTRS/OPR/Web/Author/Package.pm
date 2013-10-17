@@ -350,12 +350,18 @@ sub comments {
             _schema => $self->schema,
             user_id => $self->user->user_id,
         );
+
+        my %packages_seen;
         
+        PACKAGE:
         for my $package ( $author->packages ) {
             my $package_dao = OTRS::OPR::DAO::Package->new(
                 package_id => $package->package_id,
                 _schema      => $self->schema,
             );
+
+            my $name = $package_dao->package_name;
+            next PACKAGE if $packages_seen{$name}++;
 
             push @packages, $package_dao;
         }
