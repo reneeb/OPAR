@@ -789,7 +789,7 @@ section form button:hover {
 }
 
 .activity {
-    position: relative;
-    top: -130px;
+    position: absolute;
+    top: 10px;
     left: 530px
 }
