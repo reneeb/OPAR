@@ -174,17 +174,17 @@ footer {
 
 header {
 	margin: 0 0 2em;
-	background: url(../img/OPAR-Logo.png) left 2px no-repeat;
+	/* background: url(../img/OPAR-Logo.png) left 2px no-repeat; */
 }
 	header h1 {
 		/* padding: 0 0 10px 2px; */
 		
 		width: 143px;
 		height: 60px;
-		background: url(../img/OPAR-Logo.png) left top no-repeat;
+		/* background: url(../img/OPAR-Logo.png) left top no-repeat; */
 	}
 	header h1 * {
-		display: none;
+		/* display: none; */
 	}
 	
 	header p {
@@ -232,6 +232,14 @@ header {
 			-webkit-box-shadow: 0 0 6px #666;
 			-moz-box-shadow: 0 0 6px #666;
 		}
+
+#opar_head_link {
+	display: block;
+	background: url(../img/OPAR-Logo.png) left 2px no-repeat;
+	height: 60px;
+	text-indent: -99999px;
+	width: 143px;
+}
 
 section {
 

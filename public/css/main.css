@@ -122,16 +122,11 @@ header, section, footer {
 	margin: 1em 0; 
 	position: relative; 
 }
-header { 
-	margin: 0 0 2em; 
-	background: url(../img/OPAR-Logo.png) left 2px no-repeat; 
-}
+header { margin: 0 0 2em; }
 header h1 { 
 	width: 143px; 
 	height: 60px; 
-	background: url(../img/OPAR-Logo.png) left top no-repeat; 
 }
-header h1 * { display: none; }
 header p { 
 	border-top: solid 1px #333333; 
 	font-size: 80%; 
@@ -174,6 +169,13 @@ header form input[type="submit"]:hover {
 	box-shadow: 0 0 6px #666666; 
 	-webkit-box-shadow: 0 0 6px #666666; 
 	-moz-box-shadow: 0 0 6px #666666; 
+}
+#opar_head_link { 
+	display: block; 
+	background: url(../img/OPAR-Logo.png) left 2px no-repeat; 
+	height: 60px; 
+	text-indent: -99999px; 
+	width: 143px; 
 }
 section > h1 { font-size: 160%; }
 section > h2 { font-size: 140%; }
