@@ -207,6 +207,7 @@ sub _save_documentation {
     return if !$html;
     
     $package->documentation( $html );
+    $package->documentation_raw( $docu->{content} );
     
     # save the updates
     $package->update;

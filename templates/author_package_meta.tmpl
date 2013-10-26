@@ -1,0 +1,29 @@
+<section>
+	<h1>Edit Metadata for Package <i><%= NAME %></i></h1>
+</section>
+
+<section>		
+	<div>
+		<form action="/author/package/meta/<%= PACKAGE_ID %>/save" method="post">
+  		<input type="hidden" name="formid" value="<%= FORMID %>" />
+			<dl>
+				<dt>Description</dt>
+				<dd><textarea name="documentation_raw" id="documentation_raw" class="px290"><%= documentation_raw %></textarea><br />
+                                    <a href="http://perldoc.perl.org/perlpod.html">Pod format</a></dd>
+				
+				<dt>Overwrite Documentation</dt>
+				<dd><input type="checkbox" name="overwrite_docs" checked="checked" /></dd>
+
+				<!-- <dt>Tags</dt>
+				<dd><span id="span_tags" class="hidden">
+				        Tags already used for <span id="package_name"></span>
+				    </span>
+				    <input type="text" name="tags" id="tags" class="px290" value="<%= tags %>" /><br />
+				    separated with ','</dd> -->
+		
+				<dt class="empty">&nbsp;</dt>
+				<dd class="right"><button type="submit" name="submit" value="Save">Save</button></dd>
+			</dl>
+		</form>
+	</div>
+</section>

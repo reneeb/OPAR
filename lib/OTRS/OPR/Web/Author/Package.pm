@@ -13,6 +13,7 @@ use OTRS::OPR::DAO::Author;
 use OTRS::OPR::DAO::Comment;
 use OTRS::OPR::DAO::Maintainer;
 use OTRS::OPR::DAO::Package;
+use OTRS::OPR::Doc::Converter;
 use OTRS::OPR::DB::Helper::Author  qw(active_authors);
 use OTRS::OPR::DB::Helper::Job     qw(create_job find_job);
 use OTRS::OPR::DB::Helper::Package (qw(page user_is_maintainer package_exists package_name_object),
@@ -171,6 +172,14 @@ sub do_upload_package {
     $package->name_id( $name_id );
     $package->upload_time( time );
     $package->description( $params{description} );
+    $package->documentation_raw( $params{description} );
+
+    my $converter = OTRS::OPR::Doc::Converter->new(
+        raw => $params{description},
+    );
+
+    my $html = $converter->convert;
+    $package->documentation( $html ) if $html;
     
     for my $tag ( split /\s*,\s*/, $params{tags} ) {
         $package->add_tag( $tag );
@@ -506,6 +515,67 @@ sub version_list {
 
     my $html = $self->render_opar( 'author_package_version_list' );
     return $self->render( text => $html, format => 'html' );
+}
+
+sub edit_package_meta {
+    my ($self) = @_;
+
+    my $package_id = $self->param('id');
+
+    # check if author is a maintainer of this package
+    if ( !$self->user_is_maintainer( $self->user, { id => $package_id } ) ) {
+        return $self->list_packages;
+    }
+
+    my $package = OTRS::OPR::DAO::Package->new(
+    	package_id   => $package_id,
+        _schema      => $self->schema,
+    );
+    
+    if ( !$package ) {
+        return $self->list_packages;
+    }
+
+    $self->stash( $package->to_hash, documentation_raw => $package->documentation_raw );
+
+    my $html = $self->render_opar( 'author_package_meta' );
+    return $self->render( text => $html, format => 'html' );
+}
+
+sub save_package_meta {
+    my ($self) = @_;
+
+    my $package_id = $self->param('id');
+
+    # check if author is a maintainer of this package
+    if ( !$self->user_is_maintainer( $self->user, { id => $package_id } ) ) {
+        return $self->list_packages;
+    }
+
+    my $package = OTRS::OPR::DAO::Package->new(
+    	package_id   => $package_id,
+        _schema      => $self->schema,
+    );
+    
+    if ( !$package ) {
+        return $self->list_packages;
+    }
+
+    my $raw       = $self->param( 'documentation_raw' );
+    my $converter = OTRS::OPR::Doc::Converter->new(
+        raw => $raw,
+    );
+
+    my $html = $converter->convert;
+
+    if ( !$html ) {
+        return $self->edit_package_meta;
+    }
+
+    $package->documentation( $html ) if $self->param('overwrite_docs');;
+    $package->documentation_raw( $raw );
+
+    $self->redirect_to( '/author/package/versions/' . $package->package_name );
 }
 
 sub _get_package_name {

@@ -155,6 +155,8 @@ sub startup {
             '/author/package/comment/unpublish/:id'  => [ 'Author::Package', 'unpublish_comment' ], 
             '/author/package/comment/delete/:id'     => [ 'Author::Package', 'delete_comment'    ],
             '/author/package/delete/:id'             => [ 'Author::Package', 'delete_package'    ],
+            '/author/package/meta/:id'               => [ 'Author::Package', 'edit_package_meta' ],
+            '/author/package/meta/:id/save'          => [ 'Author::Package', 'save_package_meta' ],
             '/author/package/undelete/:id'           => [ 'Author::Package', 'undelete_package'  ],
             '/author/package/reanalyze/:id'          => [ 'Author::Package', 'reanalyze_package' ],
             '/author/package/versions/:package'      => [ 'Author::Package', 'version_list'      ],

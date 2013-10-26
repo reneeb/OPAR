@@ -30,6 +30,7 @@ CREATE TABLE `opr_package` (
   virtual_path VARCHAR(255) ,
   deletion_flag BIGINT ,
   documentation TEXT,
+  documentation_raw TEXT,
   downloads INT NOT NULL DEFAULT 0,
   PRIMARY KEY(package_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;

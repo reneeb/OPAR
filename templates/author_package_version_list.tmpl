@@ -21,6 +21,7 @@
         scheduled for deletion on
         <span id="deletion_date_<%= PACKAGE_ID %>"><%= DELETION_DATE %></span>
       </span>
+      <a href="/author/package/meta/<%= PACKAGE_ID %>" class="button">edit metadata</a> 
       <a href="#"
          id="delete_link_<%= PACKAGE_ID %>"
          onclick="OPAR.Package.<%= DELETION_PRE %>Delete( '<%= PACKAGE_ID %>' );" class="button">(un-)delete</a>

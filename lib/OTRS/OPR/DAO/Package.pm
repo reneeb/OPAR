@@ -11,7 +11,7 @@ extends 'OTRS::OPR::DAO::Base';
 my @attributes = qw(
     uploaded_by description version name_id
     framework path virtual_path is_in_index website bugtracker upload_time
-    deletion_flag documentation
+    deletion_flag documentation documentation_raw
 );
 
 for my $attribute ( @attributes ) {
