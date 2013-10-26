@@ -178,8 +178,8 @@ sub do_upload_package {
         raw => $params{description},
     );
 
-    my $html = $converter->convert;
-    $package->documentation( $html ) if $html;
+    my $doc_html = $converter->convert;
+    $package->documentation( $doc_html ) if $html;
     
     for my $tag ( split /\s*,\s*/, $params{tags} ) {
         $package->add_tag( $tag );
