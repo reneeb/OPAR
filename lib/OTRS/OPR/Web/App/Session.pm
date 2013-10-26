@@ -60,6 +60,10 @@ sub is_expired{
     return !$valid;
 }
 
+sub delete {
+    shift->app->session( OPAR => 'undef' );
+}
+
 sub update_session{
     return 1;
 }

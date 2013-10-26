@@ -164,6 +164,17 @@ sub search {
     $self->render( text => $html, format => 'html' )
 }
 
+sub logout {
+    my ($self) = @_;
+
+    my $user = $self->user;
+    $user->session_id( undef );
+
+    $self->opar_session->delete;
+
+    $self->redirect_to( '/login' );
+}
+
 sub login {
     my ($self) = @_;
     
