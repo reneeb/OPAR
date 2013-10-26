@@ -23,7 +23,7 @@
                                     <ul id="package_list">
                                         <%LOOP name="PACKAGES" %>
                                         <li id="package_<%= NAME_ID %>">
-                                            <input type="hidden" name="package" value="<%= NAME_ID %>" />
+                                            <input type="hidden" name="package_<%= NAME_ID %>" value="<%= NAME_ID %>" />
                                             <%= NAME %>
                                             <img src="/img/delete.png" onclick="delete_package(<%= NAME_ID %>)" alt="delete" title="delete package" />
                                         </li>
@@ -60,7 +60,7 @@
     function add_package ( id, name ) {
         $('package_list').insert(
             "<li id=\"package_" + id + "\"> " +
-            "    <input type=\"hidden\" name=\"package\" value=\"" + id + "\" /> " + 
+            "    <input type=\"hidden\" name=\"package_" + id + "\" value=\"" + id + "\" /> " + 
             name +
             "    <img src=\"/img/delete.png\" onclick=\"delete_package(" + id + ")\" alt=\"delete\" title=\"delete package\" /> "  +
             "</li>"

@@ -129,7 +129,7 @@ sub DEMOLISH {
 
     return if !$repo;
     
-    #$self->_schema->storage->debug( 1 );
+#    $self->_schema->storage->debug( 1 );
     
     ATTRELEMENT:
     for my $attr_element ( @changed_attrs ) {
@@ -143,7 +143,7 @@ sub DEMOLISH {
             $self->ask_table( 'opr_repo_package' )->search({ repo_id => $self->repo_id })->delete;
 
             for my $name_id ( @package_ids ) {
-                $self->ask_table( 'opr_repo_package' )->find_or_create({
+                $self->ask_table( 'opr_repo_package' )->create({
                     repo_id => $self->repo_id,
                     name_id => $name_id,
                 });
@@ -155,6 +155,7 @@ sub DEMOLISH {
         $repo->$attr( $self->$attr() );
     }
     
+#    $self->_schema->storage->debug( 0 );
     $repo->in_storage ? $repo->update : $repo->insert;
 }
 

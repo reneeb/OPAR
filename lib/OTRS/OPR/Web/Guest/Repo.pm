@@ -66,8 +66,7 @@ sub add_form {
 sub add {    
     my ($self) = @_;
     
-    my %params = %{ $self->req->params->to_hash || {} };
-    my %errors;
+    my %params            = %{ $self->req->params->to_hash || {} };
     my $notification_type = 'success';
     my $config            = $self->opar_config;
     
@@ -179,7 +178,8 @@ sub save {
     return $self->redirect_to( '/repo' ) if !$repo;
 
     my %params      = %{ $self->req->params->to_hash || {} };
-    my @package_ids = $self->param( 'package' );
+    my @fieldnames  = grep{ /^package_\d+$/ }keys %params;
+    my @package_ids = @params{@fieldnames};
 
     my $repo_dao = OTRS::OPR::DAO::Repo->new(
         _schema => $self->schema,
