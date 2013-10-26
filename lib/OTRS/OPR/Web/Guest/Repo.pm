@@ -77,10 +77,14 @@ sub add {
     my $formid_ok = $self->validate_formid( \%params );
  
     # check captcha
-    #my $success = $self->validate_captcha( \%params );
-    my $success = 1;
+    my $success = $self->validate_captcha( \%params );
 
-    if ($formid_ok && $success) {
+    my %errors = $self->validate_fields( 'repo.yml', \%params );
+    if ( %errors ) {
+        return $self->add_form;
+    }
+
+    if ($formid_ok && $success ) {
 
         # save data object to db
         my $repo = OTRS::OPR::DAO::Repo->new(
