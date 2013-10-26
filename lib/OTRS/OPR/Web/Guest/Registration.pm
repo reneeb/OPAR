@@ -48,7 +48,7 @@ sub send_registration {
     
     my %params = %{ $self->req->params->to_hash || {} };
     
-    # check captcha
+    # check captcha 
     my $success = $self->validate_captcha( \%params );
     if ( !$success ) {
         return $self->start;

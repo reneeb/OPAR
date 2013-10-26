@@ -97,6 +97,7 @@ sub startup {
     
                 if( $user ) {
                     $c->{___user} = $user;
+                    $c->stash( __LOGGEDIN__ => $user->user_name );
                 }
             }
         }

@@ -131,6 +131,7 @@ header p {
 	border-top: solid 1px #333333; 
 	font-size: 80%; 
 	background: #eeeeee; 
+	width: 100%; 
 	padding: 0.6em 0.8em; 
 	border-radius: 0 0 0.4em 0.4em; 
 	-webkit-border-radius: 0 0 0.4em 0.4em; 
