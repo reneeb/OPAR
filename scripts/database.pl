@@ -9,9 +9,9 @@ use DBIx::Class::DeploymentHandler;
 use File::Basename;
 use File::Spec;
 use Getopt::Long;
-use JSON::XS;
+use YAML::Tiny;
 
-use AuthorDB::DB::Schema;
+use OTRS::OPR::DB::Schema;
 
 no warnings 'experimental';
 
@@ -39,16 +39,15 @@ $cmd || usage();
 
 my $base_dir               = File::Spec->rel2abs( File::Spec->catdir( dirname( __FILE__ ), '..' ) );
 my $deployment_handler_dir = File::Spec->catdir( $base_dir, 'db_upgrades' );
-my $json_file              = $ENV{AUTHORDB_CONFIG} || File::Spec->catfile( $base_dir, 'conf', 'base.json' );
-my $json                   = do{ local (@ARGV, $/) = @_; <> };
-my $config                 = JSON::XS->new->decode( $json );
+my $yaml_file              = $ENV{OPAR_CONFIG} || File::Spec->catfile( $base_dir, 'conf', 'base.yml' );
+my $config                 = YAML::Tiny->read( $yaml_file )->[0];
 
 my $dh;
 if( $config->{db}->{name} ) {
     my $db           = $config->{db}->{name};
     my $host         = $config->{db}->{host};
     my $type         = $config->{db}->{type};
-    my $schema       = AuthorDB::DB::Schema->connect(
+    my $schema       = OTRS::OPR::DB::Schema->connect(
         "DBI:$type:$db:$host",
         $config->{db}->{user},
         $config->{db}->{pass},
@@ -63,10 +62,10 @@ if( $config->{db}->{name} ) {
             force_overwrite  => 1,
         }
     );
-}
 
-die 'We only support versions of format \d+\.\d+.'
-    unless $dh->schema_version =~ /^\d+\.\d+$/;
+    die 'We only support versions of format \d+\.\d+.'
+        unless $dh->schema_version =~ /^\d+\.\d+$/;
+}
 
 if ( $cmd ne 'init' and !$dh ) {
    die "you need to initialize the database first! (database.pl --cmd init)";
@@ -83,7 +82,7 @@ for ($cmd) {
 }
 
 sub init {
-    print "Init database for AuthorDB...\n";
+    print "Init database for OPAR...\n";
     print "Database type (mysql or PostgreSQL): ";
     my $type = <STDIN>;
     chomp $type;
@@ -136,9 +135,9 @@ sub init {
         pass => $pass,
     };
 
-    open my $fh, '>', $json_file;
-    print $fh JSON::XS->new->pretty->encode( $config );
-    close $fh;
+    my $yaml_write = YAML::Tiny->new;
+    $yaml_write->[0] = $config;
+    $yaml_write->write( $yaml_file );
 }
 
 sub prepare {
