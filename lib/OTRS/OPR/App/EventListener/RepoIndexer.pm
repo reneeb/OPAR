@@ -15,7 +15,7 @@ on 'repo_saved' => sub {
     my $repo          = $schema->resultset( 'opr_repo' )->search({ repo_id => $repo_id })->first;
     my @repo_packages = $repo->opr_repo_package; 
 
-    my $framework_version = $repo->framework . '%';
+    my $framework_version = '%' . $repo->framework . '%';
     my @name_ids          = map{ $_->name_id }@repo_packages;
 
     my @packages = $schema->resultset( 'opr_package' )->search(
