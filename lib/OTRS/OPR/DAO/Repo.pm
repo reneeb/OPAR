@@ -157,6 +157,7 @@ sub DEMOLISH {
     
 #    $self->_schema->storage->debug( 0 );
     $repo->in_storage ? $repo->update : $repo->insert;
+    $self->fire( repo_save => $self->repo_id ); 
 }
 
 no Moose;
