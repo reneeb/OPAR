@@ -2,7 +2,7 @@ package OTRS::OPR::DB::Schema;
 
 use base qw/DBIx::Class::Schema/;
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 __PACKAGE__->load_namespaces;
 
