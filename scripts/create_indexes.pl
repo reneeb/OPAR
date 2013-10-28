@@ -36,7 +36,7 @@ my $schema       = OTRS::OPR::DB::Schema->connect(
     $schema_class,
 );
 
-$schema->storage->debug(1);
+# $schema->storage->debug(1);
 
 my @frameworks = $schema->resultset( 'opr_framework_versions' )->search();
 
@@ -86,8 +86,8 @@ for my $repo ( @repos ) {
     my @repo_packages = $repo->opr_repo_package;
     my @name_ids      = map{ $_->name_id }@repo_packages;
 
-use Data::Dumper;
-print Dumper [ \@name_ids, $files{$repo->framework}, $repo->framework, \%files ];
+#    use Data::Dumper;
+#    print Dumper [ \@name_ids, $files{$repo->framework}, $repo->framework, \%files ];
 
     $repos_to_create{ $repo->repo_id } = [ @{ $files{ $repo->framework } }{@name_ids} ];
     $all_repos{ $repo->repo_id }       = $repo;
