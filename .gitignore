@@ -7,3 +7,4 @@ public/img/activities/*
 opr.web.log
 *.swp
 *nohup.out
+*.bak
