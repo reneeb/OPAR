@@ -120,6 +120,7 @@ sub startup {
             '/repo/:id/manage'                          => [ 'Guest::Repo',         'manage'                  ],
             '/repo/manage'                              => [ 'Guest::Repo',         'manage'                  ],
             '/repo/:id/save'                            => [ 'Guest::Repo',         'save'                    ],
+            '/repo/:id/file'                            => [ 'Guest::Repo',         'file'                    ],
             '/repo/:id/file/*file'                      => [ 'Guest::Repo',         'file'                    ],
             '/dist/*package'                            => [ 'Guest::Package',      'dist'                    ],
             '/package/:initial/:short/:author/*package' => [ 'Guest::Package',      'dist'                    ],

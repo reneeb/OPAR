@@ -21,10 +21,10 @@ sub file {
     my $repo_id = $self->param('id');
     my $config  = $self->opar_config;
 
-    if ( $repo_id eq 'otrs' && $file eq 'otrs.xml' ) {
+    if ( $repo_id eq 'otrs' && $file =~ m{\A/?otrs.xml\z} ) {
         return $self->render_file( filepath => $config->get( 'otrs.index' ), filename => 'otrs.xml' );
     }
-    elsif ( $file eq 'otrs.xml' ) {
+    elsif ( $file =~ m{\A/?otrs.xml\z} ) {
         my ($repo) = $self->table( 'opr_repo' )->find( $repo_id );
         return $self->render_file( data => $repo->index_file, filename => 'otrs.xml' );
     }
