@@ -4,14 +4,28 @@ use strict;
 use warnings;
 use base qw(DBIx::Class);
 
+our $VERSION = 0.01;
+
 __PACKAGE__->load_components( qw/PK::Auto Core/ );
 __PACKAGE__->table( 'opr_package_author' );
-__PACKAGE__->add_columns( qw/
-    user_id
-    name_id
-    is_main_author
-/);
-__PACKAGE__->set_primary_key( qw/ user_id name_id / );
+__PACKAGE__->add_columns(
+    user_id => {
+        data_type          => 'INT',
+        is_numeric         => 1,
+        retrieve_on_insert => 1,
+        is_foreign_key     => 1,
+    },
+    name_id => {
+        data_type          => 'INT',
+        is_numeric         => 1,
+        is_foreign_key     => 1,
+    },
+    is_main_author => {
+        data_type          => 'TINYINT',
+    },
+
+);
+__PACKAGE__->set_primary_key( qw/ user_id / );
 
 
 
