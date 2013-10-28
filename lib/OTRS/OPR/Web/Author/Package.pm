@@ -179,7 +179,7 @@ sub do_upload_package {
     );
 
     my $doc_html = $converter->convert;
-    $package->documentation( $doc_html ) if $html;
+    $package->documentation( $doc_html ) if $doc_html;
     
     for my $tag ( split /\s*,\s*/, $params{tags} ) {
         $package->add_tag( $tag );
