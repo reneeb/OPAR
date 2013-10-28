@@ -63,8 +63,8 @@ if( $config->{db}->{name} ) {
         }
     );
 
-    die 'We only support versions of format \d+\.\d+.'
-        unless $dh->schema_version =~ /^\d+\.\d+$/;
+    die 'We only support versions of integer format '
+        unless $dh->schema_version =~ /^\d+$/;
 }
 
 if ( $cmd ne 'init' and !$dh ) {

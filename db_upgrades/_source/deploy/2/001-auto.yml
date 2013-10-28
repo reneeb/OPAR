@@ -1,0 +1,1558 @@
+---
+schema:
+  procedures: {}
+  tables:
+    opr_comments:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - comment_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        comment_id:
+          data_type: INT
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: comment_id
+          order: 1
+          size:
+            - 0
+        comments:
+          data_type: TEXT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: comments
+          order: 5
+          size:
+            - 0
+        created:
+          data_type: BIGINT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: created
+          order: 10
+          size:
+            - 0
+        deletion_flag:
+          data_type: BIGINT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: deletion_flag
+          order: 7
+          size:
+            - 0
+        headline:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: headline
+          order: 8
+          size:
+            - 255
+        packagename:
+          data_type: VARCHAR
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: packagename
+          order: 3
+          size:
+            - 255
+        packageversion:
+          data_type: VARCHAR
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: packageversion
+          order: 4
+          size:
+            - 255
+        published:
+          data_type: BIGINT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: published
+          order: 9
+          size:
+            - 0
+        rating:
+          data_type: INT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: rating
+          order: 6
+          size:
+            - 0
+        username:
+          data_type: VARCHAR
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: username
+          order: 2
+          size:
+            - 255
+      indices: []
+      name: opr_comments
+      options: []
+      order: 1
+    opr_feeds:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - feed_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        feed_config:
+          data_type: TEXT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: feed_config
+          order: 2
+          size:
+            - 0
+        feed_id:
+          data_type: VARCHAR
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: feed_id
+          order: 1
+          size:
+            - 255
+      indices: []
+      name: opr_feeds
+      options: []
+      order: 2
+    opr_formid:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - formid
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        expire:
+          data_type: BIGINT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: expire
+          order: 3
+          size:
+            - 0
+        formid:
+          data_type: VARCHAR
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: formid
+          order: 1
+          size:
+            - 255
+        used:
+          data_type: TINYINT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: used
+          order: 2
+          size:
+            - 0
+      indices: []
+      name: opr_formid
+      options: []
+      order: 3
+    opr_framework_versions:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - framework
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        framework:
+          data_type: VARCHAR
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: framework
+          order: 1
+          size:
+            - 8
+      indices: []
+      name: opr_framework_versions
+      options: []
+      order: 4
+    opr_group:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - group_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        group_id:
+          data_type: INT
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: group_id
+          order: 1
+          size:
+            - 0
+        group_name:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: group_name
+          order: 2
+          size:
+            - 255
+      indices: []
+      name: opr_group
+      options: []
+      order: 5
+    opr_group_user:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - user_id
+            - group_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - group_id
+          match_type: ''
+          name: opr_group_user_fk_group_id
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - group_id
+          reference_table: opr_group
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - user_id
+          match_type: ''
+          name: opr_group_user_fk_user_id
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - user_id
+          reference_table: opr_user
+          type: FOREIGN KEY
+      fields:
+        group_id:
+          data_type: INT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: group_id
+          order: 2
+          size:
+            - 0
+        user_id:
+          data_type: INT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: user_id
+          order: 1
+          size:
+            - 0
+      indices:
+        - fields:
+            - group_id
+          name: opr_group_user_idx_group_id
+          options: []
+          type: NORMAL
+        - fields:
+            - user_id
+          name: opr_group_user_idx_user_id
+          options: []
+          type: NORMAL
+      name: opr_group_user
+      options: []
+      order: 14
+    opr_job_queue:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - job_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - type_id
+          match_type: ''
+          name: opr_job_queue_fk_type_id
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - type_id
+          reference_table: opr_job_type
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - package_id
+          match_type: ''
+          name: opr_job_queue_fk_package_id
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - package_id
+          reference_table: opr_package
+          type: FOREIGN KEY
+      fields:
+        changed:
+          data_type: BIGINT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: changed
+          order: 6
+          size:
+            - 0
+        created:
+          data_type: BIGINT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: created
+          order: 4
+          size:
+            - 0
+        job_id:
+          data_type: INT
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: job_id
+          order: 1
+          size:
+            - 0
+        job_state:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: job_state
+          order: 5
+          size:
+            - 255
+        package_id:
+          data_type: INT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: package_id
+          order: 3
+          size:
+            - 0
+        type_id:
+          data_type: INT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: type_id
+          order: 2
+          size:
+            - 0
+      indices:
+        - fields:
+            - type_id
+          name: opr_job_queue_idx_type_id
+          options: []
+          type: NORMAL
+        - fields:
+            - package_id
+          name: opr_job_queue_idx_package_id
+          options: []
+          type: NORMAL
+      name: opr_job_queue
+      options: []
+      order: 19
+    opr_job_type:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - type_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        type_id:
+          data_type: INT
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: type_id
+          order: 1
+          size:
+            - 0
+        type_label:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: type_label
+          order: 2
+          size:
+            - 255
+      indices: []
+      name: opr_job_type
+      options: []
+      order: 6
+    opr_oq_entity:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - oq_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        module:
+          data_type: VARCHAR
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: module
+          order: 4
+          size:
+            - 255
+        oq_id:
+          data_type: INT
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: oq_id
+          order: 1
+          size:
+            - 0
+        oq_label:
+          data_type: VARCHAR
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: oq_label
+          order: 2
+          size:
+            - 255
+        priority:
+          data_type: INT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: priority
+          order: 3
+          size:
+            - 0
+      indices: []
+      name: opr_oq_entity
+      options: []
+      order: 7
+    opr_oq_result:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - result_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - oq_id
+          match_type: ''
+          name: opr_oq_result_fk_oq_id
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - oq_id
+          reference_table: opr_oq_entity
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - package_id
+          match_type: ''
+          name: opr_oq_result_fk_package_id
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - package_id
+          reference_table: opr_package
+          type: FOREIGN KEY
+      fields:
+        filename:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: filename
+          order: 5
+          size:
+            - 255
+        oq_id:
+          data_type: INT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: oq_id
+          order: 2
+          size:
+            - 0
+        oq_result:
+          data_type: TEXT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: oq_result
+          order: 4
+          size:
+            - 0
+        package_id:
+          data_type: INT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: package_id
+          order: 3
+          size:
+            - 0
+        result_id:
+          data_type: INT
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: result_id
+          order: 1
+          size:
+            - 0
+      indices:
+        - fields:
+            - oq_id
+          name: opr_oq_result_idx_oq_id
+          options: []
+          type: NORMAL
+        - fields:
+            - package_id
+          name: opr_oq_result_idx_package_id
+          options: []
+          type: NORMAL
+      name: opr_oq_result
+      options: []
+      order: 20
+    opr_package:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - package_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - name_id
+          match_type: ''
+          name: opr_package_fk_name_id
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - name_id
+          reference_table: opr_package_names
+          type: FOREIGN KEY
+      fields:
+        bugtracker:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: bugtracker
+          order: 10
+          size:
+            - 255
+        deletion_flag:
+          data_type: BIGINT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: deletion_flag
+          order: 13
+          size:
+            - 0
+        description:
+          data_type: TEXT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: description
+          order: 4
+          size:
+            - 0
+        documentation:
+          data_type: TEXT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: documentation
+          order: 14
+          size:
+            - 0
+        documentation_raw:
+          data_type: TEXT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: documentation_raw
+          order: 16
+          size:
+            - 0
+        downloads:
+          data_type: INT
+          default_value: "'0'"
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: downloads
+          order: 15
+          size:
+            - 0
+        framework:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: framework
+          order: 6
+          size:
+            - 255
+        is_in_index:
+          data_type: TINYINT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: is_in_index
+          order: 8
+          size:
+            - 0
+        name_id:
+          data_type: INT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: name_id
+          order: 2
+          size:
+            - 0
+        package_id:
+          data_type: INT
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: package_id
+          order: 1
+          size:
+            - 0
+        path:
+          data_type: VARCHAR
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: path
+          order: 7
+          size:
+            - 255
+        upload_time:
+          data_type: INT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: upload_time
+          order: 11
+          size:
+            - 0
+        uploaded_by:
+          data_type: INT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: uploaded_by
+          order: 3
+          size:
+            - 0
+        version:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: version
+          order: 5
+          size:
+            - 255
+        virtual_path:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: virtual_path
+          order: 12
+          size:
+            - 255
+        website:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: website
+          order: 9
+          size:
+            - 255
+      indices:
+        - fields:
+            - name_id
+          name: opr_package_idx_name_id
+          options: []
+          type: NORMAL
+      name: opr_package
+      options: []
+      order: 12
+    opr_package_author:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - user_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - name_id
+          match_type: ''
+          name: opr_package_author_fk_name_id
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - name_id
+          reference_table: opr_package_names
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - user_id
+          match_type: ''
+          name: opr_package_author_fk_user_id
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - user_id
+          reference_table: opr_user
+          type: FOREIGN KEY
+      fields:
+        is_main_author:
+          data_type: TINYINT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: is_main_author
+          order: 3
+          size:
+            - 0
+        name_id:
+          data_type: INT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: name_id
+          order: 2
+          size:
+            - 0
+        user_id:
+          data_type: INT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: user_id
+          order: 1
+          size:
+            - 0
+      indices:
+        - fields:
+            - name_id
+          name: opr_package_author_idx_name_id
+          options: []
+          type: NORMAL
+      name: opr_package_author
+      options: []
+      order: 15
+    opr_package_dependencies:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - dependency_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - package_id
+          match_type: ''
+          name: opr_package_dependencies_fk_package_id
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - package_id
+          reference_table: opr_package
+          type: FOREIGN KEY
+      fields:
+        dependency:
+          data_type: VARCHAR
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: dependency
+          order: 3
+          size:
+            - 255
+        dependency_id:
+          data_type: INT
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: dependency_id
+          order: 1
+          size:
+            - 0
+        dependency_type:
+          data_type: ENUM
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: dependency_type
+          order: 4
+          size:
+            - 0
+        dependency_version:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: dependency_version
+          order: 5
+          size:
+            - 255
+        package_id:
+          data_type: INT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: package_id
+          order: 2
+          size:
+            - 0
+      indices:
+        - fields:
+            - package_id
+          name: opr_package_dependencies_idx_package_id
+          options: []
+          type: NORMAL
+      name: opr_package_dependencies
+      options: []
+      order: 16
+    opr_package_names:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - name_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        name_id:
+          data_type: INT
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: name_id
+          order: 1
+          size:
+            - 0
+        package_name:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: package_name
+          order: 2
+          size:
+            - 255
+      indices: []
+      name: opr_package_names
+      options: []
+      order: 8
+    opr_package_tags:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - name_id
+            - tag_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - name_id
+          match_type: ''
+          name: opr_package_tags_fk_name_id
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - name_id
+          reference_table: opr_package_names
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - tag_id
+          match_type: ''
+          name: opr_package_tags_fk_tag_id
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - tag_id
+          reference_table: opr_tags
+          type: FOREIGN KEY
+      fields:
+        name_id:
+          data_type: INT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: name_id
+          order: 1
+          size:
+            - 0
+        tag_id:
+          data_type: INT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: tag_id
+          order: 2
+          size:
+            - 0
+      indices:
+        - fields:
+            - name_id
+          name: opr_package_tags_idx_name_id
+          options: []
+          type: NORMAL
+        - fields:
+            - tag_id
+          name: opr_package_tags_idx_tag_id
+          options: []
+          type: NORMAL
+      name: opr_package_tags
+      options: []
+      order: 17
+    opr_repo:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - repo_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        email:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: email
+          order: 3
+          size:
+            - 255
+        framework:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: framework
+          order: 2
+          size:
+            - 8
+        index_file:
+          data_type: TEXT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: index_file
+          order: 4
+          size:
+            - 0
+        repo_id:
+          data_type: VARCHAR
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: repo_id
+          order: 1
+          size:
+            - 100
+      indices: []
+      name: opr_repo
+      options: []
+      order: 9
+    opr_repo_package:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - name_id
+            - repo_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - name_id
+          match_type: ''
+          name: opr_repo_package_fk_name_id
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - name_id
+          reference_table: opr_package_names
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - repo_id
+          match_type: ''
+          name: opr_repo_package_fk_repo_id
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - repo_id
+          reference_table: opr_repo
+          type: FOREIGN KEY
+      fields:
+        name_id:
+          data_type: INT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: name_id
+          order: 1
+          size:
+            - 0
+        repo_id:
+          data_type: VARCHAR
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: repo_id
+          order: 2
+          size:
+            - 100
+      indices:
+        - fields:
+            - name_id
+          name: opr_repo_package_idx_name_id
+          options: []
+          type: NORMAL
+        - fields:
+            - repo_id
+          name: opr_repo_package_idx_repo_id
+          options: []
+          type: NORMAL
+      name: opr_repo_package
+      options: []
+      order: 18
+    opr_tags:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - tag_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        tag_id:
+          data_type: INT
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: tag_id
+          order: 1
+          size:
+            - 0
+        tag_name:
+          data_type: VARCHAR
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: tag_name
+          order: 2
+          size:
+            - 255
+      indices: []
+      name: opr_tags
+      options: []
+      order: 10
+    opr_temp_passwd:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - user_id
+          match_type: ''
+          name: opr_temp_passwd_fk_user_id
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - user_id
+          reference_table: opr_user
+          type: FOREIGN KEY
+      fields:
+        created:
+          data_type: INT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: created
+          order: 4
+          size:
+            - 0
+        id:
+          data_type: INT
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        token:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: token
+          order: 3
+          size:
+            - 255
+        user_id:
+          data_type: INT
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: user_id
+          order: 2
+          size:
+            - 0
+      indices:
+        - fields:
+            - user_id
+          name: opr_temp_passwd_idx_user_id
+          options: []
+          type: NORMAL
+      name: opr_temp_passwd
+      options: []
+      order: 13
+    opr_user:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - user_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        active:
+          data_type: TINYINT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: active
+          order: 7
+          size:
+            - 0
+        mail:
+          data_type: VARCHAR
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: mail
+          order: 6
+          size:
+            - 255
+        realname:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: realname
+          order: 9
+          size:
+            - 255
+        registered:
+          data_type: INT
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: registered
+          order: 8
+          size:
+            - 0
+        session_id:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: session_id
+          order: 4
+          size:
+            - 255
+        user_id:
+          data_type: INT
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: user_id
+          order: 1
+          size:
+            - 0
+        user_name:
+          data_type: VARCHAR
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: user_name
+          order: 2
+          size:
+            - 255
+        user_password:
+          data_type: VARCHAR
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: user_password
+          order: 3
+          size:
+            - 255
+        website:
+          data_type: VARCHAR
+          default_value: NULL
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: website
+          order: 5
+          size:
+            - 255
+      indices: []
+      name: opr_user
+      options: []
+      order: 11
+  triggers: {}
+  views: {}
+translator:
+  add_drop_table: 0
+  filename: ~
+  no_comments: 0
+  parser_args:
+    sources:
+      - opr_comments
+      - opr_package_names
+      - opr_framework_versions
+      - opr_oq_result
+      - opr_job_queue
+      - opr_job_type
+      - opr_package_dependencies
+      - opr_group
+      - opr_package_author
+      - opr_package_tags
+      - opr_feeds
+      - opr_package
+      - opr_repo
+      - opr_formid
+      - opr_group_user
+      - opr_repo_package
+      - opr_user
+      - opr_temp_passwd
+      - opr_oq_entity
+      - opr_tags
+  parser_type: SQL::Translator::Parser::DBIx::Class
+  producer_args: {}
+  producer_type: SQL::Translator::Producer::YAML
+  show_warnings: 0
+  trace: 0
+  version: 0.11016
