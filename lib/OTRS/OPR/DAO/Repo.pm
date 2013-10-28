@@ -2,6 +2,7 @@ package OTRS::OPR::DAO::Repo;
 
 use Moose;
 use OTRS::OPR::App::AttributeInformation;
+use OTRS::OPR::App::EventHandler;
 
 extends 'OTRS::OPR::DAO::Base';
 
@@ -157,7 +158,8 @@ sub DEMOLISH {
     
 #    $self->_schema->storage->debug( 0 );
     $repo->in_storage ? $repo->update : $repo->insert;
-    $self->fire( repo_save => $self->repo_id ); 
+
+    publish repo_saved => $self->repo_id, $self->_schema;
 }
 
 no Moose;

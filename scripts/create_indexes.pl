@@ -94,7 +94,7 @@ print Dumper [ \@name_ids, $files{$repo->framework}, $repo->framework, \%files ]
 }
 
 for my $repo ( keys %repos_to_create ) {
-    my $index = create_index( $repos_to_create{$repo} );
+    my $index = create_index( $repos_to_create{$repo}, \%paths );
 
     if ( $repo eq 'otrs' ) {
         my $fh = File::Temp->new( UNLINK => 0 );

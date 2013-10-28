@@ -11,7 +11,7 @@ use XML::LibXML::PrettyPrint;
 our @EXPORT_OK = qw(create_index);
 
 sub create_index {
-    my ($opm_files) = @_;
+    my ($opm_files, $paths) = @_;
 
     my $pp = XML::LibXML::PrettyPrint->new(
         indent_string => '  ',
@@ -69,7 +69,7 @@ sub create_index {
         }
 
         my $file_node  = XML::LibXML::Element->new( 'File' );
-        (my $file_path = $paths{$file}) =~ s!(/[A-Z]/[A-Z]{2}/[A-Z]{3}/.*)!$1!;
+        (my $file_path = $paths->{$file}) =~ s!(/[A-Z]/[A-Z]{2}/[A-Z]{3}/.*)!$1!;
         $file_node->appendText( $file_path );
         $root_elem->addChild( $file_node );
 

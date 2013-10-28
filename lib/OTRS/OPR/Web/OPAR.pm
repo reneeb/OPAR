@@ -12,6 +12,7 @@ use DBIx::Class;
 use File::Basename;
 use Path::Class;
 
+use OTRS::OPR::App::EventHandler;
 use OTRS::OPR::DAO::User;
 use OTRS::OPR::Web::App::Mailer;
 use OTRS::OPR::Web::App::Session;
@@ -24,6 +25,8 @@ sub startup {
     $self->home->parse( $ENV{OPAR_APP} );
     $self->static->paths([ $self->home->rel_dir( 'public' )] );
     $self->renderer->paths([ $self->home->rel_dir( 'templates') ]);
+
+    OTRS::OPR::App::EventHandler->init( 'OTRS::OPR::App::EventListener' );
 
     $self->plugin( 
         OPARConfig => {
