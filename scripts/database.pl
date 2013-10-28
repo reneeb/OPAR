@@ -11,9 +11,9 @@ use File::Spec;
 use Getopt::Long;
 use YAML::Tiny;
 
-use OTRS::OPR::DB::Schema;
+use lib dirname(__FILE__) . "/../lib";
 
-no warnings 'experimental';
+use OTRS::OPR::DB::Schema;
 
 GetOptions(
     'command|cmd|c=s' => \my $cmd,
