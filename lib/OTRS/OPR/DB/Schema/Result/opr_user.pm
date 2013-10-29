@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use base qw(DBIx::Class);
 
-our $VERSION = 2;
+our $VERSION = 3;
 
 __PACKAGE__->load_components( qw/PK::Auto Core/ );
 __PACKAGE__->table( 'opr_user' );
@@ -64,10 +64,10 @@ __PACKAGE__->set_primary_key( qw/ user_id / );
 __PACKAGE__->has_many(opr_package_author => 'OTRS::OPR::DB::Schema::Result::opr_package_author',
              { 'foreign.user_id' => 'self.user_id' });
 
-__PACKAGE__->has_many(opr_temp_passwd => 'OTRS::OPR::DB::Schema::Result::opr_temp_passwd',
+__PACKAGE__->has_many(opr_notifications => 'OTRS::OPR::DB::Schema::Result::opr_notifications',
              { 'foreign.user_id' => 'self.user_id' });
 
-__PACKAGE__->has_many(opr_group_user => 'OTRS::OPR::DB::Schema::Result::opr_group_user',
+__PACKAGE__->has_many(opr_temp_passwd => 'OTRS::OPR::DB::Schema::Result::opr_temp_passwd',
              { 'foreign.user_id' => 'self.user_id' });
 
 

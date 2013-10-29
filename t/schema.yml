@@ -10,12 +10,6 @@ schema:
     active: TINYINT
     registered: INTEGER
     realname: VARCHAR(255)
-  opr_group:
-    group_id: INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT
-    group_name: VARCHAR(255) NOT NULL
-  opr_group_user:
-    group_id: INTEGER NOT NULL
-    user_id: INTEGER NOT NULL
   opr_package_names:
     name_id: INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT
     package_name: VARCHAR(255)

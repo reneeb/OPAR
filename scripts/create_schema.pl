@@ -17,7 +17,7 @@ my $foo = MySQL::Workbench::DBIC->new(
     file           => $mwb_file,
     output_path    => $out_dir,
     namespace      => 'OTRS::OPR::DB',
-    version_add    => 1
+    version_add    => 1,
     schema_name    => 'Schema',
     column_details => 1, # default 1
 );
