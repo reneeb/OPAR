@@ -4,13 +4,9 @@ TODO
    Title                                                                    Prio
    -----                                                                    ----
  * Send email to author when analysis is done                               -> 1 # (REB)
- * author's area
  * guest's area
    * FAQ                                                                    -> 1 # (REB)
-   * own feed for OTRS Package Manager                                      -> 1 # (REB)
    * show OK results                                                           2
-   * Show only the newest version of a package on authors' page                2
- * admin's area
  * Perl::Critic policies
    * 4 whitespaces instead of tabulators                                       4
    * using {} as delimiters in RegEx                                           4
@@ -24,9 +20,7 @@ TODO
       * Docbook                                                                2
       * HTML                                                                   3
       * PDF                                                                    4
-   * support multiple framework tags
    * Preview images for Skins
    * License for documentation
-   * drop for search with framework versions
    * "Skin" Checkbox for module upload and a new action in package list
    * News page that shows recent updates
