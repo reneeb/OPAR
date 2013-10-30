@@ -96,7 +96,7 @@ sub create_activity_graphs {
 
     return if !$user || !$name;
 
-    return { user => $user->user_name, package => $name->package_name };
+    return { user => $user->user_name, package => $name->package_name, package_id => $job->package_id };
 }
 
 sub analyze_package {

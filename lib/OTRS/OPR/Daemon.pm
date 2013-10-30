@@ -15,6 +15,7 @@ use OTRS::OPM::Analyzer;
 use OTRS::OPM::Analyzer::Utils::Config;
 use OTRS::OPR::DB::Schema;
 use OTRS::OPR::App::Activity;
+use OTRS::OPR::App::EventHandler;
 
 sub new {
     my ( $class, %args ) = @_;
@@ -30,6 +31,7 @@ sub new {
     # initialize db connection
     $self->_init_db;
     
+    OTRS::OPR::App::EventHandler->init( 'OTRS::OPR::App::EventListener' );
     return $self;
 }
 
@@ -130,6 +132,8 @@ sub run {
 
         $logger->info( 'create activity graph for package ' . $graphs->{package} );
         $activity->create_activity( type => 'package', id => $graphs->{package} );
+
+        publish package_indexed => $graphs->{package_id}, $self->{__schema__}, $self->_base_conf;
     }
 }
 

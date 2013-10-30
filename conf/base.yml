@@ -92,4 +92,10 @@ otrs:
 app:
   reverse_proxy: 1
   secret: 2387t813797198fasdhvljashdsadasld13589(51)
+twitter:
+  url: http://opar/dist/
+  consumer_key: 13djvks230iv
+  consumer_secret: ljaasdlasjrlvbvkkrlraillshyl23131
+  token: 32oi1f10o1ohcoh
+  token_secret: avdfkoqjwlvjlsdjf
 
