@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use base qw(DBIx::Class);
 
-our $VERSION = 3;
+our $VERSION = 4;
 
 __PACKAGE__->load_components( qw/PK::Auto Core/ );
 __PACKAGE__->table( 'opr_package' );
@@ -23,6 +23,7 @@ __PACKAGE__->add_columns(
     uploaded_by => {
         data_type          => 'INT',
         is_numeric         => 1,
+        is_foreign_key     => 1,
     },
     description => {
         data_type          => 'TEXT',
@@ -112,6 +113,9 @@ __PACKAGE__->has_many(opr_package_dependencies => 'OTRS::OPR::DB::Schema::Result
 
 __PACKAGE__->belongs_to(opr_package_names => 'OTRS::OPR::DB::Schema::Result::opr_package_names',
              { 'foreign.name_id' => 'self.name_id' });
+
+__PACKAGE__->belongs_to(opr_user => 'OTRS::OPR::DB::Schema::Result::opr_user',
+             { 'foreign.user_id' => 'self.uploaded_by' });
 
 
 1;

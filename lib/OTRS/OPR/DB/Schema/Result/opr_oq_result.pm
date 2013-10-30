@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use base qw(DBIx::Class);
 
-our $VERSION = 3;
+our $VERSION = 4;
 
 __PACKAGE__->load_components( qw/PK::Auto Core/ );
 __PACKAGE__->table( 'opr_oq_result' );
