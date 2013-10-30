@@ -141,29 +141,7 @@ sub DEMOLISH {
         
         next ATTRELEMENT if $attr eq 'user_id';
         
-        if ( $attr ne 'groups' ) {
-            $user->$attr( $self->$attr() );
-        }
-        elsif ( $attr eq 'groups' ) {
-            $self->ask_table( 'opr_group_user' )->search({
-                user_id => $self->user_id
-            })->delete;
-            
-            GROUP:
-            for my $group ( $self->group_list ) {
-                my ($group_object) = $self->ask_table( 'opr_group' )->search({
-                    group_name => $group->[0],
-                });
-                
-                next GROUP if !$group_object;
-                
-                my ($group_user) = $self->ask_table( 'opr_group_user' )->create({
-                    group_id => $group_object->group_id,
-                    user_id  => $self->user_id,
-                });
-                $group_user->update;
-            }
-        }
+        $user->$attr( $self->$attr() );
     }
     $user->update;
 }

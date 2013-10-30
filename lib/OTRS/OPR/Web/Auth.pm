@@ -9,7 +9,7 @@ sub author {
 
     my $user  = $self->user;
 
-    if ( $user and $user->has_group( 'author' ) ) {
+    if ( $user ) {
         $self->opar_session->update_session;
         $self->stash( main_template => $self->opar_config->get( 'templates.author' ) );
         return 1;

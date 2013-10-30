@@ -279,7 +279,6 @@ sub confirm_password_change {
 
     $user->user_password( $crypted_passwd );
     $user->active( 1 );
-    $user->add_group( 'author' => 1 );
     
     $self->delete_temp_passwd( \%params );
     
