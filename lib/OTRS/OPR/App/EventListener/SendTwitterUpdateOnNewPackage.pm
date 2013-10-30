@@ -13,23 +13,27 @@ on 'package_indexed' => sub {
     my $schema     = shift;
     my $config     = shift;
 
+    return if !$package_id || !$schema || !$config;
+
     my $package = $schema->resultset( 'opr_package' )->search({ package_id => $package_id })->first;
 
     return if !$package;
-    
+
+    my $twitter = $config->get('twitter');
+
     my $nt = Net::Twitter->new(
         traits   => [qw/API::RESTv1_1/],
-        consumer_key        => $config->{twitter}->{consumer_key},
-        consumer_secret     => $config->{twitter}->{consumer_secret},
-        access_token        => $config->{twitter}->{token},
-        access_token_secret => $config->{twitter}->{token_secret},
+        consumer_key        => $twitter->{consumer_key},
+        consumer_secret     => $twitter->{consumer_secret},
+        access_token        => $twitter->{token},
+        access_token_secret => $twitter->{token_secret},
     );
  
-    my $name    = $package->opr_package_names->name;
+    my $name    = $package->opr_package_names->package_name;
     my $message = sprintf 'A new module on #OPAR: %s %s %s%s #OTRS',
         $name,
         $package->version,
-        $config->{twitter}->{url},
+        $twitter->{url},
         $name;
      
     my $result  = $nt->update($message);
