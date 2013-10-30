@@ -1,8 +1,9 @@
 package OTRS::OPR::DAO::Comment;
 
 use Moose;
-use OTRS::OPR::App::AttributeInformation;
 
+use OTRS::OPR::App::AttributeInformation;
+use OTRS::OPR::App::EventHandler;
 use OTRS::OPR::Web::Utils qw(time_to_date);
 
 extends 'OTRS::OPR::DAO::Base';
@@ -105,7 +106,14 @@ sub DEMOLISH {
         $comment->$attr( $self->$attr() );
     }
     
-    $comment->in_storage ? $comment->update : $comment->insert;
+    if ( $comment->in_storage ) {
+        $comment->update;
+        publish comment_changed => $comment->comment_id, $comment->_schema;
+    }
+    else {
+        $comment->insert;
+        publish comment_created => $comment->comment_id, $comment->_schema, $comment->_config;
+    }
 }
 
 no Moose;
