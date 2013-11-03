@@ -50,6 +50,7 @@ on 'comment_created' => sub {
         my $mailer = OTRS::OPR::Web::App::Mailer->new( $config );
         $mailer->prepare_mail(
             $template_name,
+            USER => $user->user_name,
             TEXT => $comment->comments,
         );
 

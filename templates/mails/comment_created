@@ -1,0 +1,11 @@
+Dear <%= USER %>,
+
+one of your packages got a new comment. Please log in on the OPAR website and activate the comment.
+The comment:
+
+------------- 8< -------------
+<%= TEXT %>
+------------- 8< -------------
+
+Yours,
+OPAR-Team
