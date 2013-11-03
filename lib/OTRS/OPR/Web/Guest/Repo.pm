@@ -29,9 +29,16 @@ sub file {
         return $self->render_file( data => $repo->index_file, filename => 'otrs.xml' );
     }
     else {
-        my ($name,$version) = OTRS::OPR::Web::Utils->validate_opm_name( $file );
+        $file =~ s{\A/}{};
 
-        my ($package)       = $self->table( 'opr_package' )->search(
+        my ($name,$version) = OTRS::OPR::Web::Utils->validate_opm_name( $file, 1 );
+
+        if ( !$version ) {
+            my ($repo) = $self->table( 'opr_repo' )->find( $repo_id );
+            ($version) = $repo->index_file =~ m{<Name>$name</Name>.*?<Version>(.*?)</Version>}xms;
+        }
+
+        my ($package) = $self->table( 'opr_package' )->search(
             {
                 'opr_package_names.package_name' => $name,
                 version                          => $version,
@@ -41,7 +48,12 @@ sub file {
             }
         );
 
-        return $self->render_file( filepath => $package->path, filename => 'otrs.xml' );
+        if ( !$package ) {
+            return $self->render( text => '' );
+        }
+
+        my $filename = sprintf "%s-%s.opm", $package->opr_package_names->package_name, $package->version;
+        return $self->render_file( filepath => $package->path, filename => $filename );
     }
 }
 
