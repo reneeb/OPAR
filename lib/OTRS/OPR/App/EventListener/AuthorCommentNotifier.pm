@@ -39,7 +39,7 @@ on 'comment_created' => sub {
 
     my @notifications = $user->opr_notifications;
 
-    return if !@notificiations;
+    return if !@notifications;
 
     my $notification = first{ $_->notification_name eq 'new_comment' }@notifications;
     return if !$notification;

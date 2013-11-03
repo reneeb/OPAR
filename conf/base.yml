@@ -99,4 +99,9 @@ twitter:
   consumer_secret: ljaasdlasjrlvbvkkrlraillshyl23131
   token: 32oi1f10o1ohcoh
   token_secret: avdfkoqjwlvjlsdjf
+notifications:
+  comment_created:
+    label: Notify me when a comment for one of my packages is created
+    types:
+      - Mail
 

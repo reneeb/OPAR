@@ -17,6 +17,26 @@ sub show {
         %info,
     );
 
+    my %notifications = map{ $_->{notification_name} => $_->{notification_type} }@{ $self->user->notifications || [] };
+    my $config = $self->opar_config;
+
+    my @notification_fields;
+    for my $notification_name ( sort keys %{ $config->get('notifications') || {} } ) {
+        my @types = map{ {
+            value    => $_,
+            selected => ( ( $_ eq ( $notifications{$notification_name} || '' ) ) ? 'selected="selected"' : '' ),
+        } }@{$config->get('notifications')->{$notification_name}->{types} || []};
+
+        push @notification_fields, {
+            NAME     => $notification_name,
+            TYPE     => $notifications{$notification_name},
+            SELECTED => ( $notifications{$notification_name} ? 'checked="checked"' : '' ),
+            LABEL    => $config->get('notifications')->{$notification_name}->{label},
+        };
+    }
+
+    $self->stash( NOTIFICATION_FIELDS => \@notification_fields );
+
     my $html = $self->render_opar( 'author_profile' );
     $self->render( text => $html, format => 'html' );
 }
@@ -32,6 +52,25 @@ sub edit {
         %params,
         FORMID => $formid,
     );
+
+    my %notifications = map{ $_->{notification_name} => $_->{notification_type} }@{ $self->user->notifications || [] };
+    my $config = $self->opar_config;
+
+    my @notification_fields;
+    for my $notification_name ( sort keys %{ $config->get('notifications') || {} } ) {
+        my @types = map{ {
+            value    => $_,
+            selected => ( ( $_ eq ( $notifications{$notification_name} || '' ) ) ? 'selected="selected"' : '' ),
+        } }@{$config->get('notifications')->{$notification_name}->{types} || []};
+
+        push @notification_fields, {
+            NAME  => $notification_name,
+            TYPES => \@types,
+            LABEL => $config->get('notifications')->{$notification_name}->{label},
+        };
+    }
+
+    $self->stash( NOTIFICATION_FIELDS => \@notification_fields );
 
     my $html = $self->render_opar( 'author_profile_edit' );
     $self->render( text => $html, format => 'html' );
@@ -61,6 +100,17 @@ sub save {
     $dao->website( $params{website} );
     $dao->mail( $params{mail} );
     $dao->realname( $params{realname} );
+
+    my $config = $self->opar_config;
+    $dao->clear_notifications;
+    for my $notification_name ( keys %{ $config->get('notifications') || {} } ) {
+        if ( $params{$notification_name} ) {
+            $dao->add_notification({
+                notification_name => $notification_name,
+                notification_type => $params{ $notification_name . '_type' },
+            });
+        }
+    }
     
     my %info = $self->_user_to_hash( $dao );
     

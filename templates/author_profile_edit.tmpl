@@ -1,36 +1,47 @@
 <section>
-	<h1>Edit Profile</h1>
+    <h1>Edit Profile</h1>
 </section>
 
-<section>		
-	<div>
-		<form action="/author/profile/save" method="post">
-			<dl>
-				<dt><label for="realname">Realname</label></dt>
-				<dd class="<%= ERROR_REALNAME %>">
-					<input type="text" id="realname" name="realname" value="<%= realname %>">
-				</dd>
-					
-				<dt><label for="user_name">Username</label></dt>
-				<dd>
-					<span id="user_name"><%= user_name %></span>
-				</dd>
-	
-				<dt><label for="mail">E-mail</label></dt>
-				<dd class="<%= ERROR_MAIL %>">
-					<input type="text" name="mail" id="mail" value="<%= mail %>" />
-				</dd>
-	
-				<dt><label for="website">Website</label></dt>
-				<dd class="<%= ERROR_WEBSITE %>">
-					<input type="text" name="website" id="website" value="<%= website %>" />
-				</dd>
-	
-				<dt class="empty">&nbsp;</dt>
-				<dd class="right">
-					<button type="submit" value="Save profile">Save profile</button>
-				</dd>
-			</dl>
-		</form>
-	</div>
+<section>        
+    <div>
+        <form action="/author/profile/save" method="post">
+            <dl>
+                <dt><label for="realname">Realname</label></dt>
+                <dd class="<%= ERROR_REALNAME %>">
+                    <input type="text" id="realname" name="realname" value="<%= realname %>">
+                </dd>
+                    
+                <dt><label for="user_name">Username</label></dt>
+                <dd>
+                    <span id="user_name"><%= user_name %></span>
+                </dd>
+    
+                <dt><label for="mail">E-mail</label></dt>
+                <dd class="<%= ERROR_MAIL %>">
+                    <input type="text" name="mail" id="mail" value="<%= mail %>" />
+                </dd>
+    
+                <dt><label for="website">Website</label></dt>
+                <dd class="<%= ERROR_WEBSITE %>">
+                    <input type="text" name="website" id="website" value="<%= website %>" />
+                </dd>
+
+                <%LOOP NAME=NOTIFICATION_FIELDS %>
+                <dt><label for="<%= NAME %>"><%= LABEL %></label></dt>
+                <dd>
+                    <input type="checkbox" name="<%= NAME %>" id="<%= NAME %>" value="1" />
+                    <select name="<%= NAME %>_type">
+                    <%LOOP NAME=TYPES %><option value="<%= value %>" <%= selected %>><%= value %> </option>
+                    <%/LOOP %>
+                    </select>
+                </dd>
+                <%/LOOP %>
+    
+                <dt class="empty">&nbsp;</dt>
+                <dd class="right">
+                    <button type="submit" value="Save profile">Save profile</button>
+                </dd>
+            </dl>
+        </form>
+    </div>
 </section>
