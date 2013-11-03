@@ -4,13 +4,14 @@ use strict;
 use warnings;
 use base qw(DBIx::Class);
 
-our $VERSION = 4;
+our $VERSION = 5;
 
 __PACKAGE__->load_components( qw/PK::Auto Core/ );
 __PACKAGE__->table( 'opr_notifications' );
 __PACKAGE__->add_columns(
     notification_id => {
         data_type          => 'INT',
+        is_auto_increment  => 1,
         is_numeric         => 1,
         retrieve_on_insert => 1,
     },

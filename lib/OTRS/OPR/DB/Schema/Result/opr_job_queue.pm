@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use base qw(DBIx::Class);
 
-our $VERSION = 4;
+our $VERSION = 5;
 
 __PACKAGE__->load_components( qw/PK::Auto Core/ );
 __PACKAGE__->table( 'opr_job_queue' );
