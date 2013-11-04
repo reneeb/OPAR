@@ -14,7 +14,6 @@ CREATE TABLE `opr_notifications` (
   `user_id` integer NOT NULL,
   INDEX `opr_notifications_idx_user_id` (`user_id`),
   PRIMARY KEY (`notification_id`),
-  CONSTRAINT `opr_notifications_fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `opr_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 ;
@@ -25,10 +24,6 @@ DROP TABLE opr_feeds;
 
 ;
 DROP TABLE opr_group;
-
-;
-ALTER TABLE opr_group_user DROP FOREIGN KEY opr_group_user_fk_group_id,
-                           DROP FOREIGN KEY opr_group_user_fk_user_id;
 
 ;
 DROP TABLE opr_group_user;
