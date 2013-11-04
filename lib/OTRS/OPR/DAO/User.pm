@@ -104,6 +104,8 @@ sub DEMOLISH {
                     user_id => $user->user_id,
                 });
             }
+
+            next ATTRELEMENT;
         }
         
         $user->$attr( $self->$attr() );
