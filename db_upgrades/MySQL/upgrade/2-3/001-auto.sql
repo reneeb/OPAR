@@ -13,7 +13,7 @@ CREATE TABLE `opr_notifications` (
   `notification_name` VARCHAR(45) NULL,
   `user_id` integer NOT NULL,
   INDEX `opr_notifications_idx_user_id` (`user_id`),
-  PRIMARY KEY (`notification_id`),
+  PRIMARY KEY (`notification_id`)
 ) ENGINE=InnoDB;
 
 ;
