@@ -8,7 +8,32 @@ use File::Basename;
 use OTRS::OPR::App::EventHandler;
 use OTRS::OPR::App::Utils::Repo qw(create_index);
 
-on 'repo_saved' => sub {
+on repo_saved      => \&_index_repo;
+on package_indexed => sub {
+    my $package_id = shift;
+    my $schema     = shift;
+
+    my $package    = $schema->resultset( 'opr_package' )->search({ package_id => $package_id })->first;
+    my @frameworks = map{ $_ =~ s/\.x//g; $_ }split /, /, $package->framework;
+    my $name_id    = $package->opr_package_names->name_id;
+
+    my @repos = $schema->resultset( 'opr_repo' )->search(
+        {
+            name_id   => $name_id,
+            framework => [ @frameworks ], 
+        },
+        {
+            join => 'opr_repo_package',
+        },
+    );
+
+    for my $repo ( @repos ) {
+        _index_repo( $repo->repo_id, $schema );
+    }
+};
+
+
+sub _index_repo {
     my $repo_id = shift;
     my $schema  = shift;
 
@@ -42,6 +67,6 @@ on 'repo_saved' => sub {
     my $index     = create_index( \@opm_files, \%paths );
 
     $repo->update({ index_file => $index });
-};
+}
 
 1;
