@@ -27,6 +27,7 @@ on 'package_indexed' => sub {
         consumer_secret     => $twitter->{consumer_secret},
         access_token        => $twitter->{token},
         access_token_secret => $twitter->{token_secret},
+        ssl                 => 1,
     );
  
     my $name    = $package->opr_package_names->package_name;
