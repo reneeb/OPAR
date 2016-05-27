@@ -5,7 +5,8 @@ use warnings;
 
 use List::Util qw(first);
 
-use OTRS::OPR::App::EventHandler;
+use MojoX::GlobalEvents;
+
 use OTRS::OPR::DAO::User;
 use OTRS::OPR::Web::App::Mailer;
 

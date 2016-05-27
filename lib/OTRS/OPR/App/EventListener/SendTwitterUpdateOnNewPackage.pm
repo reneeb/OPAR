@@ -5,8 +5,7 @@ use warnings;
 
 use File::Basename;
 use Net::Twitter;
-
-use OTRS::OPR::App::EventHandler;
+use MojoX::GlobalEvents;
 
 on 'package_indexed' => sub {
     my $package_id = shift;

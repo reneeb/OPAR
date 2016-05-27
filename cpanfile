@@ -31,6 +31,7 @@ requires 'Mojolicious';
 requires 'Mojolicious::Plugin::Mail';
 requires 'Mojolicious::Plugin::RenderFile';
 requires 'Mojolicious::Plugin::Captcha::reCAPTCHA';
+requires 'MojoX::GlobalEvents';
 requires 'MojoX::Log::Log4perl';
 requires 'MojoX::Renderer::HTC';
 requires 'Moo';

@@ -4,8 +4,8 @@ use strict;
 use warnings;
 
 use File::Basename;
+use MojoX::GlobalEvents;
 
-use OTRS::OPR::App::EventHandler;
 use OTRS::OPR::App::Utils::Repo qw(create_index);
 
 on repo_saved      => \&_index_repo;
