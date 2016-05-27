@@ -8,6 +8,7 @@ use Mojo::Base qw(Mojolicious::Controller);
 use File::Basename;
 use File::Spec;
 use Path::Class;
+use File::Copy;
 
 use OTRS::OPR::DAO::Author;
 use OTRS::OPR::DAO::Comment;
@@ -146,6 +147,16 @@ sub do_upload_package {
             ERROR_HEADLINE => 'User is not maintainer',
             ERROR_MESSAGE  => 'You are not the maintainer',
         });
+
+        $self->app->log->debug( "Fileinfo (time=%s): Size=%s, Name=%s, Mtime=%s", time, -s $file, $file, -M $file );
+
+        my $basename   = basename $file;
+        my $spool_file = Path::Class::File->new(
+            $self->opar_config->get( 'paths.spool' ),
+            $basename,
+        );
+
+        copy $file, $spool_file->stringify;
         
         unlink $file;
         
@@ -590,9 +601,16 @@ sub _get_package_name {
                 $content .= $line;
             }
         }
+
+        $self->app->log->debug( "Try to get the name from line(s): $content" );
         
         ($package_name) = $content =~ m{ <Name.*?> \s* ([\w\s-]+) \s* </Name> }xms;
         $package_name =~ s{\s+$}{};
+
+        $self->app->log->debug( "Found $package_name" );
+    }
+    else {
+        $self->app->log->debug( "Cannot open $file: $!" );
     }
     
     return $package_name || '';
@@ -606,6 +624,7 @@ sub _upload_file {
     my $upload = $self->req->upload( $field_name );
     
     if ( !$upload ) {
+        $self->app->log->debug( 'Cannot open filehandle to read upload' );
         return 0, 'Cannot open filehandle to read upload';
     }
     
@@ -615,7 +634,10 @@ sub _upload_file {
     
     $file =~ s{[^A-Za-z0-9.-]}{}g;
     
-    return (0, 'No valid filename' ) if !$file;
+    if ( !$file ) {
+        $self->app->log->debug( 'No valid filename' );
+        return (0, 'No valid filename' )
+    }
     
     my $user_name = $self->user->user_name;
     
@@ -634,6 +656,7 @@ sub _upload_file {
     $self->app->log->debug( "Target file: $file_path" );
     
     if ( -e $file_path ) {
+        $self->app->log->debug( 'File already exists' );
         return 0, 'File already exists';
     }
     
@@ -643,11 +666,9 @@ sub _upload_file {
     
     $self->app->log->warn( "Directory $path_stringified does not exist" ) unless -e $path_stringified;
 
-    my $buffer;
-    my $something_read = '';
-
     $upload->move_to( $file_path->stringify );
     if ( !-s $file_path->stringify ) {
+        $self->app->log->debug( 'File seems to be empty' );
         return 0, 'file seems to be empty';
     }
     

@@ -51,6 +51,7 @@ sub run {
     # run job
     my $result;
     my $job_type = $job->opr_job_type->type_label;
+    $logger->info( "Job-Type: $job_type" );
     
     if ( $job_type eq 'analyze' ) {
         $result = $self->analyze_package( $job );
@@ -102,6 +103,10 @@ sub create_activity_graphs {
 sub analyze_package {
     my ( $self, $job ) = @_;
     
+    my $logger = Log::Log4perl->get_logger;
+
+    $logger->trace( sprintf "Start analyzing package (id %s)", $job->package_id );
+
     # if job state was 'stalled', delete possibly existing info about the package
     if ( $self->old_state eq 'stalled' ) {
         $self->table( 'opr_oq_result' )->search({
@@ -111,16 +116,32 @@ sub analyze_package {
     
     # get the package object that belongs to the job
     my $package = $self->table( 'opr_package' )->find( $job->package_id );
-    return if !$package;
+    if ( !$package ) {
+        $logger->warn( sprintf "No package for id %s found", $job->package_id );
+        return;
+    }
+
+    $logger->trace( sprintf "Found package %s (%s)", $package->opr_package_names->package_name, $package->path );
     
     # analyse package
     my $analyzer = OTRS::OPM::Analyzer->new(
         configfile => $self->analyzer_config,
     );
+   
+    my $result;
+    eval { 
+        $result = $analyzer->analyze( $package->path );
+        1;
+    } or do {
+        $logger->warn( "Fehler: $@" );
+        return;
+    };
     
-    my $result = $analyzer->analyze( $package->path );
-    return if !$result;
-    
+    if ( !$result ) {
+        $logger->warn( sprintf "Can't analyze %s", $package->path );
+        return;
+    }
+
     # save basic data of file
     $self->_save_basic_info( $package, $analyzer->opm );
     
@@ -152,6 +173,9 @@ sub _save_basic_info {
     # save framework version in extra table for dropdown
     for my $version ( $opm->framework ) {
         (my $otrs) = $version =~ m{(\d+\.\d+)};
+
+        next if !$otrs;
+
         $self->table( 'opr_framework_versions' )->find_or_create( { framework => $otrs } );
     }
     # ---
