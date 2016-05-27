@@ -9,7 +9,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 
 use OTRS::OPR::DB::Schema;
 
-our $VERSION = 0.02;
+our $VERSION = 0.03;
 
 sub register {
     my $self   = shift;
@@ -25,15 +25,15 @@ sub register {
     $app->attr(
         'db_schema' => sub {
             $app->log->debug( 'connect to db' );
-            my $db           = $local_config->{name};
-            my $host         = $local_config->{host};
-            my $type         = $local_config->{type};
-            my $schema_class = $local_config->{schema};
+            my $db     = $local_config->{name};
+            my $host   = $local_config->{host};
+            my $type   = $local_config->{type};
+            my $params = $local_config->{params};
             my $schema       = OTRS::OPR::DB::Schema->connect(
                 "DBI:$type:$db:$host",
                 $local_config->{user},
                 $local_config->{pass},
-                $schema_class,
+                $params,
             );
 
             #$schema->storage->debug(1);
