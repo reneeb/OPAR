@@ -29,6 +29,7 @@ requires 'Moose';
 requires 'MySQL::Workbench::DBIC';
 requires 'Net::FTP';
 requires 'Net::Twitter';
+requires 'OTRS::OPM::Analyzer';
 requires 'Parallel::ForkManager';
 requires 'Path::Class';
 requires 'Perl::Critic';
