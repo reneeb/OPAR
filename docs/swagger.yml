@@ -1,0 +1,457 @@
+swagger: '2.0'
+info:
+  description: >-
+    OPAR is the OTRS Package Archive, a collection of free OTRS addons. This
+    spec describes the API for OPAR 3.0
+  version: 1.0.0
+  title: OPAR
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    email: opar@perl-services.de
+  license:
+    name: Artistic License 2.0
+    url: 'http://www.perlfoundation.org/artistic_license_2_0'
+host: opar.perl-services.de
+basePath: /v1
+schemes:
+  - https
+paths:
+  /package:
+    post:
+      tags:
+        - package
+      summary: Upload a package
+      description: Only allowed for logged in users
+      operationId: uploadPackage
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: uploadData
+          required: true
+          schema:
+            $ref: '#/definitions/UploadData'
+      responses:
+        '201':
+          description: created package
+        '400':
+          description: Invalid request
+  '/package/{packageId}':
+    get:
+      tags:
+        - package
+      summary: Get all information about a package
+      description: Returns a single instance of package
+      operationId: getPackage
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: packageId
+          description: The id of the package
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Package'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Not found
+  '/package/{packageId}/download':
+    get:
+      tags:
+        - package
+      summary: Get the opm of a package
+      description: Returns the opm of package
+      operationId: downloadPackage
+      consumes:
+        - application/json
+      produces:
+        - application/xml
+      parameters:
+        - in: path
+          name: packageId
+          description: The id of the package
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: string
+            format: byte
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Not found
+  /packages:
+    get:
+      tags:
+        - package
+      summary: Get a list of packages
+      description: Returns a list of packages
+      operationId: getPackages
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: author
+          description: Authorname
+          required: false
+          type: string
+        - in: query
+          name: sort-by
+          description: Framework version
+          required: false
+          type: string
+          enum:
+            - date
+            - author
+        - in: query
+          name: format
+          description: Format of the result list
+          required: false
+          type: string
+          enum:
+            - json
+            - rss
+        - in: query
+          name: limit
+          description: Format of the result list
+          required: false
+          type: integer
+        - in: query
+          name: framework
+          description: Framework version
+          required: false
+          schema:
+            $ref: '#/definitions/VersionString'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Package'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Not found
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Created user object
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        default:
+          description: successful operation
+  '/user/{username}':
+    get:
+      tags:
+        - user
+      summary: Get user by user name
+      description: ''
+      operationId: getUserByName
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: username
+          in: path
+          description: 'The name that needs to be fetched. Use user1 for testing. '
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/User'
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+    put:
+      tags:
+        - user
+      summary: Updated user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: username
+          in: path
+          description: name that need to be updated
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Updated user object
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '400':
+          description: Invalid user supplied
+        '404':
+          description: User not found
+    delete:
+      tags:
+        - user
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          type: string
+      responses:
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+  /login:
+    post:
+      tags:
+        - user
+      summary: Logs user into the system
+      description: ''
+      operationId: loginUser
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: username
+          in: query
+          description: The user name for login
+          required: true
+          type: string
+        - name: password
+          in: query
+          description: The password for login in clear text
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: string
+          headers:
+            X-Rate-Limit:
+              type: integer
+              format: int32
+              description: calls per hour allowed by the user
+            X-Expires-After:
+              type: string
+              format: date-time
+              description: date in UTC when token expires
+        '400':
+          description: Invalid username/password supplied
+  /logout:
+    get:
+      tags:
+        - user
+      summary: Logs out current logged in user session
+      description: ''
+      operationId: logoutUser
+      produces:
+        - application/xml
+        - application/json
+      parameters: []
+      responses:
+        default:
+          description: successful operation
+  /repo:
+    post:
+      tags:
+        - repository
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createRepository
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Created user object
+          required: true
+          schema:
+            $ref: '#/definitions/Repository'
+      responses:
+        default:
+          description: successful operation
+  '/repo/{repoID}':
+    get:
+      tags:
+        - repository
+      summary: Get repository
+      description: Get all information about a repository
+      operationId: getRepository
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: path
+          name: repoID
+          description: ID of the repository
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Repository'
+        default:
+          description: successful operation
+securityDefinitions:
+  jwt:
+    type: apiKey
+    name: api_key
+    in: header
+definitions:
+  Comment:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      petId:
+        type: integer
+        format: int64
+      quantity:
+        type: integer
+        format: int32
+      shipDate:
+        type: string
+        format: date-time
+      status:
+        type: string
+        description: Order Status
+        enum:
+          - placed
+          - approved
+          - delivered
+      complete:
+        type: boolean
+        default: false
+    xml:
+      name: Order
+  UploadData:
+    type: object
+    properties:
+      opm:
+        type: string
+        format: bytes
+      description:
+        type: string
+    xml:
+      name: UploadData
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      username:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      userStatus:
+        type: integer
+        format: int32
+        description: User Status
+    xml:
+      name: User
+  Repository:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    xml:
+      name: Tag
+  Package:
+    type: object
+    required:
+      - name
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+        example: ArticleNotes
+      website:
+        type: string
+        example: 'http://feature-addons.de'
+      vendor:
+        type: string
+        example: Perl-Services.de
+      upload-date:
+        type: string
+        example: '2017-04-06'
+      description:
+        type: string
+        example: Add a note to articles
+      documentation:
+        type: string
+        example: <h1>ArticleNotes</h1>...
+      framework:
+        type: array
+        description: All frameworks this addon version is for
+        items:
+          $ref: '#/definitions/VersionString'
+    xml:
+      name: Package
+  VersionString:
+    type: integer
+    format: int64
+  ApiResponse:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      type:
+        type: string
+      message:
+        type: string
