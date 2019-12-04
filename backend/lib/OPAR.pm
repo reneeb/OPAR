@@ -10,8 +10,16 @@ sub startup {
     my ($app) = shift;
 
     $app->plugin(
-        OpenAPI => 
-    );
+        JSONConfig => {
+            file => $app->home->rel_file( 'conf/opar.json' ),
+    });
+
+    $app->plugin(
+        OpenAPI => {
+            file => $app->home->rel_file( $app->config->{openapi} ),
+    });
+
+    $app->plugin( 'RenderFile' );
 }
 
 1;
